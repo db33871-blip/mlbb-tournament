@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TOURNAMENT MLBB INFLY CARNIVAL</title>
+    
+    <!-- Firebase SDK (Versi Kompatibel - v8.10.1) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
     <style>
         :root {
             --bg-primary: #1e0533;
@@ -47,7 +52,6 @@
             margin: 0 auto;
         }
 
-        /* Modal Login / Pilih Peran */
         #login-modal {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -94,24 +98,10 @@
             transition: 0.2s;
         }
 
-        .btn-admin {
-            background: var(--accent-gold);
-            color: #1e0533;
-        }
-
-        .btn-admin:hover {
-            background: #d97706;
-        }
-
-        .btn-viewer {
-            background: rgba(56, 189, 248, 0.2);
-            color: var(--accent-cyan);
-            border: 1px solid var(--accent-cyan);
-        }
-
-        .btn-viewer:hover {
-            background: rgba(56, 189, 248, 0.4);
-        }
+        .btn-admin { background: var(--accent-gold); color: #1e0533; }
+        .btn-admin:hover { background: #d97706; }
+        .btn-viewer { background: rgba(56, 189, 248, 0.2); color: var(--accent-cyan); border: 1px solid var(--accent-cyan); }
+        .btn-viewer:hover { background: rgba(56, 189, 248, 0.4); }
 
         .panitia-login-box {
             display: none;
@@ -129,7 +119,6 @@
             text-align: center;
         }
 
-        /* Top Bar Status */
         .top-bar {
             display: flex;
             justify-content: space-between;
@@ -177,7 +166,6 @@
             text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
         }
 
-        /* Navigasi Menu Utama */
         .main-nav {
             display: flex;
             justify-content: center;
@@ -196,7 +184,6 @@
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
         }
 
         .nav-btn.active {
@@ -207,15 +194,9 @@
             transform: translateY(-2px);
         }
 
-        .tab-section {
-            display: none;
-        }
+        .tab-section { display: none; }
+        .tab-section.active { display: block; }
 
-        .tab-section.active {
-            display: block;
-        }
-
-        /* Halaman Daftar Tim */
         .team-list-container {
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
@@ -231,7 +212,6 @@
             margin-bottom: 20px;
             text-align: center;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
         }
 
         .sub-tab-container {
@@ -257,12 +237,8 @@
             border-color: var(--accent-cyan);
         }
 
-        .sub-content {
-            display: none;
-        }
-        .sub-content.active {
-            display: block;
-        }
+        .sub-content { display: none; }
+        .sub-content.active { display: block; }
 
         .team-inputs-grid {
             display: grid;
@@ -282,12 +258,7 @@
             border: 1px solid rgba(255,255,255,0.05);
         }
 
-        .team-input-item span {
-            min-width: 55px;
-            color: var(--accent-cyan);
-            font-weight: bold;
-        }
-
+        .team-input-item span { min-width: 55px; color: var(--accent-cyan); font-weight: bold; }
         .team-input-item input {
             flex-grow: 1;
             padding: 6px 10px;
@@ -297,28 +268,10 @@
             border-radius: 4px;
         }
 
-        /* Struktur Bagan Bracket */
-        .bracket-scroll-area {
-            overflow-x: auto;
-            padding-bottom: 20px;
-        }
-
-        .bracket-container {
-            display: flex;
-            justify-content: flex-start;
-            gap: 30px;
-            min-width: 1350px;
-            padding: 10px 0;
-        }
-
-        .round {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-around;
-            flex: 1;
-            min-width: 260px;
-        }
-
+        .bracket-scroll-area { overflow-x: auto; padding-bottom: 20px; }
+        .bracket-container { display: flex; justify-content: flex-start; gap: 30px; min-width: 1350px; padding: 10px 0; }
+        .round { display: flex; flex-direction: column; justify-content: space-around; flex: 1; min-width: 260px; }
+        
         .round-title {
             text-align: center;
             color: var(--accent-gold);
@@ -326,8 +279,6 @@
             font-weight: bold;
             margin-bottom: 15px;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
-            text-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
             background: rgba(0, 0, 0, 0.4);
             padding: 6px;
             border-radius: 6px;
@@ -341,19 +292,11 @@
             margin: 10px 0;
             overflow: hidden;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(5px);
         }
 
-        .matchup.final-match {
-            border: 2px solid var(--accent-gold);
-            box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
-        }
-
-        .matchup.third-match {
-            border: 2px solid var(--accent-cyan);
-            box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
-        }
-
+        .matchup.final-match { border: 2px solid var(--accent-gold); }
+        .matchup.third-match { border: 2px solid var(--accent-cyan); }
+        
         .matchup-label {
             background: rgba(0, 0, 0, 0.5);
             font-size: 0.75rem;
@@ -361,7 +304,6 @@
             text-align: center;
             padding: 4px;
             text-transform: uppercase;
-            letter-spacing: 1px;
             font-weight: bold;
         }
 
@@ -372,27 +314,11 @@
             padding: 9px 12px;
             font-size: 0.9rem;
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            transition: background 0.2s;
         }
 
-        .team:last-child {
-            border-bottom: none;
-        }
-
-        .team.winner {
-            background: rgba(245, 158, 11, 0.25);
-            color: var(--accent-gold);
-            font-weight: bold;
-        }
-
-        .team-name {
-            flex-grow: 1;
-            margin-right: 8px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            font-weight: 500;
-        }
+        .team:last-child { border-bottom: none; }
+        .team.winner { background: rgba(245, 158, 11, 0.25); color: var(--accent-gold); font-weight: bold; }
+        .team-name { flex-grow: 1; margin-right: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500; }
 
         .score-input {
             width: 38px;
@@ -403,13 +329,6 @@
             text-align: center;
             padding: 4px;
             border-radius: 4px;
-            font-size: 0.95rem;
-        }
-
-        .score-input:focus {
-            outline: none;
-            border-color: var(--accent-gold);
-            box-shadow: 0 0 5px rgba(245, 158, 11, 0.6);
         }
 
         .btn {
@@ -421,21 +340,14 @@
             font-size: 1rem;
             border-radius: 8px;
             cursor: pointer;
-            transition: all 0.2s;
             box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
             text-transform: uppercase;
-            letter-spacing: 1px;
         }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.6);
-        }
+        .btn:hover { transform: translateY(-2px); }
     </style>
 </head>
 <body>
 
-    <!-- MODAL LOGIN / PILIH PERAN -->
     <div id="login-modal">
         <div class="modal-box">
             <h2>Pilih Akses Masuk</h2>
@@ -452,7 +364,6 @@
     </div>
 
     <div class="container">
-        <!-- TOP BAR STATUS -->
         <div class="top-bar">
             <span id="role-display" class="role-badge badge-viewer">Status: Peserta</span>
             <button class="btn" style="padding: 6px 15px; font-size: 0.85rem;" onclick="location.reload()">Ganti Peran / Keluar</button>
@@ -463,353 +374,84 @@
             <p>Kategori Pelajar & Umum (16 Tim)</p>
         </header>
 
-        <!-- Navigasi Menu Utama -->
         <div class="main-nav">
             <button class="nav-btn active" onclick="switchMainTab(event, 'section-teams')">📋 Daftar Tim Terdaftar</button>
             <button class="nav-btn" onclick="switchMainTab(event, 'section-pelajar')">🎓 Bracket Pelajar</button>
             <button class="nav-btn" onclick="switchMainTab(event, 'section-umum')">🔥 Bracket Umum</button>
         </div>
 
-        <!-- ================= SECTION 1: DAFTAR TIM TERDAFTAR ================= -->
+        <!-- DAFTAR TIM -->
         <div id="section-teams" class="tab-section active">
             <div class="team-list-container">
                 <h2>Manajemen Daftar Tim Peserta</h2>
-                
                 <div class="sub-tab-container">
                     <button class="sub-tab-btn active" onclick="switchSubTab(event, 'sub-pelajar')">Kategori Pelajar (16 Tim)</button>
                     <button class="sub-tab-btn" onclick="switchSubTab(event, 'sub-umum')">Kategori Umum (16 Tim)</button>
                 </div>
 
-                <!-- Sub-Tab Pelajar -->
                 <div id="sub-pelajar" class="sub-content active">
                     <div class="team-inputs-grid" id="pelajar-team-inputs"></div>
                     <div id="admin-save-pelajar" style="text-align: center; margin-top: 20px; display: none;">
-                        <button class="btn" onclick="saveAndApplyTeams('pelajar')">Simpan & Perbarui Bagan Pelajar</button>
+                        <button class="btn" onclick="saveTeamsToFirebase('pelajar')">Simpan & Perbarui Bagan Pelajar</button>
                     </div>
                 </div>
 
-                <!-- Sub-Tab Umum -->
                 <div id="sub-umum" class="sub-content">
                     <div class="team-inputs-grid" id="umum-team-inputs"></div>
                     <div id="admin-save-umum" style="text-align: center; margin-top: 20px; display: none;">
-                        <button class="btn" onclick="saveAndApplyTeams('umum')">Simpan & Perbarui Bagan Umum</button>
+                        <button class="btn" onclick="saveTeamsToFirebase('umum')">Simpan & Perbarui Bagan Umum</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- ================= SECTION 2: BRACKET PELAJAR ================= -->
+        <!-- BRACKET PELAJAR -->
         <div id="section-pelajar" class="tab-section">
             <div class="bracket-scroll-area">
-                <div class="bracket-container">
+                <div class="bracket-container" id="bracket-pelajar-container">
                     <div class="round">
                         <div class="round-title">16 Besar Pelajar</div>
-                        <div class="matchup" data-match="1"><div class="team"><span class="team-name" id="p-t1">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('pelajar')"></div><div class="team"><span class="team-name" id="p-t2">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('pelajar')"></div></div>
-                        <div class="matchup" data-match="2"><div class="team"><span class="team-name" id="p-t3">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('pelajar')"></div><div class="team"><span class="team-name" id="p-t4">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('pelajar')"></div></div>
-                        <div class="matchup" data-match="3"><div class="team"><span class="team-name" id="p-t5">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('pelajar')"></div><div class="team"><span class="team-name" id="p-t6">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('pelajar')"></div></div>
-                        <div class="matchup" data-match="4"><div class="team"><span class="team-name" id="p-t7">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('pelajar')"></div><div class="team"><span class="team-name" id="p-t8">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('pelajar')"></div></div>
-                        <div class="matchup" data-match="5"><div class="team"><span class="team-name" id="p-t9">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('pelajar')"></div><div class="team"><span class="team-name" id="p-t10">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('pelajar')"></div></div>
-                        <div class="matchup" data-match="6"><div class="team"><span class="team-name" id="p-t11">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('pelajar')"></div><div class="team"><span class="team-name" id="p-t12">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('pelajar')"></div></div>
-                        <div class="matchup" data-match="7"><div class="team"><span class="team-name" id="p-t13">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('pelajar')"></div><div class="team"><span class="team-name" id="p-t14">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('pelajar')"></div></div>
-                        <div class="matchup" data-match="8"><div class="team"><span class="team-name" id="p-t15">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('pelajar')"></div><div class="team"><span class="team-name" id="p-t16">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('pelajar')"></div></div>
+                        <!-- Match 1-8 -->
+                        <div class="matchup" data-match="1"><div class="team"><span class="team-name" id="p-t1">-</span><input type="number" min="0" class="score-input p-score" data-match="1" value="0" oninput="updateScoreFirebase('pelajar')"></div><div class="team"><span class="team-name" id="p-t2">-</span><input type="number" min="0" class="score-input p-score" data-match="1" value="0" oninput="updateScoreFirebase('pelajar')"></div></div>
+                        <div class="matchup" data-match="2"><div class="team"><span class="team-name" id="p-t3">-</span><input type="number" min="0" class="score-input p-score" data-match="2" value="0" oninput="updateScoreFirebase('pelajar')"></div><div class="team"><span class="team-name" id="p-t4">-</span><input type="number" min="0" class="score-input p-score" data-match="2" value="0" oninput="updateScoreFirebase('pelajar')"></div></div>
+                        <div class="matchup" data-match="3"><div class="team"><span class="team-name" id="p-t5">-</span><input type="number" min="0" class="score-input p-score" data-match="3" value="0" oninput="updateScoreFirebase('pelajar')"></div><div class="team"><span class="team-name" id="p-t6">-</span><input type="number" min="0" class="score-input p-score" data-match="3" value="0" oninput="updateScoreFirebase('pelajar')"></div></div>
+                        <div class="matchup" data-match="4"><div class="team"><span class="team-name" id="p-t7">-</span><input type="number" min="0" class="score-input p-score" data-match="4" value="0" oninput="updateScoreFirebase('pelajar')"></div><div class="team"><span class="team-name" id="p-t8">-</span><input type="number" min="0" class="score-input p-score" data-match="4" value="0" oninput="updateScoreFirebase('pelajar')"></div></div>
+                        <div class="matchup" data-match="5"><div class="team"><span class="team-name" id="p-t9">-</span><input type="number" min="0" class="score-input p-score" data-match="5" value="0" oninput="updateScoreFirebase('pelajar')"></div><div class="team"><span class="team-name" id="p-t10">-</span><input type="number" min="0" class="score-input p-score" data-match="5" value="0" oninput="updateScoreFirebase('pelajar')"></div></div>
+                        <div class="matchup" data-match="6"><div class="team"><span class="team-name" id="p-t11">-</span><input type="number" min="0" class="score-input p-score" data-match="6" value="0" oninput="updateScoreFirebase('pelajar')"></div><div class="team"><span class="team-name" id="p-t12">-</span><input type="number" min="0" class="score-input p-score" data-match="6" value="0" oninput="updateScoreFirebase('pelajar')"></div></div>
+                        <div class="matchup" data-match="7"><div class="team"><span class="team-name" id="p-t13">-</span><input type="number" min="0" class="score-input p-score" data-match="7" value="0" oninput="updateScoreFirebase('pelajar')"></div><div class="team"><span class="team-name" id="p-t14">-</span><input type="number" min="0" class="score-input p-score" data-match="7" value="0" oninput="updateScoreFirebase('pelajar')"></div></div>
+                        <div class="matchup" data-match="8"><div class="team"><span class="team-name" id="p-t15">-</span><input type="number" min="0" class="score-input p-score" data-match="8" value="0" oninput="updateScoreFirebase('pelajar')"></div><div class="team"><span class="team-name" id="p-t16">-</span><input type="number" min="0" class="score-input p-score" data-match="8" value="0" oninput="updateScoreFirebase('pelajar')"></div></div>
                     </div>
                     <div class="round">
                         <div class="round-title">Perempat Final</div>
-                        <div class="matchup" data-match="qf-1" style="margin: 25px 0;"><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('pelajar')"></div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('pelajar')"></div></div>
-                        <div class="matchup" data-match="qf-2" style="margin: 25px 0;"><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('pelajar')"></div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('pelajar')"></div></div>
-                        <div class="matchup" data-match="qf-3" style="margin: 25px 0;"><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('pelajar')"></div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('pelajar')"></div></div>
-                        <div class="matchup" data-match="qf-4" style="margin: 25px 0;"><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('pelajar')"></div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('pelajar')"></div></div>
+                        <div class="matchup" data-match="qf-1" style="margin: 25px 0;"><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" readonly></div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" readonly></div></div>
+                        <div class="matchup" data-match="qf-2" style="margin: 25px 0;"><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" readonly></div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" readonly></div></div>
+                        <div class="matchup" data-match="qf-3" style="margin: 25px 0;"><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" readonly></div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" readonly></div></div>
+                        <div class="matchup" data-match="qf-4" style="margin: 25px 0;"><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" readonly></div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" readonly></div></div>
                     </div>
                     <div class="round">
                         <div class="round-title">Semifinal</div>
-                        <div class="matchup" data-match="sf-1" style="margin: 75px 0;"><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('pelajar')"></div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('pelajar')"></div></div>
-                        <div class="matchup" data-match="sf-2" style="margin: 75px 0;"><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('pelajar')"></div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('pelajar')"></div></div>
+                        <div class="matchup" data-match="sf-1" style="margin: 75px 0;"><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" readonly></div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" readonly></div></div>
+                        <div class="matchup" data-match="sf-2" style="margin: 75px 0;"><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" readonly></div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" readonly></div></div>
                     </div>
                     <div class="round" style="justify-content: center;">
                         <div class="round-title">Perebutan Juara</div>
-                        <div class="matchup final-match" data-match="final"><div class="matchup-label">👑 Grand Final (Juara 1 & 2)</div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('pelajar')"></div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('pelajar')"></div></div>
-                        <div class="matchup third-match" data-match="third" style="margin-top: 30px;"><div class="matchup-label">🥉 Perebutan Juara 3 & 4</div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('pelajar')"></div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('pelajar')"></div></div>
+                        <div class="matchup final-match" data-match="final"><div class="matchup-label">👑 Grand Final</div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" readonly></div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" readonly></div></div>
+                        <div class="matchup third-match" data-match="third" style="margin-top: 30px;"><div class="matchup-label">🥉 Juara 3 & 4</div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" readonly></div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" readonly></div></div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- ================= SECTION 3: BRACKET UMUM ================= -->
+        <!-- BRACKET UMUM -->
         <div id="section-umum" class="tab-section">
             <div class="bracket-scroll-area">
-                <div class="bracket-container">
+                <div class="bracket-container" id="bracket-umum-container">
                     <div class="round">
                         <div class="round-title">16 Besar Umum</div>
-                        <div class="matchup" data-match="1"><div class="team"><span class="team-name" id="u-t1">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('umum')"></div><div class="team"><span class="team-name" id="u-t2">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('umum')"></div></div>
-                        <div class="matchup" data-match="2"><div class="team"><span class="team-name" id="u-t3">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('umum')"></div><div class="team"><span class="team-name" id="u-t4">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('umum')"></div></div>
-                        <div class="matchup" data-match="3"><div class="team"><span class="team-name" id="u-t5">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('umum')"></div><div class="team"><span class="team-name" id="u-t6">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('umum')"></div></div>
-                        <div class="matchup" data-match="4"><div class="team"><span class="team-name" id="u-t7">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('umum')"></div><div class="team"><span class="team-name" id="u-t8">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('umum')"></div></div>
-                        <div class="matchup" data-match="5"><div class="team"><span class="team-name" id="u-t9">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('umum')"></div><div class="team"><span class="team-name" id="u-t10">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('umum')"></div></div>
-                        <div class="matchup" data-match="6"><div class="team"><span class="team-name" id="u-t11">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('umum')"></div><div class="team"><span class="team-name" id="u-t12">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('umum')"></div></div>
-                        <div class="matchup" data-match="7"><div class="team"><span class="team-name" id="u-t13">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('umum')"></div><div class="team"><span class="team-name" id="u-t14">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('umum')"></div></div>
-                        <div class="matchup" data-match="8"><div class="team"><span class="team-name" id="u-t15">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('umum')"></div><div class="team"><span class="team-name" id="u-t16">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('umum')"></div></div>
-                    </div>
-                    <div class="round">
-                        <div class="round-title">Perempat Final</div>
-                        <div class="matchup" data-match="qf-1" style="margin: 25px 0;"><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('umum')"></div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('umum')"></div></div>
-                        <div class="matchup" data-match="qf-2" style="margin: 25px 0;"><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('umum')"></div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('umum')"></div></div>
-                        <div class="matchup" data-match="qf-3" style="margin: 25px 0;"><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('umum')"></div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('umum')"></div></div>
-                        <div class="matchup" data-match="qf-4" style="margin: 25px 0;"><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('umum')"></div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('umum')"></div></div>
-                    </div>
-                    <div class="round">
-                        <div class="round-title">Semifinal</div>
-                        <div class="matchup" data-match="sf-1" style="margin: 75px 0;"><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('umum')"></div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('umum')"></div></div>
-                        <div class="matchup" data-match="sf-2" style="margin: 75px 0;"><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('umum')"></div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('umum')"></div></div>
-                    </div>
-                    <div class="round" style="justify-content: center;">
-                        <div class="round-title">Perebutan Juara</div>
-                        <div class="matchup final-match" data-match="final"><div class="matchup-label">👑 Grand Final (Juara 1 & 2)</div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('umum')"></div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('umum')"></div></div>
-                        <div class="matchup third-match" data-match="third" style="margin-top: 30px;"><div class="matchup-label">🥉 Perebutan Juara 3 & 4</div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('umum')"></div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input" value="0" oninput="calculateBracket('umum')"></div></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- SCRIPT JAVASCRIPT -->
-    <script>
-        // Menggunakan localStorage agar data tim tidak hilang saat web ditutup/refresh
-        let pelajarTeams = JSON.parse(localStorage.getItem('pelajarTeams')) || [];
-        let umumTeams = JSON.parse(localStorage.getItem('umumTeams')) || [];
-
-        if (pelajarTeams.length === 0) {
-            for(let i=1; i<=16; i++) { pelajarTeams.push(`SMA ${i} Team`); }
-        }
-        if (umumTeams.length === 0) {
-            for(let i=1; i<=16; i++) { umumTeams.push(`Team Umum ${i < 10 ? '0' + i : i}`); }
-        }
-
-        window.onload = function() {
-            renderTeamInputs('pelajar');
-            renderTeamInputs('umum');
-            applyTeamsToBracket('pelajar');
-            applyTeamsToBracket('umum');
-        };
-
-        function renderTeamInputs(category) {
-            const container = document.getElementById(`${category}-team-inputs`);
-            const teamsArray = category === 'pelajar' ? pelajarTeams : umumTeams;
-            container.innerHTML = '';
-            
-            for (let i = 0; i < 16; i++) {
-                container.innerHTML += `
-                    <div class="team-input-item">
-                        <span>Tim ${i+1}:</span>
-                        <input type="text" id="${category}-field-${i}" value="${teamsArray[i]}">
-                    </div>
-                `;
-            }
-        }
-
-        function setRole(role, username = '') {
-            document.getElementById('login-modal').style.display = 'none';
-            const badge = document.getElementById('role-display');
-            
-            if (role === 'admin') {
-                badge.className = 'role-badge badge-admin';
-                badge.textContent = `Status: Panitia (${username.toUpperCase()})`;
-                document.getElementById('admin-save-pelajar').style.display = 'block';
-                document.getElementById('admin-save-umum').style.display = 'block';
-                setInputsEditable(true);
-            } else {
-                badge.className = 'role-badge badge-viewer';
-                badge.textContent = 'Status: Peserta (Hanya Lihat)';
-                document.getElementById('admin-save-pelajar').style.display = 'none';
-                document.getElementById('admin-save-umum').style.display = 'none';
-                setInputsEditable(false);
-            }
-        }
-
-        function showPanitiaLoginBox() {
-            document.getElementById('panitia-login-container').style.display = 'block';
-        }
-
-        function verifyPanitiaLogin() {
-            const userInput = document.getElementById('panitia-user-input').value.trim().toLowerCase();
-            const passInput = document.getElementById('panitia-pass-input').value;
-
-            // Daftar username dan password panitia resmi
-            const panitiaUsers = {
-                "bentar": "infly2026",
-                "dwi": "infly2026",
-                "rafa": "infly2026",
-                "nuzul": "infly2026",
-                "dimas": "infly2026",
-                "ipank": "infly2026",
-                "dana": "infly2026",
-                "untung": "infly2026"
-            };
-
-            if (panitiaUsers[userInput] && panitiaUsers[userInput] === passInput) {
-                setRole('admin', userInput);
-            } else {
-                alert('Username atau Password salah! Silakan coba lagi.');
-            }
-        }
-
-        function setInputsEditable(enable) {
-            document.querySelectorAll('.score-input').forEach(input => input.disabled = !enable);
-            document.querySelectorAll('.team-inputs-grid input').forEach(input => input.disabled = !enable);
-        }
-
-        function saveAndApplyTeams(category) {
-            const teamsArray = category === 'pelajar' ? pelajarTeams : umumTeams;
-            for (let i = 0; i < 16; i++) {
-                const val = document.getElementById(`${category}-field-${i}`).value.trim();
-                teamsArray[i] = val || `Tim ${i+1}`;
-            }
-            
-            // Simpan permanen di memory browser
-            localStorage.setItem(category === 'pelajar' ? 'pelajarTeams' : 'umumTeams', JSON.stringify(teamsArray));
-
-            applyTeamsToBracket(category);
-            alert(`Daftar tim ${category} berhasil disimpan dan diperbarui di bagan!`);
-        }
-
-        function applyTeamsToBracket(category) {
-            const teamsArray = category === 'pelajar' ? pelajarTeams : umumTeams;
-            const prefix = category === 'pelajar' ? 'p' : 'u';
-            
-            for (let i = 1; i <= 16; i++) {
-                const span = document.getElementById(`${prefix}-t${i}`);
-                if (span) {
-                    span.textContent = teamsArray[i-1];
-                }
-            }
-            calculateBracket(category);
-        }
-
-        function switchMainTab(evt, sectionId) {
-            document.querySelectorAll('.tab-section').forEach(sec => sec.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-
-            document.getElementById(sectionId).classList.add('active');
-            evt.currentTarget.classList.add('active');
-        }
-
-        function switchSubTab(evt, subId) {
-            document.querySelectorAll('.sub-content').forEach(sub => sub.classList.remove('active'));
-            document.querySelectorAll('.sub-tab-btn').forEach(btn => btn.classList.remove('active'));
-
-            document.getElementById(subId).classList.add('active');
-            evt.currentTarget.classList.add('active');
-        }
-
-        function calculateBracket(category) {
-            const container = document.getElementById(category === 'pelajar' ? 'section-pelajar' : 'section-umum');
-            const prefix = category === 'pelajar' ? 'p' : 'u';
-            
-            function getWinnerR1(matchNum) {
-                const matchEl = container.querySelector(`.round:nth-child(1) .matchup[data-match="${matchNum}"]`);
-                if (!matchEl) return "-";
-                const teams = matchEl.querySelectorAll('.team');
-                const t1Name = document.getElementById(`${prefix}-t${matchNum*2-1}`).textContent.trim();
-                const s1 = parseInt(teams[0].querySelector('.score-input').value) || 0;
-                const t2Name = document.getElementById(`${prefix}-t${matchNum*2}`).textContent.trim();
-                const s2 = parseInt(teams[1].querySelector('.score-input').value) || 0;
-
-                teams[0].classList.remove('winner');
-                teams[1].classList.remove('winner');
-
-                if (s1 === 0 && s2 === 0) return "-";
-                if (s1 > s2) {
-                    teams[0].classList.add('winner');
-                    return t1Name;
-                } else if (s2 > s1) {
-                    teams[1].classList.add('winner');
-                    return t2Name;
-                }
-                return "-";
-            }
-
-            const w1 = getWinnerR1(1), w2 = getWinnerR1(2), w3 = getWinnerR1(3), w4 = getWinnerR1(4);
-            const w5 = getWinnerR1(5), w6 = getWinnerR1(6), w7 = getWinnerR1(7), w8 = getWinnerR1(8);
-
-            setTeamToMatch(container, 'qf-1', 0, w1);
-            setTeamToMatch(container, 'qf-1', 1, w2);
-            setTeamToMatch(container, 'qf-2', 0, w3);
-            setTeamToMatch(container, 'qf-2', 1, w4);
-            setTeamToMatch(container, 'qf-3', 0, w5);
-            setTeamToMatch(container, 'qf-3', 1, w6);
-            setTeamToMatch(container, 'qf-4', 0, w7);
-            setTeamToMatch(container, 'qf-4', 1, w8);
-
-            function getWinnerQF(qfNum) {
-                const matchEl = container.querySelector(`.round:nth-child(2) .matchup[data-match="qf-${qfNum}"]`);
-                if (!matchEl) return { winner: "-", loser: "-" };
-                const teams = matchEl.querySelectorAll('.team');
-                const t1Name = teams[0].querySelector('.team-name').textContent.trim();
-                const s1 = parseInt(teams[0].querySelector('.score-input').value) || 0;
-                const t2Name = teams[1].querySelector('.team-name').textContent.trim();
-                const s2 = parseInt(teams[1].querySelector('.score-input').value) || 0;
-
-                teams[0].classList.remove('winner');
-                teams[1].classList.remove('winner');
-
-                if (t1Name === "-" || t2Name === "-" || (s1 === 0 && s2 === 0)) return { winner: "-", loser: "-" };
-                if (s1 > s2) {
-                    teams[0].classList.add('winner');
-                    return { winner: t1Name, loser: t2Name };
-                } else if (s2 > s1) {
-                    teams[1].classList.add('winner');
-                    return { winner: t2Name, loser: t1Name };
-                }
-                return { winner: "-", loser: "-" };
-            }
-
-            const qf1 = getWinnerQF(1), qf2 = getWinnerQF(2), qf3 = getWinnerQF(3), qf4 = getWinnerQF(4);
-
-            setTeamToMatch(container, 'sf-1', 0, qf1.winner);
-            setTeamToMatch(container, 'sf-1', 1, qf2.winner);
-            setTeamToMatch(container, 'sf-2', 0, qf3.winner);
-            setTeamToMatch(container, 'sf-2', 1, qf4.winner);
-
-            function getWinnerSF(sfNum) {
-                const matchEl = container.querySelector(`.round:nth-child(3) .matchup[data-match="sf-${sfNum}"]`);
-                if (!matchEl) return { winner: "-", loser: "-" };
-                const teams = matchEl.querySelectorAll('.team');
-                const t1Name = teams[0].querySelector('.team-name').textContent.trim();
-                const s1 = parseInt(teams[0].querySelector('.score-input').value) || 0;
-                const t2Name = teams[1].querySelector('.team-name').textContent.trim();
-                const s2 = parseInt(teams[1].querySelector('.score-input').value) || 0;
-
-                teams[0].classList.remove('winner');
-                teams[1].classList.remove('winner');
-
-                if (t1Name === "-" || t2Name === "-" || (s1 === 0 && s2 === 0)) return { winner: "-", loser: "-" };
-                if (s1 > s2) {
-                    teams[0].classList.add('winner');
-                    return { winner: t1Name, loser: t2Name };
-                } else if (s2 > s1) {
-                    teams[1].classList.add('winner');
-                    return { winner: t2Name, loser: t1Name };
-                }
-                return { winner: "-", loser: "-" };
-            }
-
-            const sf1 = getWinnerSF(1), sf2 = getWinnerSF(2);
-
-            setTeamToMatch(container, 'final', 0, sf1.winner);
-            setTeamToMatch(container, 'final', 1, sf2.winner);
-
-            setTeamToMatch(container, 'third', 0, sf1.loser);
-            setTeamToMatch(container, 'third', 1, sf2.loser);
-        }
-
-        function setTeamToMatch(container, matchKey, teamIndex, teamName) {
-            const matchEl = container.querySelector(`.matchup[data-match="${matchKey}"]`);
-            if (!matchEl) return;
-            const teamEl = matchEl.querySelectorAll('.team')[teamIndex];
-            if (!teamEl) return;
-            const nameSpan = teamEl.querySelector('.team-name');
-            nameSpan.textContent = teamName;
-        }
-    </script>
-</body>
-</html>
+                        <!-- Match 1-8 -->
+                        <div class="matchup" data-match="1"><div class="team"><span class="team-name" id="u-t1">-</span><input type="number" min="0" class="score-input u-score" data-match="1" value="0" oninput="updateScoreFirebase('umum')"></div><div class="team"><span class="team-name" id="u-t2">-</span><input type="number" min="0" class="score-input u-score" data-match="1" value="0" oninput="updateScoreFirebase('umum')"></div></div>
+                        <div class="matchup" data-match="2"><div class="team"><span class="team-name" id="u-t3">-</span><input type="number" min="0" class="score-input u-score" data-match="2" value="0" oninput="updateScoreFirebase('umum')"></div><div class="team"><span class="team-name" id="u-t4">-</span><input type="number" min="0" class="score-input u-score" data-match="2" value="0" oninput="updateScoreFirebase('umum')"></div></div>
+                        <div class="matchup" data-match="3"><div class="team"><span class="team-name" id="u-t5">-</span><input type="number" min="0" class="score-input u-score" data-match="3" value="0" oninput="updateScoreFirebase('umum')"></div><div class="team"><span class="team-name" id="u-t6">-</span><input type="number" min="0" class="score-input u-score" data-match="3" value="0" oninput="updateScoreFirebase('umum')"></div></div>
+                        <div class="matchup" data-match="4"><div class="team"><span class="team-name" id="u-t7">-</span><input type="number" min="0" class="score-input u-score" data-match="4" value="0" oninput="updateScoreFirebase('umum')"></div><div class="team"><span class="team-name" id="u-t8">-</span><input type="number" min="0" class="score-input u-score" data-match="4" value="0" oninput="updateScoreFirebase('umum')"></div></div>
+                        <div class="matchup" data-match="5"><div class="team"><span class="team-name" id="u-t9">-</span><input type="number" min="0" class="score-input u-score" data-match="5" value="0" oninput="updateScoreFirebase('umum')"></div><div class="team"><span class="team-name" id="u-t10">-</span><input type="number" min="0" class="score-input u-score" data-match="5" value="0" oninput="updateScoreFirebase('umum')"></div></div>
+                        <div class="matchup" data-match="6"><div class="team"><span class="team-name" id="u-t11">-</span><input type="number" min="0" class="score-input u-score" data-match="6" value="0" oninput="updateScoreFirebase('umum')"></div><div class="team"><span class="team-name" id="u-t12">-</span><input type="number" min="0" class
