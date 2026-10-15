@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TOURNAMENT MLBB INFLY CARNIVAL</title>
     
-    <script src="[https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js](https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js)"></script>
-    <script src="[https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js](https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js)"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <style>
         :root {
@@ -235,25 +236,29 @@
         const firebaseConfig = {
             apiKey: "AIzaSyA093jfB0I5cZhy0-BfAWUaEPUIobBxQXA",
             authDomain: "tournamen-mlbb-infly-carnival.firebaseapp.com",
-            databaseURL: "[https://tournamen-mlbb-infly-carnival-default-rtdb.firebaseio.com](https://tournamen-mlbb-infly-carnival-default-rtdb.firebaseio.com)",
+            databaseURL: "https://tournamen-mlbb-infly-carnival-default-rtdb.firebaseio.com",
             projectId: "tournamen-mlbb-infly-carnival",
             storageBucket: "tournamen-mlbb-infly-carnival.firebasestorage.app"
         };
 
-        let db;
-        try {
-            if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
-            db = firebase.database();
-        } catch (e) {
-            console.error("Firebase error: ", e);
-        }
-
+        let db = null;
         let currentUserRole = 'viewer';
 
         window.onload = function() {
             initInputs('pelajar');
             initInputs('umum');
-            if(db) listenFirebaseData();
+            
+            try {
+                if (typeof firebase === 'undefined') {
+                    alert("Sistem Firebase diblokir oleh browser. Harap buka website ini menggunakan aplikasi Google Chrome asli, jangan lewat browser bawaan WA.");
+                    return;
+                }
+                if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+                db = firebase.database();
+                listenFirebaseData();
+            } catch (e) {
+                alert("Error Koneksi Database: " + e.message + "\\n\\nPastikan Anda sudah masuk ke menu Firebase dan menekan tombol 'Create Database'.");
+            }
         };
 
         function initInputs(category) {
@@ -299,7 +304,7 @@
         }
 
         function saveTeamsToFirebase(category) {
-            if(!db) return alert("Database belum terhubung");
+            if(!db) return alert("Sistem belum tersambung ke Firebase. Harap perhatikan pesan error saat pertama kali web dibuka.");
             const teamsArray = [];
             for (let i = 0; i < 16; i++) {
                 const val = document.getElementById(category+'-field-'+i).value.trim();
@@ -307,7 +312,7 @@
             }
             db.ref('tournament/'+category+'/teams').set(teamsArray)
               .then(function() { alert('Data ' + category.toUpperCase() + ' berhasil disimpan online!'); })
-              .catch(function(error) { alert("Gagal menyimpan: " + error); });
+              .catch(function(error) { alert("Penyimpanan gagal. " + error.message); });
         }
 
         function updateScoreFirebase(category) {
@@ -321,6 +326,7 @@
         }
 
         function listenFirebaseData() {
+            if(!db) return;
             db.ref('tournament/pelajar/teams').on('value', function(snapshot) {
                 const data = snapshot.val();
                 if (data) {
