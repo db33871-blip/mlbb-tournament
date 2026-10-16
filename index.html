@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TOURNAMENT MLBB INFLY CARNIVAL</title>
 
-    <!-- FIREBASE SDK (Dimuat paling awal) -->
+    <!-- FIREBASE SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
@@ -115,7 +115,7 @@
     <div class="container">
         <div class="top-bar">
             <span id="role-display" class="role-badge">Status: Peserta</span>
-            <button class="btn-action" style="padding: 4px 10px; font-size: 0.75rem;" onclick="location.reload()">Keluar / Ganti</button>
+            <button class="btn-action" style="padding: 4px 10px; font-size: 0.75rem;" onclick="logout()">Keluar / Ganti</button>
         </div>
 
         <header>
@@ -175,7 +175,6 @@
     </div>
 
     <script>
-        // Inisialisasi Firebase Langsung
         var firebaseConfig = {
             apiKey: "AIzaSyA093jfB0I5cZhy0-BfAWUaEPUIobBxQXA",
             authDomain: "tournamen-mlbb-infly-carnival.firebaseapp.com",
@@ -210,6 +209,10 @@
             currentUserRole = role;
             currentAdminName = username;
 
+            // Simpan sesi ke browser
+            localStorage.setItem('infly_role', role);
+            localStorage.setItem('infly_user', username);
+
             document.getElementById('login-modal').style.display = 'none';
 
             var badge = document.getElementById('role-display');
@@ -230,6 +233,12 @@
                 if (navHist) navHist.style.display = 'none';
                 setInputsEditable(false);
             }
+        }
+
+        function logout() {
+            localStorage.removeItem('infly_role');
+            localStorage.removeItem('infly_user');
+            location.reload();
         }
 
         function showPanitiaBox() {
@@ -433,6 +442,13 @@
         renderGrids('umum');
         renderBrackets('pelajar');
         renderBrackets('umum');
+
+        // Otomatis Login saat Halaman Dimuat
+        var savedRole = localStorage.getItem('infly_role');
+        var savedUser = localStorage.getItem('infly_user');
+        if (savedRole) {
+            setRole(savedRole, savedUser);
+        }
 
         // Listener Firebase Data
         ['pelajar', 'umum'].forEach(function(cat) {
