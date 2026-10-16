@@ -20,9 +20,8 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         
         body {
-            /* MEMBACA FORMAT JPEG SESUAI FILE DI LAPTOP ANDA */
             background-color: #120428;
-            background-image: linear-gradient(rgba(10, 2, 25, 0.65), rgba(10, 2, 25, 0.82)), url('logo.jpeg'), url('logo.jpg');
+            background-image: linear-gradient(rgba(10, 2, 25, 0.65), rgba(10, 2, 25, 0.82)), url('logo.jpeg');
             background-repeat: no-repeat;
             background-position: center center;
             background-attachment: fixed;
@@ -62,19 +61,8 @@
             background: linear-gradient(135deg, rgba(255, 0, 127, 0.4), rgba(123, 44, 191, 0.8)); 
             border: 2px solid var(--accent-yellow); 
             border-radius: 12px; 
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
         }
-        .header-logo {
-            max-width: 220px;
-            width: 80%;
-            height: auto;
-            margin-bottom: 12px;
-            filter: drop-shadow(0 0 15px rgba(255, 234, 0, 0.6));
-        }
-        header h1 { color: var(--accent-yellow); font-size: 1.5rem; text-transform: uppercase; }
+        header h1 { color: var(--accent-yellow); font-size: 1.5rem; text-transform: uppercase; margin-bottom: 5px; }
         header p { color: var(--accent-cyan); font-size: 0.85rem; font-weight: bold; }
 
         .main-nav { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
@@ -143,7 +131,6 @@
         </div>
 
         <header>
-            <img src="logo.jpeg" alt="Logo INFLY CARNIVAL" class="header-logo" onerror="this.src='logo.jpg'; this.onerror=function(){this.style.display='none'}">
             <h1>TOURNAMENT MLBB INFLY CARNIVAL</h1>
             <p>Kategori Pelajar & Umum (16 Tim)</p>
         </header>
@@ -460,7 +447,7 @@
             } else {
                 var btns = document.querySelectorAll('.main-nav .nav-btn');
                 btns.forEach(function(btn) {
-                    if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(secId)) {
+                    if (btn.getAttribute('onclick') && btn.getAttribute('onclick'].includes(secId)) {
                         btn.classList.add('active');
                     }
                 });
