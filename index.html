@@ -21,13 +21,13 @@
         
         body {
             background-color: #120428;
-            background-image: linear-gradient(rgba(10, 2, 25, 0.65), rgba(10, 2, 25, 0.82)), url('logo.jpeg');
+            /* DIPERBAIKI AGAR PAS DI HP DAN TIDAK RUSAK */
+            background-image: linear-gradient(rgba(10, 2, 25, 0.7), rgba(10, 2, 25, 0.85)), url('logo.jpeg');
             background-repeat: no-repeat;
-            background-position: center center;
-            background-attachment: fixed;
+            background-position: center top;
             background-size: cover;
             color: #ffffff;
-            padding: 15px;
+            padding: 12px;
             min-height: 100vh;
         }
 
@@ -56,25 +56,24 @@
         
         header { 
             text-align: center; 
-            margin-bottom: 15px; 
-            padding: 15px; 
+            margin-bottom: 12px; 
+            padding: 10px; 
             background: transparent; 
             border: none;
         }
-        header h1 { color: var(--accent-yellow); font-size: 1.5rem; text-transform: uppercase; margin-bottom: 5px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
-        header p { color: var(--accent-cyan); font-size: 0.85rem; font-weight: bold; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
+        header h1 { color: var(--accent-yellow); font-size: 1.25rem; text-transform: uppercase; margin-bottom: 3px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+        header p { color: var(--accent-cyan); font-size: 0.75rem; font-weight: bold; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
 
-        /* TOMBOL GARIS TIGA (HAMBURGER MENU) DI SEBELAH KIRI */
         .menu-container {
             position: relative;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
         .hamburger-btn {
             background: rgba(18, 4, 40, 0.9);
             color: var(--accent-yellow);
             border: 1px solid var(--accent-yellow);
-            padding: 10px 16px;
-            font-size: 1.1rem;
+            padding: 8px 14px;
+            font-size: 0.95rem;
             font-weight: bold;
             border-radius: 6px;
             cursor: pointer;
@@ -83,15 +82,11 @@
             gap: 8px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.4);
         }
-        .hamburger-btn:hover {
-            background: rgba(255, 234, 0, 0.2);
-        }
 
-        /* DAFTAR MENU YANG MUNCUL KETIKA TOMBOL GARIS TIGA DIKLIK */
         .main-nav { 
             display: none; 
             position: absolute;
-            top: 45px;
+            top: 40px;
             left: 0;
             background: rgba(18, 4, 40, 0.95);
             border: 1px solid var(--border-glow);
@@ -99,7 +94,7 @@
             padding: 8px;
             flex-direction: column; 
             gap: 6px; 
-            min-width: 220px;
+            min-width: 200px;
             z-index: 999;
             box-shadow: 0 8px 20px rgba(0,0,0,0.6);
         }
@@ -110,16 +105,12 @@
             background: transparent; 
             color: var(--accent-cyan); 
             border: 1px solid transparent; 
-            padding: 10px 14px; 
-            font-size: 0.85rem; 
+            padding: 9px 12px; 
+            font-size: 0.8rem; 
             font-weight: bold; 
             border-radius: 6px; 
             cursor: pointer; 
             text-align: left;
-            transition: all 0.2s;
-        }
-        .nav-btn:hover {
-            background: rgba(0, 242, 254, 0.15);
         }
         .nav-btn.active { 
             background: linear-gradient(135deg, #ffea00, #ff007f); 
@@ -130,39 +121,39 @@
         .tab-section { display: none; }
         .tab-section.active { display: block; }
 
-        .card { background: var(--bg-card); border: 1px solid var(--border-glow); padding: 15px; border-radius: 12px; }
-        .card h2 { color: var(--accent-yellow); margin-bottom: 12px; text-align: center; font-size: 1.1rem; }
+        .card { background: var(--bg-card); border: 1px solid var(--border-glow); padding: 12px; border-radius: 10px; }
+        .card h2 { color: var(--accent-yellow); margin-bottom: 10px; text-align: center; font-size: 1rem; }
 
-        .sub-nav { display: flex; justify-content: center; gap: 8px; margin-bottom: 12px; }
-        .sub-btn { background: rgba(0,0,0,0.4); color: #cbd5e1; border: 1px solid var(--border-glow); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: bold; }
+        .sub-nav { display: flex; justify-content: center; gap: 8px; margin-bottom: 10px; }
+        .sub-btn { background: rgba(0,0,0,0.4); color: #cbd5e1; border: 1px solid var(--border-glow); padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: bold; }
         .sub-btn.active { background: var(--accent-cyan); color: #120428; }
 
-        .team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; margin-bottom: 12px; }
-        .team-item { display: flex; align-items: center; gap: 6px; background: rgba(0,0,0,0.4); padding: 6px; border-radius: 6px; font-size: 0.85rem; }
-        .team-item span { min-width: 45px; color: var(--accent-cyan); font-weight: bold; }
-        .team-item input { flex: 1; padding: 5px; background: rgba(0,0,0,0.6); border: 1px solid var(--border-glow); color: #fff; border-radius: 4px; }
+        .team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 6px; margin-bottom: 10px; }
+        .team-item { display: flex; align-items: center; gap: 6px; background: rgba(0,0,0,0.4); padding: 5px; border-radius: 6px; font-size: 0.8rem; }
+        .team-item span { min-width: 40px; color: var(--accent-cyan); font-weight: bold; }
+        .team-item input { flex: 1; padding: 4px; background: rgba(0,0,0,0.6); border: 1px solid var(--border-glow); color: #fff; border-radius: 4px; }
 
-        .btn-action { background: linear-gradient(135deg, #ffea00, #ff007f); color: #fff; border: none; padding: 8px 18px; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
+        .btn-action { background: linear-gradient(135deg, #ffea00, #ff007f); color: #fff; border: none; padding: 7px 15px; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 0.8rem; }
 
-        .bracket-scroll { overflow-x: auto; padding-bottom: 10px; }
-        .bracket-flex { display: flex; gap: 15px; min-width: 1100px; }
-        .round-col { flex: 1; min-width: 210px; display: flex; flex-direction: column; justify-content: space-around; }
-        .round-title { text-align: center; color: var(--accent-yellow); font-size: 0.85rem; font-weight: bold; margin-bottom: 8px; background: rgba(0,0,0,0.5); padding: 5px; border-radius: 4px; border: 1px solid rgba(255,234,0,0.3); }
+        .bracket-scroll { overflow-x: auto; padding-bottom: 10px; -webkit-overflow-scrolling: touch; }
+        .bracket-flex { display: flex; gap: 12px; min-width: 950px; }
+        .round-col { flex: 1; min-width: 190px; display: flex; flex-direction: column; justify-content: space-around; }
+        .round-title { text-align: center; color: var(--accent-yellow); font-size: 0.8rem; font-weight: bold; margin-bottom: 6px; background: rgba(0,0,0,0.5); padding: 4px; border-radius: 4px; border: 1px solid rgba(255,234,0,0.3); }
 
-        .matchup { background: var(--bg-card); border: 1px solid var(--border-glow); border-radius: 6px; margin: 6px 0; overflow: hidden; }
+        .matchup { background: var(--bg-card); border: 1px solid var(--border-glow); border-radius: 6px; margin: 5px 0; overflow: hidden; }
         .matchup.final { border: 2px solid var(--accent-yellow); }
         .matchup.third { border: 2px solid var(--accent-cyan); }
-        .match-label { background: rgba(255,0,127,0.4); font-size: 0.7rem; color: #fff; text-align: center; padding: 2px; font-weight: bold; }
+        .match-label { background: rgba(255,0,127,0.4); font-size: 0.65rem; color: #fff; text-align: center; padding: 2px; font-weight: bold; }
 
-        .team-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; font-size: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .team-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 7px; font-size: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.08); }
         .team-row:last-child { border-bottom: none; }
         .team-row.winner { background: rgba(255, 0, 127, 0.35); font-weight: bold; color: var(--accent-yellow); }
         .team-name { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-right: 5px; }
 
-        .score-in { width: 32px; background: rgba(0,0,0,0.7); border: 1px solid var(--border-glow); color: var(--accent-cyan); text-align: center; padding: 2px; border-radius: 4px; font-weight: bold; }
+        .score-in { width: 28px; background: rgba(0,0,0,0.7); border: 1px solid var(--border-glow); color: var(--accent-cyan); text-align: center; padding: 2px; border-radius: 4px; font-weight: bold; font-size: 0.75rem; }
 
-        .history-log { max-height: 350px; overflow-y: auto; background: rgba(0,0,0,0.4); border-radius: 6px; padding: 10px; font-size: 0.8rem; }
-        .log-item { padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; }
+        .history-log { max-height: 300px; overflow-y: auto; background: rgba(0,0,0,0.4); border-radius: 6px; padding: 8px; font-size: 0.75rem; }
+        .log-item { padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; }
     </style>
 </head>
 <body>
@@ -185,7 +176,7 @@
     <div class="container">
         <div class="top-bar">
             <span id="role-display" class="role-badge">Status: Peserta</span>
-            <button class="btn-action" style="padding: 4px 10px; font-size: 0.75rem;" onclick="logout()">Keluar / Ganti</button>
+            <button class="btn-action" style="padding: 3px 8px; font-size: 0.7rem;" onclick="logout()">Keluar / Ganti</button>
         </div>
 
         <header>
@@ -193,7 +184,6 @@
             <p>Kategori Pelajar & Umum (16 Tim)</p>
         </header>
 
-        <!-- MENU GARIS TIGA DI SEBELAH KIRI -->
         <div class="menu-container">
             <button class="hamburger-btn" onclick="toggleMenu()">
                 <span>☰</span> Menu Navigasi
@@ -285,7 +275,6 @@
             menu.classList.toggle('show');
         }
 
-        // Menutup menu otomatis jika diklik di luar area menu
         window.onclick = function(event) {
             if (!event.target.matches('.hamburger-btn') && !event.target.matches('.hamburger-btn span')) {
                 var menu = document.getElementById('dropdown-menu');
