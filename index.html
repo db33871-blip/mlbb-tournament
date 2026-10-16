@@ -20,8 +20,15 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         
         body {
-            /* Membaca file logo.jpg dari folder yang sama */
-            background: linear-gradient(rgba(10, 2, 25, 0.75), rgba(10, 2, 25, 0.88)), url('logo.jpg') no-repeat center center fixed;
+            /* BACKUP GRADASI + DUKUNGAN NAMA LOGO.JPG MAUPUN LOGO.JPG.JPG */
+            background-color: #120428;
+            background-image: 
+                linear-gradient(rgba(10, 2, 25, 0.75), rgba(10, 2, 25, 0.88)), 
+                url('logo.jpg'), 
+                url('logo.jpg.jpg');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-attachment: fixed;
             background-size: cover;
             color: #ffffff;
             padding: 15px;
@@ -139,7 +146,8 @@
         </div>
 
         <header>
-            <img src="logo.jpg" alt="Logo INFLY CARNIVAL" class="header-logo" onerror="this.style.display='none'">
+            <!-- MENCOBA MEMUAT LOGO DARI BEBERAPA JENIS PENAMAAN FILE -->
+            <img src="logo.jpg" alt="Logo INFLY CARNIVAL" class="header-logo" onerror="this.src='logo.jpg.jpg'; this.onerror=function(){this.style.display='none'}">
             <h1>TOURNAMENT MLBB INFLY CARNIVAL</h1>
             <p>Kategori Pelajar & Umum (16 Tim)</p>
         </header>
