@@ -2,122 +2,65 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TOURNAMENT MLBB INFLY CARNIVAL</title>
     
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-
     <style>
         :root {
-            --bg-card: rgba(30, 8, 60, 0.9);
+            --bg-card: rgba(30, 8, 60, 0.92);
             --accent-yellow: #ffea00;
             --accent-cyan: #00f2fe;
             --accent-pink: #ff007f;
             --text-white: #ffffff;
-            --border-glow: rgba(0, 242, 254, 0.4);
+            --border-glow: rgba(0, 242, 254, 0.5);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
 
         body {
-            background: 
-                radial-gradient(circle at 50% 20%, rgba(0, 242, 254, 0.35) 0%, transparent 60%),
-                radial-gradient(circle at 50% 50%, rgba(255, 0, 127, 0.25) 0%, transparent 70%),
-                linear-gradient(180deg, #00b4db 0%, #0083b0 25%, #7b2cbf 55%, #3c096c 80%, #120428 100%);
+            background: linear-gradient(180deg, #00b4db 0%, #0083b0 25%, #7b2cbf 60%, #3c096c 85%, #120428 100%);
             background-attachment: fixed;
             color: var(--text-white);
-            padding: 20px;
+            padding: 15px;
             min-height: 100vh;
-            position: relative;
         }
 
-        .container { position: relative; z-index: 1; max-width: 100%; margin: 0 auto; }
+        .container { max-width: 1200px; margin: 0 auto; }
 
+        /* MODAL LOGIN */
         #login-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(10, 2, 25, 0.95); display: flex; justify-content: center; align-items: center; z-index: 9999;
+            background: rgba(10, 2, 25, 0.96);
+            display: flex !important; justify-content: center; align-items: center;
+            z-index: 99999; padding: 20px;
         }
 
         .modal-box {
-            background: var(--bg-card); border: 2px solid var(--accent-yellow); padding: 30px;
-            border-radius: 16px; width: 90%; max-width: 400px; text-align: center;
-            box-shadow: 0 0 35px rgba(255, 234, 0, 0.5);
+            background: var(--bg-card); border: 2px solid var(--accent-yellow); padding: 25px;
+            border-radius: 16px; width: 100%; max-width: 380px; text-align: center;
+            box-shadow: 0 0 30px rgba(255, 234, 0, 0.5);
         }
 
-        .modal-box h2 { color: var(--accent-yellow); margin-bottom: 15px; text-transform: uppercase; }
+        .modal-box h2 { color: var(--accent-yellow); margin-bottom: 12px; text-transform: uppercase; font-size: 1.4rem; }
         .modal-box p { color: #e2e8f0; font-size: 0.9rem; margin-bottom: 20px; }
 
         .modal-btn { width: 100%; padding: 12px; margin: 8px 0; font-weight: bold; border-radius: 8px; cursor: pointer; border: none; font-size: 1rem; }
         .btn-admin { background: linear-gradient(135deg, #ffea00 0%, #ff9100 100%); color: #120428; }
-        .btn-viewer { background: rgba(0, 242, 254, 0.15); color: var(--accent-cyan); border: 1px solid var(--accent-cyan); }
+        .btn-viewer { background: rgba(0, 242, 254, 0.2); color: var(--accent-cyan); border: 1px solid var(--accent-cyan); }
 
         .panitia-login-box { display: none; margin-top: 15px; }
         .panitia-login-box input {
-            width: 100%; padding: 10px; background: rgba(0,0,0,0.6); border: 1px solid var(--border-glow);
-            color: #fff; border-radius: 6px; margin-bottom: 10px; text-align: center;
+            width: 100%; padding: 10px; background: rgba(0,0,0,0.7); border: 1px solid var(--border-glow);
+            color: #fff; border-radius: 6px; margin-bottom: 10px; text-align: center; font-size: 1rem;
         }
 
-        .top-bar { display: flex; justify-content: space-between; align-items: center; background: rgba(18, 4, 40, 0.85); padding: 10px 20px; border-radius: 10px; margin-bottom: 20px; border: 1px solid var(--border-glow); }
-        .role-badge { font-size: 0.9rem; font-weight: bold; padding: 5px 12px; border-radius: 20px; }
+        /* HEADER & NAVBAR */
+        .top-bar { display: flex; justify-content: space-between; align-items: center; background: rgba(18, 4, 40, 0.85); padding: 10px 15px; border-radius: 10px; margin-bottom: 15px; border: 1px solid var(--border-glow); }
+        .role-badge { font-size: 0.85rem; font-weight: bold; padding: 5px 10px; border-radius: 20px; }
         .badge-admin { background: rgba(255, 234, 0, 0.2); color: var(--accent-yellow); border: 1px solid var(--accent-yellow); }
         .badge-viewer { background: rgba(0, 242, 254, 0.2); color: var(--accent-cyan); border: 1px solid var(--accent-cyan); }
 
         header {
-            text-align: center; margin-bottom: 25px; padding: 20px;
+            text-align: center; margin-bottom: 20px; padding: 15px;
             background: linear-gradient(135deg, rgba(255, 0, 127, 0.4) 0%, rgba(123, 44, 191, 0.8) 50%, rgba(0, 242, 254, 0.4) 100%);
-            border: 2px solid var(--accent-yellow); border-radius: 16px;
-            box-shadow: 0 0 30px rgba(255, 0, 127, 0.4);
-        }
-        header h1 { color: var(--accent-yellow); font-size: 2.2rem; text-transform: uppercase; margin-bottom: 5px; }
-        header p { color: var(--accent-cyan); font-size: 1rem; font-weight: bold; }
-
-        .main-nav { display: flex; justify-content: center; gap: 12px; margin-bottom: 25px; flex-wrap: wrap; }
-        .nav-btn {
-            background: rgba(18, 4, 40, 0.85); color: var(--accent-cyan);
-            border: 2px solid var(--accent-cyan); padding: 10px 20px; font-size: 0.95rem;
-            font-weight: bold; border-radius: 8px; cursor: pointer;
-        }
-        .nav-btn.active {
-            background: linear-gradient(135deg, #ffea00 0%, #ff007f 100%); color: #ffffff;
-            border-color: var(--accent-yellow); box-shadow: 0 0 20px rgba(255, 0, 127, 0.6);
-        }
-
-        .tab-section { display: none; }
-        .tab-section.active { display: block; }
-
-        .team-list-container {
-            background: var(--bg-card); border: 1px solid var(--border-glow);
-            padding: 20px; border-radius: 16px; max-width: 900px; margin: 0 auto;
-        }
-        .team-list-container h2 { color: var(--accent-yellow); margin-bottom: 20px; text-align: center; }
-        
-        .sub-tab-container { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
-        .sub-tab-btn {
-            background: rgba(0,0,0,0.5); color: #cbd5e1; border: 1px solid var(--border-glow);
-            padding: 8px 18px; border-radius: 8px; cursor: pointer; font-weight: bold;
-        }
-        .sub-tab-btn.active { background: var(--accent-cyan); color: #120428; border-color: var(--accent-cyan); }
-        .sub-content { display: none; }
-        .sub-content.active { display: block; }
-
-        .team-inputs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; margin-bottom: 20px; }
-        .team-input-item {
-            display: flex; align-items: center; gap: 8px; font-size: 0.9rem;
-            background: rgba(0,0,0,0.4); padding: 8px 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);
-        }
-        .team-input-item span { min-width: 50px; color: var(--accent-cyan); font-weight: bold; }
-        .team-input-item input { flex-grow: 1; padding: 6px; background: rgba(0,0,0,0.6); border: 1px solid var(--border-glow); color: #fff; border-radius: 4px; }
-
-        .bracket-scroll-area { overflow-x: auto; padding-bottom: 20px; }
-        .bracket-container { display: flex; justify-content: flex-start; gap: 25px; min-width: 1300px; padding: 10px 0; }
-        .round { display: flex; flex-direction: column; justify-content: space-around; flex: 1; min-width: 250px; }
-        
-        .round-title {
-            text-align: center; color: var(--accent-yellow); font-size: 1rem; font-weight: bold;
-            margin-bottom: 15px; text-transform: uppercase; background: rgba(0, 0, 0, 0.6);
-            padding: 8px; border-radius: 8px; border: 1px solid rgba(255, 234, 0, 0.4);
-        }
-        
-        .matchup { background: var(--
+            border: 2px solid var(--accent-yellow
