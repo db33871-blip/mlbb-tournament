@@ -64,24 +64,52 @@
         header h1 { color: var(--accent-yellow); font-size: 1.5rem; text-transform: uppercase; margin-bottom: 5px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
         header p { color: var(--accent-cyan); font-size: 0.85rem; font-weight: bold; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
 
-        /* LAYOUT UTAMA: MENU DI KIRI, KONTEN DI KANAN */
-        .main-layout {
-            display: flex;
-            gap: 15px;
-            align-items: flex-start;
+        /* TOMBOL GARIS TIGA (HAMBURGER MENU) DI SEBELAH KIRI */
+        .menu-container {
+            position: relative;
+            margin-bottom: 15px;
+        }
+        .hamburger-btn {
+            background: rgba(18, 4, 40, 0.9);
+            color: var(--accent-yellow);
+            border: 1px solid var(--accent-yellow);
+            padding: 10px 16px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+        }
+        .hamburger-btn:hover {
+            background: rgba(255, 234, 0, 0.2);
         }
 
-        /* MENU NAVIGASI VERTIKAL DI SEBELAH KIRI */
+        /* DAFTAR MENU YANG MUNCUL KETIKA TOMBOL GARIS TIGA DIKLIK */
         .main-nav { 
-            display: flex; 
+            display: none; 
+            position: absolute;
+            top: 45px;
+            left: 0;
+            background: rgba(18, 4, 40, 0.95);
+            border: 1px solid var(--border-glow);
+            border-radius: 8px;
+            padding: 8px;
             flex-direction: column; 
-            gap: 8px; 
-            min-width: 180px;
+            gap: 6px; 
+            min-width: 220px;
+            z-index: 999;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+        }
+        .main-nav.show {
+            display: flex;
         }
         .nav-btn { 
-            background: rgba(18, 4, 40, 0.85); 
+            background: transparent; 
             color: var(--accent-cyan); 
-            border: 1px solid var(--accent-cyan); 
+            border: 1px solid transparent; 
             padding: 10px 14px; 
             font-size: 0.85rem; 
             font-weight: bold; 
@@ -90,16 +118,13 @@
             text-align: left;
             transition: all 0.2s;
         }
+        .nav-btn:hover {
+            background: rgba(0, 242, 254, 0.15);
+        }
         .nav-btn.active { 
             background: linear-gradient(135deg, #ffea00, #ff007f); 
             color: #fff; 
             border-color: var(--accent-yellow); 
-        }
-
-        /* AREA KONTEN UTAMA DI KANAN */
-        .content-area {
-            flex: 1;
-            min-width: 0;
         }
 
         .tab-section { display: none; }
@@ -138,13 +163,6 @@
 
         .history-log { max-height: 350px; overflow-y: auto; background: rgba(0,0,0,0.4); border-radius: 6px; padding: 10px; font-size: 0.8rem; }
         .log-item { padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; }
-
-        /* Responsif untuk HP / layar kecil: menu kembali ke atas agar tetap rapi */
-        @media (max-width: 768px) {
-            .main-layout { flex-direction: column; }
-            .main-nav { width: 100%; flex-direction: row; flex-wrap: wrap; justify-content: center; }
-            .nav-btn { flex: 1; text-align: center; min-width: 120px; }
-        }
     </style>
 </head>
 <body>
@@ -175,57 +193,58 @@
             <p>Kategori Pelajar & Umum (16 Tim)</p>
         </header>
 
-        <!-- STRUKTUR UTAMA: MENU DI KIRI, KONTEN DI KANAN -->
-        <div class="main-layout">
-            <div class="main-nav">
+        <!-- MENU GARIS TIGA DI SEBELAH KIRI -->
+        <div class="menu-container">
+            <button class="hamburger-btn" onclick="toggleMenu()">
+                <span>☰</span> Menu Navigasi
+            </button>
+            <div class="main-nav" id="dropdown-menu">
                 <button class="nav-btn active" onclick="switchTab(event, 'sec-teams')">📋 Daftar Tim</button>
                 <button class="nav-btn" onclick="switchTab(event, 'sec-pelajar')">🎓 Bracket Pelajar</button>
                 <button class="nav-btn" onclick="switchTab(event, 'sec-umum')">🔥 Bracket Umum</button>
                 <button class="nav-btn" id="nav-history" style="display: none;" onclick="switchTab(event, 'sec-history')">📜 Riwayat</button>
             </div>
+        </div>
 
-            <div class="content-area">
-                <div id="sec-teams" class="tab-section active">
-                    <div class="card">
-                        <h2>Daftar Tim Peserta</h2>
-                        <div class="sub-nav">
-                            <button class="sub-btn active" onclick="switchSub(event, 'sub-pelajar')">Pelajar (16 Tim)</button>
-                            <button class="sub-btn" onclick="switchSub(event, 'sub-umum')">Umum (16 Tim)</button>
-                        </div>
-                        <div id="sub-pelajar" class="sub-content">
-                            <div class="team-grid" id="grid-pelajar"></div>
-                            <div id="save-pelajar" style="text-align: center; display: none; margin-top: 10px;">
-                                <button class="btn-action" onclick="saveTeams('pelajar')">Simpan Bagan Pelajar</button>
-                            </div>
-                        </div>
-                        <div id="sub-umum" class="sub-content" style="display: none;">
-                            <div class="team-grid" id="grid-umum"></div>
-                            <div id="save-umum" style="text-align: center; display: none; margin-top: 10px;">
-                                <button class="btn-action" onclick="saveTeams('umum')">Simpan Bagan Umum</button>
-                            </div>
-                        </div>
+        <div id="sec-teams" class="tab-section active">
+            <div class="card">
+                <h2>Daftar Tim Peserta</h2>
+                <div class="sub-nav">
+                    <button class="sub-btn active" onclick="switchSub(event, 'sub-pelajar')">Pelajar (16 Tim)</button>
+                    <button class="sub-btn" onclick="switchSub(event, 'sub-umum')">Umum (16 Tim)</button>
+                </div>
+                <div id="sub-pelajar" class="sub-content">
+                    <div class="team-grid" id="grid-pelajar"></div>
+                    <div id="save-pelajar" style="text-align: center; display: none; margin-top: 10px;">
+                        <button class="btn-action" onclick="saveTeams('pelajar')">Simpan Bagan Pelajar</button>
                     </div>
                 </div>
-
-                <div id="sec-pelajar" class="tab-section">
-                    <div class="bracket-scroll">
-                        <div class="bracket-flex" id="bracket-pelajar"></div>
+                <div id="sub-umum" class="sub-content" style="display: none;">
+                    <div class="team-grid" id="grid-umum"></div>
+                    <div id="save-umum" style="text-align: center; display: none; margin-top: 10px;">
+                        <button class="btn-action" onclick="saveTeams('umum')">Simpan Bagan Umum</button>
                     </div>
                 </div>
+            </div>
+        </div>
 
-                <div id="sec-umum" class="tab-section">
-                    <div class="bracket-scroll">
-                        <div class="bracket-flex" id="bracket-umum"></div>
-                    </div>
-                </div>
+        <div id="sec-pelajar" class="tab-section">
+            <div class="bracket-scroll">
+                <div class="bracket-flex" id="bracket-pelajar"></div>
+            </div>
+        </div>
 
-                <div id="sec-history" class="tab-section">
-                    <div class="card">
-                        <h2>Riwayat Perubahan Panitia</h2>
-                        <div class="history-log" id="log-list">
-                            <p style="text-align: center; color: #cbd5e1;">Belum ada riwayat aktivitas.</p>
-                        </div>
-                    </div>
+        <div id="sec-umum" class="tab-section">
+            <div class="bracket-scroll">
+                <div class="bracket-flex" id="bracket-umum"></div>
+            </div>
+        </div>
+
+        <div id="sec-history" class="tab-section">
+            <div class="card">
+                <h2>Riwayat Perubahan Panitia</h2>
+                <div class="history-log" id="log-list">
+                    <p style="text-align: center; color: #cbd5e1;">Belum ada riwayat aktivitas.</p>
                 </div>
             </div>
         </div>
@@ -259,6 +278,21 @@
             tournamentData.umum.teams.push("Tim " + (i + 1));
             tournamentData.pelajar.scores.push({ s1: 0, s2: 0 });
             tournamentData.umum.scores.push({ s1: 0, s2: 0 });
+        }
+
+        function toggleMenu() {
+            var menu = document.getElementById('dropdown-menu');
+            menu.classList.toggle('show');
+        }
+
+        // Menutup menu otomatis jika diklik di luar area menu
+        window.onclick = function(event) {
+            if (!event.target.matches('.hamburger-btn') && !event.target.matches('.hamburger-btn span')) {
+                var menu = document.getElementById('dropdown-menu');
+                if (menu && menu.classList.contains('show')) {
+                    menu.classList.remove('show');
+                }
+            }
         }
 
         function setRole(role, username) {
@@ -498,6 +532,7 @@
                 });
             }
             localStorage.setItem('infly_tab', secId);
+            document.getElementById('dropdown-menu').classList.remove('show');
         }
 
         function switchSub(evt, subId) {
