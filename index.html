@@ -92,13 +92,17 @@
         .bracket-container { display: flex; justify-content: flex-start; gap: 30px; min-width: 1350px; padding: 10px 0; }
         .round { display: flex; flex-direction: column; justify-content: space-around; flex: 1; min-width: 260px; }
         .round-title { text-align: center; color: var(--accent-gold); font-size: 1.1rem; font-weight: bold; margin-bottom: 15px; text-transform: uppercase; background: rgba(0, 0, 0, 0.4); padding: 6px; border-radius: 6px; border: 1px solid rgba(245, 158, 11, 0.3); }
+        
         .matchup { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; margin: 10px 0; overflow: hidden; }
         .matchup.final-match { border: 2px solid var(--accent-gold); }
         .matchup.third-match { border: 2px solid var(--accent-cyan); }
         .matchup-label { background: rgba(0, 0, 0, 0.5); font-size: 0.75rem; color: var(--accent-cyan); text-align: center; padding: 4px; font-weight: bold; }
-        .team { display: flex; justify-content: space-between; align-items: center; padding: 9px 12px; font-size: 0.9rem; border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+        
+        .team { display: flex; justify-content: space-between; align-items: center; padding: 9px 12px; font-size: 0.9rem; border-bottom: 1px solid rgba(255, 255, 255, 0.08); transition: background 0.3s; }
         .team:last-child { border-bottom: none; }
+        .team.winner { background: rgba(245, 158, 11, 0.3); font-weight: bold; }
         .team-name { flex-grow: 1; margin-right: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500; }
+        
         .score-input { width: 38px; background: rgba(0, 0, 0, 0.6); border: 1px solid var(--border-color); color: var(--accent-cyan); font-weight: bold; text-align: center; padding: 4px; border-radius: 4px; }
         .btn { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #1e0533; border: none; padding: 12px 28px; font-weight: bold; font-size: 1rem; border-radius: 8px; cursor: pointer; }
         .btn:hover { transform: translateY(-2px); }
@@ -138,6 +142,7 @@
             <button class="nav-btn" onclick="switchMainTab(event, 'section-umum')">🔥 Bracket Umum</button>
         </div>
 
+        <!-- DAFTAR TIM -->
         <div id="section-teams" class="tab-section active">
             <div class="team-list-container">
                 <h2>Manajemen Daftar Tim Peserta</h2>
@@ -160,73 +165,17 @@
             </div>
         </div>
 
+        <!-- BRACKET PELAJAR -->
         <div id="section-pelajar" class="tab-section">
             <div class="bracket-scroll-area">
-                <div class="bracket-container" id="bracket-pelajar-container">
-                    <div class="round">
-                        <div class="round-title">16 Besar Pelajar</div>
-                        <div class="matchup"><div class="team"><span class="team-name" id="p-t1">-</span><input type="number" min="0" class="score-input p-score" value="0" oninput="updateScoreFirebase('pelajar')"></div><div class="team"><span class="team-name" id="p-t2">-</span><input type="number" min="0" class="score-input p-score" value="0" oninput="updateScoreFirebase('pelajar')"></div></div>
-                        <div class="matchup"><div class="team"><span class="team-name" id="p-t3">-</span><input type="number" min="0" class="score-input p-score" value="0" oninput="updateScoreFirebase('pelajar')"></div><div class="team"><span class="team-name" id="p-t4">-</span><input type="number" min="0" class="score-input p-score" value="0" oninput="updateScoreFirebase('pelajar')"></div></div>
-                        <div class="matchup"><div class="team"><span class="team-name" id="p-t5">-</span><input type="number" min="0" class="score-input p-score" value="0" oninput="updateScoreFirebase('pelajar')"></div><div class="team"><span class="team-name" id="p-t6">-</span><input type="number" min="0" class="score-input p-score" value="0" oninput="updateScoreFirebase('pelajar')"></div></div>
-                        <div class="matchup"><div class="team"><span class="team-name" id="p-t7">-</span><input type="number" min="0" class="score-input p-score" value="0" oninput="updateScoreFirebase('pelajar')"></div><div class="team"><span class="team-name" id="p-t8">-</span><input type="number" min="0" class="score-input p-score" value="0" oninput="updateScoreFirebase('pelajar')"></div></div>
-                        <div class="matchup"><div class="team"><span class="team-name" id="p-t9">-</span><input type="number" min="0" class="score-input p-score" value="0" oninput="updateScoreFirebase('pelajar')"></div><div class="team"><span class="team-name" id="p-t10">-</span><input type="number" min="0" class="score-input p-score" value="0" oninput="updateScoreFirebase('pelajar')"></div></div>
-                        <div class="matchup"><div class="team"><span class="team-name" id="p-t11">-</span><input type="number" min="0" class="score-input p-score" value="0" oninput="updateScoreFirebase('pelajar')"></div><div class="team"><span class="team-name" id="p-t12">-</span><input type="number" min="0" class="score-input p-score" value="0" oninput="updateScoreFirebase('pelajar')"></div></div>
-                        <div class="matchup"><div class="team"><span class="team-name" id="p-t13">-</span><input type="number" min="0" class="score-input p-score" value="0" oninput="updateScoreFirebase('pelajar')"></div><div class="team"><span class="team-name" id="p-t14">-</span><input type="number" min="0" class="score-input p-score" value="0" oninput="updateScoreFirebase('pelajar')"></div></div>
-                        <div class="matchup"><div class="team"><span class="team-name" id="p-t15">-</span><input type="number" min="0" class="score-input p-score" value="0" oninput="updateScoreFirebase('pelajar')"></div><div class="team"><span class="team-name" id="p-t16">-</span><input type="number" min="0" class="score-input p-score" value="0" oninput="updateScoreFirebase('pelajar')"></div></div>
-                    </div>
-                    <div class="round">
-                        <div class="round-title">Perempat Final</div>
-                        <div class="matchup" style="margin: 25px 0;"><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input p-score" value="0" oninput="updateScoreFirebase('pelajar')"></div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input p-score" value="0" oninput="updateScoreFirebase('pelajar')"></div></div>
-                        <div class="matchup" style="margin: 25px 0;"><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input p-score" value="0" oninput="updateScoreFirebase('pelajar')"></div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input p-score" value="0" oninput="updateScoreFirebase('pelajar')"></div></div>
-                        <div class="matchup" style="margin: 25px 0;"><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input p-score" value="0" oninput="updateScoreFirebase('pelajar')"></div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input p-score" value="0" oninput="updateScoreFirebase('pelajar')"></div></div>
-                        <div class="matchup" style="margin: 25px 0;"><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input p-score" value="0" oninput="updateScoreFirebase('pelajar')"></div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input p-score" value="0" oninput="updateScoreFirebase('pelajar')"></div></div>
-                    </div>
-                    <div class="round">
-                        <div class="round-title">Semifinal</div>
-                        <div class="matchup" style="margin: 75px 0;"><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input p-score" value="0" oninput="updateScoreFirebase('pelajar')"></div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input p-score" value="0" oninput="updateScoreFirebase('pelajar')"></div></div>
-                        <div class="matchup" style="margin: 75px 0;"><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input p-score" value="0" oninput="updateScoreFirebase('pelajar')"></div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input p-score" value="0" oninput="updateScoreFirebase('pelajar')"></div></div>
-                    </div>
-                    <div class="round" style="justify-content: center;">
-                        <div class="round-title">Perebutan Juara</div>
-                        <div class="matchup final-match"><div class="matchup-label">👑 Grand Final</div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input p-score" value="0" oninput="updateScoreFirebase('pelajar')"></div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input p-score" value="0" oninput="updateScoreFirebase('pelajar')"></div></div>
-                        <div class="matchup third-match" style="margin-top: 30px;"><div class="matchup-label">🥉 Juara 3 & 4</div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input p-score" value="0" oninput="updateScoreFirebase('pelajar')"></div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input p-score" value="0" oninput="updateScoreFirebase('pelajar')"></div></div>
-                    </div>
-                </div>
+                <div class="bracket-container" id="bracket-pelajar-container"></div>
             </div>
         </div>
 
+        <!-- BRACKET UMUM -->
         <div id="section-umum" class="tab-section">
             <div class="bracket-scroll-area">
-                <div class="bracket-container" id="bracket-umum-container">
-                    <div class="round">
-                        <div class="round-title">16 Besar Umum</div>
-                        <div class="matchup"><div class="team"><span class="team-name" id="u-t1">-</span><input type="number" min="0" class="score-input u-score" value="0" oninput="updateScoreFirebase('umum')"></div><div class="team"><span class="team-name" id="u-t2">-</span><input type="number" min="0" class="score-input u-score" value="0" oninput="updateScoreFirebase('umum')"></div></div>
-                        <div class="matchup"><div class="team"><span class="team-name" id="u-t3">-</span><input type="number" min="0" class="score-input u-score" value="0" oninput="updateScoreFirebase('umum')"></div><div class="team"><span class="team-name" id="u-t4">-</span><input type="number" min="0" class="score-input u-score" value="0" oninput="updateScoreFirebase('umum')"></div></div>
-                        <div class="matchup"><div class="team"><span class="team-name" id="u-t5">-</span><input type="number" min="0" class="score-input u-score" value="0" oninput="updateScoreFirebase('umum')"></div><div class="team"><span class="team-name" id="u-t6">-</span><input type="number" min="0" class="score-input u-score" value="0" oninput="updateScoreFirebase('umum')"></div></div>
-                        <div class="matchup"><div class="team"><span class="team-name" id="u-t7">-</span><input type="number" min="0" class="score-input u-score" value="0" oninput="updateScoreFirebase('umum')"></div><div class="team"><span class="team-name" id="u-t8">-</span><input type="number" min="0" class="score-input u-score" value="0" oninput="updateScoreFirebase('umum')"></div></div>
-                        <div class="matchup"><div class="team"><span class="team-name" id="u-t9">-</span><input type="number" min="0" class="score-input u-score" value="0" oninput="updateScoreFirebase('umum')"></div><div class="team"><span class="team-name" id="u-t10">-</span><input type="number" min="0" class="score-input u-score" value="0" oninput="updateScoreFirebase('umum')"></div></div>
-                        <div class="matchup"><div class="team"><span class="team-name" id="u-t11">-</span><input type="number" min="0" class="score-input u-score" value="0" oninput="updateScoreFirebase('umum')"></div><div class="team"><span class="team-name" id="u-t12">-</span><input type="number" min="0" class="score-input u-score" value="0" oninput="updateScoreFirebase('umum')"></div></div>
-                        <div class="matchup"><div class="team"><span class="team-name" id="u-t13">-</span><input type="number" min="0" class="score-input u-score" value="0" oninput="updateScoreFirebase('umum')"></div><div class="team"><span class="team-name" id="u-t14">-</span><input type="number" min="0" class="score-input u-score" value="0" oninput="updateScoreFirebase('umum')"></div></div>
-                        <div class="matchup"><div class="team"><span class="team-name" id="u-t15">-</span><input type="number" min="0" class="score-input u-score" value="0" oninput="updateScoreFirebase('umum')"></div><div class="team"><span class="team-name" id="u-t16">-</span><input type="number" min="0" class="score-input u-score" value="0" oninput="updateScoreFirebase('umum')"></div></div>
-                    </div>
-                    <div class="round">
-                        <div class="round-title">Perempat Final</div>
-                        <div class="matchup" style="margin: 25px 0;"><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input u-score" value="0" oninput="updateScoreFirebase('umum')"></div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input u-score" value="0" oninput="updateScoreFirebase('umum')"></div></div>
-                        <div class="matchup" style="margin: 25px 0;"><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input u-score" value="0" oninput="updateScoreFirebase('umum')"></div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input u-score" value="0" oninput="updateScoreFirebase('umum')"></div></div>
-                        <div class="matchup" style="margin: 25px 0;"><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input u-score" value="0" oninput="updateScoreFirebase('umum')"></div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input u-score" value="0" oninput="updateScoreFirebase('umum')"></div></div>
-                        <div class="matchup" style="margin: 25px 0;"><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input u-score" value="0" oninput="updateScoreFirebase('umum')"></div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input u-score" value="0" oninput="updateScoreFirebase('umum')"></div></div>
-                    </div>
-                    <div class="round">
-                        <div class="round-title">Semifinal</div>
-                        <div class="matchup" style="margin: 75px 0;"><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input u-score" value="0" oninput="updateScoreFirebase('umum')"></div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input u-score" value="0" oninput="updateScoreFirebase('umum')"></div></div>
-                        <div class="matchup" style="margin: 75px 0;"><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input u-score" value="0" oninput="updateScoreFirebase('umum')"></div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input u-score" value="0" oninput="updateScoreFirebase('umum')"></div></div>
-                    </div>
-                    <div class="round" style="justify-content: center;">
-                        <div class="round-title">Perebutan Juara</div>
-                        <div class="matchup final-match"><div class="matchup-label">👑 Grand Final</div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input u-score" value="0" oninput="updateScoreFirebase('umum')"></div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input u-score" value="0" oninput="updateScoreFirebase('umum')"></div></div>
-                        <div class="matchup third-match" style="margin-top: 30px;"><div class="matchup-label">🥉 Juara 3 & 4</div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input u-score" value="0" oninput="updateScoreFirebase('umum')"></div><div class="team"><span class="team-name">-</span><input type="number" min="0" class="score-input u-score" value="0" oninput="updateScoreFirebase('umum')"></div></div>
-                    </div>
-                </div>
+                <div class="bracket-container" id="bracket-umum-container"></div>
             </div>
         </div>
 
@@ -244,20 +193,31 @@
         let db = null;
         let currentUserRole = 'viewer';
 
+        // Data lokal
+        const tournamentData = {
+            pelajar: { teams: Array(16).fill(""), scores: Array(16).fill(null).map(() => ({ s1: 0, s2: 0 })) },
+            umum: { teams: Array(16).fill(""), scores: Array(16).fill(null).map(() => ({ s1: 0, s2: 0 })) }
+        };
+
+        for (let i = 0; i < 16; i++) {
+            tournamentData.pelajar.teams[i] = "Tim " + (i + 1);
+            tournamentData.umum.teams[i] = "Tim " + (i + 1);
+        }
+
         window.onload = function() {
             initInputs('pelajar');
             initInputs('umum');
+            renderBracketUI('pelajar');
+            renderBracketUI('umum');
             
             try {
-                if (typeof firebase === 'undefined') {
-                    alert("Sistem Firebase diblokir oleh browser. Harap buka website ini menggunakan aplikasi Google Chrome asli, jangan lewat browser bawaan WA.");
-                    return;
+                if (typeof firebase !== 'undefined') {
+                    if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+                    db = firebase.database();
+                    listenFirebaseData();
                 }
-                if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
-                db = firebase.database();
-                listenFirebaseData();
             } catch (e) {
-                alert("Error Koneksi Database: " + e.message + "\\n\\nPastikan Anda sudah masuk ke menu Firebase dan menekan tombol 'Create Database'.");
+                console.error(e);
             }
         };
 
@@ -265,8 +225,188 @@
             const container = document.getElementById(category + '-team-inputs');
             container.innerHTML = '';
             for (let i = 0; i < 16; i++) {
-                container.innerHTML += '<div class="team-input-item"><span>Tim '+(i+1)+':</span><input type="text" id="'+category+'-field-'+i+'" value="Tim '+(i+1)+'"></div>';
+                container.innerHTML += '<div class="team-input-item"><span>Tim '+(i+1)+':</span><input type="text" id="'+category+'-field-'+i+'" value="'+tournamentData[category].teams[i]+'"></div>';
             }
+        }
+
+        function renderBracketUI(category) {
+            const container = document.getElementById('bracket-' + category + '-container');
+            if(!container) return;
+
+            let html = '';
+            
+            // 16 Besar (Match 0 - 7)
+            html += '<div class="round"><div class="round-title">16 Besar '+(category.toUpperCase())+'</div>';
+            for(let m = 0; m < 8; m++) {
+                html += createMatchHTML(category, m);
+            }
+            html += '</div>';
+
+            // Perempat Final (Match 8 - 11)
+            html += '<div class="round"><div class="round-title">Perempat Final</div>';
+            for(let m = 8; m < 12; m++) {
+                html += createMatchHTML(category, m, 'margin: 25px 0;');
+            }
+            html += '</div>';
+
+            // Semifinal (Match 12 - 13)
+            html += '<div class="round"><div class="round-title">Semifinal</div>';
+            for(let m = 12; m < 14; m++) {
+                html += createMatchHTML(category, m, 'margin: 75px 0;');
+            }
+            html += '</div>';
+
+            // Perebutan Juara (Grand Final & Juara 3)
+            html += '<div class="round" style="justify-content: center;"><div class="round-title">Perebutan Juara</div>';
+            html += createMatchHTML(category, 14, '', 'final-match', '👑 Grand Final');
+            html += createMatchHTML(category, 15, 'margin-top: 30px;', 'third-match', '🥉 Juara 3 & 4');
+            html += '</div>';
+
+            container.innerHTML = html;
+            updateBracketLogic(category);
+        }
+
+        function createMatchHTML(category, matchIdx, style = '', extraClass = '', label = '') {
+            const prefix = category[0];
+            return `
+                <div class="matchup ${extraClass}" style="${style}">
+                    ${label ? `<div class="matchup-label">${label}</div>` : ''}
+                    <div class="team" id="${prefix}-m${matchIdx}-box1">
+                        <span class="team-name" id="${prefix}-m${matchIdx}-t1">-</span>
+                        <input type="number" min="0" class="score-input ${prefix}-score" id="${prefix}-m${matchIdx}-s1" value="0" oninput="onScoreInput('${category}', ${matchIdx})">
+                    </div>
+                    <div class="team" id="${prefix}-m${matchIdx}-box2">
+                        <span class="team-name" id="${prefix}-m${matchIdx}-t2">-</span>
+                        <input type="number" min="0" class="score-input ${prefix}-score" id="${prefix}-m${matchIdx}-s2" value="0" oninput="onScoreInput('${category}', ${matchIdx})">
+                    </div>
+                </div>
+            `;
+        }
+
+        // KUNCI UTAMA: Logika Otomatisasi Bagan Pemenang
+        function updateBracketLogic(category) {
+            const prefix = category[0];
+            const data = tournamentData[category];
+            const teams = data.teams;
+            const scores = data.scores;
+
+            // Struktur Pemenang & Pecundang
+            const winners = Array(16).fill("-");
+            const losers = Array(16).fill("-");
+
+            // 1. Babak 16 Besar (Match 0 - 7)
+            for(let m = 0; m < 8; m++) {
+                const t1 = teams[m * 2] || "Tim " + (m*2+1);
+                const t2 = teams[m * 2 + 1] || "Tim " + (m*2+2);
+                setMatchDisplay(prefix, m, t1, t2, scores[m]);
+
+                if (scores[m].s1 > scores[m].s2) { winners[m] = t1; losers[m] = t2; }
+                else if (scores[m].s2 > scores[m].s1) { winners[m] = t2; losers[m] = t1; }
+            }
+
+            // 2. Perempat Final (Match 8 - 11)
+            for(let i = 0; i < 4; i++) {
+                const m = 8 + i;
+                const t1 = winners[i * 2];
+                const t2 = winners[i * 2 + 1];
+                setMatchDisplay(prefix, m, t1, t2, scores[m]);
+
+                if (scores[m].s1 > scores[m].s2 && t1 !== "-") { winners[m] = t1; losers[m] = t2; }
+                else if (scores[m].s2 > scores[m].s1 && t2 !== "-") { winners[m] = t2; losers[m] = t1; }
+            }
+
+            // 3. Semifinal (Match 12 - 13)
+            for(let i = 0; i < 2; i++) {
+                const m = 12 + i;
+                const t1 = winners[8 + i * 2];
+                const t2 = winners[8 + i * 2 + 1];
+                setMatchDisplay(prefix, m, t1, t2, scores[m]);
+
+                if (scores[m].s1 > scores[m].s2 && t1 !== "-") { winners[m] = t1; losers[m] = t2; }
+                else if (scores[m].s2 > scores[m].s1 && t2 !== "-") { winners[m] = t2; losers[m] = t1; }
+            }
+
+            // 4. Grand Final (Match 14) & Juara 3 (Match 15)
+            const finalT1 = winners[12];
+            const finalT2 = winners[13];
+            setMatchDisplay(prefix, 14, finalT1, finalT2, scores[14]);
+
+            const thirdT1 = losers[12];
+            const thirdT2 = losers[13];
+            setMatchDisplay(prefix, 15, thirdT1, thirdT2, scores[15]);
+        }
+
+        function setMatchDisplay(prefix, matchIdx, t1Name, t2Name, scoreObj) {
+            const elT1 = document.getElementById(`${prefix}-m${matchIdx}-t1`);
+            const elT2 = document.getElementById(`${prefix}-m${matchIdx}-t2`);
+            const elS1 = document.getElementById(`${prefix}-m${matchIdx}-s1`);
+            const elS2 = document.getElementById(`${prefix}-m${matchIdx}-s2`);
+            const box1 = document.getElementById(`${prefix}-m${matchIdx}-box1`);
+            const box2 = document.getElementById(`${prefix}-m${matchIdx}-box2`);
+
+            if (elT1) elT1.textContent = t1Name;
+            if (elT2) elT2.textContent = t2Name;
+            if (elS1 && document.activeElement !== elS1) elS1.value = scoreObj ? scoreObj.s1 : 0;
+            if (elS2 && document.activeElement !== elS2) elS2.value = scoreObj ? scoreObj.s2 : 0;
+
+            // Highlight Pemenang
+            if (box1 && box2) {
+                box1.classList.remove('winner');
+                box2.classList.remove('winner');
+                if (scoreObj) {
+                    if (scoreObj.s1 > scoreObj.s2 && t1Name !== "-") box1.classList.add('winner');
+                    else if (scoreObj.s2 > scoreObj.s1 && t2Name !== "-") box2.classList.add('winner');
+                }
+            }
+        }
+
+        function onScoreInput(category, matchIdx) {
+            const prefix = category[0];
+            const s1Val = parseInt(document.getElementById(`${prefix}-m${matchIdx}-s1`).value) || 0;
+            const s2Val = parseInt(document.getElementById(`${prefix}-m${matchIdx}-s2`).value) || 0;
+
+            tournamentData[category].scores[matchIdx] = { s1: s1Val, s2: s2Val };
+            updateBracketLogic(category);
+
+            if (currentUserRole === 'admin' && db) {
+                db.ref(`tournament/${category}/scores`).set(tournamentData[category].scores);
+            }
+        }
+
+        function saveTeamsToFirebase(category) {
+            if(!db) return alert("Firebase belum terhubung.");
+            const newTeams = [];
+            for (let i = 0; i < 16; i++) {
+                const val = document.getElementById(`${category}-field-${i}`).value.trim();
+                newTeams.push(val || "Tim " + (i + 1));
+            }
+            db.ref(`tournament/${category}/teams`).set(newTeams)
+              .then(() => alert(`Daftar tim ${category.toUpperCase()} berhasil disimpan & bagan diperbarui!`))
+              .catch((err) => alert("Gagal menyimpan: " + err.message));
+        }
+
+        function listenFirebaseData() {
+            ['pelajar', 'umum'].forEach(category => {
+                db.ref(`tournament/${category}/teams`).on('value', snapshot => {
+                    const data = snapshot.val();
+                    if (data && Array.isArray(data)) {
+                        tournamentData[category].teams = data;
+                        for (let i = 0; i < 16; i++) {
+                            const field = document.getElementById(`${category}-field-${i}`);
+                            if (field && document.activeElement !== field) field.value = data[i] || ("Tim " + (i+1));
+                        }
+                        updateBracketLogic(category);
+                    }
+                });
+
+                db.ref(`tournament/${category}/scores`).on('value', snapshot => {
+                    const data = snapshot.val();
+                    if (data && Array.isArray(data)) {
+                        tournamentData[category].scores = data;
+                        updateBracketLogic(category);
+                    }
+                });
+            });
         }
 
         function setRole(role, username = '') {
@@ -299,95 +439,20 @@
         }
 
         function setInputsEditable(enable) {
-            document.querySelectorAll('.score-input').forEach(function(input) { input.disabled = !enable; });
-            document.querySelectorAll('.team-inputs-grid input').forEach(function(input) { input.disabled = !enable; });
-        }
-
-        function saveTeamsToFirebase(category) {
-            if(!db) return alert("Sistem belum tersambung ke Firebase. Harap perhatikan pesan error saat pertama kali web dibuka.");
-            const teamsArray = [];
-            for (let i = 0; i < 16; i++) {
-                const val = document.getElementById(category+'-field-'+i).value.trim();
-                teamsArray.push(val || 'Tim '+(i+1));
-            }
-            db.ref('tournament/'+category+'/teams').set(teamsArray)
-              .then(function() { alert('Data ' + category.toUpperCase() + ' berhasil disimpan online!'); })
-              .catch(function(error) { alert("Penyimpanan gagal. " + error.message); });
-        }
-
-        function updateScoreFirebase(category) {
-            if (currentUserRole !== 'admin' || !db) return;
-            const scores = [];
-            const inputs = document.querySelectorAll('.' + (category === 'pelajar' ? 'p' : 'u') + '-score');
-            for(let i=0; i<inputs.length; i+=2) {
-                scores.push({ s1: parseInt(inputs[i].value) || 0, s2: parseInt(inputs[i+1].value) || 0 });
-            }
-            db.ref('tournament/'+category+'/scores').set(scores);
-        }
-
-        function listenFirebaseData() {
-            if(!db) return;
-            db.ref('tournament/pelajar/teams').on('value', function(snapshot) {
-                const data = snapshot.val();
-                if (data) {
-                    for (let i = 0; i < 16; i++) {
-                        const field = document.getElementById('pelajar-field-'+i);
-                        if (field) field.value = data[i];
-                        const span = document.getElementById('p-t'+(i+1));
-                        if (span) span.textContent = data[i];
-                    }
-                }
-            });
-
-            db.ref('tournament/umum/teams').on('value', function(snapshot) {
-                const data = snapshot.val();
-                if (data) {
-                    for (let i = 0; i < 16; i++) {
-                        const field = document.getElementById('umum-field-'+i);
-                        if (field) field.value = data[i];
-                        const span = document.getElementById('u-t'+(i+1));
-                        if (span) span.textContent = data[i];
-                    }
-                }
-            });
-
-            db.ref('tournament/pelajar/scores').on('value', function(snapshot) {
-                const data = snapshot.val();
-                if (data && currentUserRole !== 'admin') {
-                    const inputs = document.querySelectorAll('.p-score');
-                    let inputIdx = 0;
-                    data.forEach(function(match) {
-                        if (inputs[inputIdx]) inputs[inputIdx].value = match.s1;
-                        if (inputs[inputIdx+1]) inputs[inputIdx+1].value = match.s2;
-                        inputIdx += 2;
-                    });
-                }
-            });
-
-            db.ref('tournament/umum/scores').on('value', function(snapshot) {
-                const data = snapshot.val();
-                if (data && currentUserRole !== 'admin') {
-                    const inputs = document.querySelectorAll('.u-score');
-                    let inputIdx = 0;
-                    data.forEach(function(match) {
-                        if (inputs[inputIdx]) inputs[inputIdx].value = match.s1;
-                        if (inputs[inputIdx+1]) inputs[inputIdx+1].value = match.s2;
-                        inputIdx += 2;
-                    });
-                }
-            });
+            document.querySelectorAll('.score-input').forEach(input => input.disabled = !enable);
+            document.querySelectorAll('.team-inputs-grid input').forEach(input => input.disabled = !enable);
         }
 
         function switchMainTab(evt, sectionId) {
-            document.querySelectorAll('.tab-section').forEach(function(sec) { sec.classList.remove('active'); });
-            document.querySelectorAll('.nav-btn').forEach(function(btn) { btn.classList.remove('active'); });
+            document.querySelectorAll('.tab-section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(sectionId).classList.add('active');
             evt.currentTarget.classList.add('active');
         }
 
         function switchSubTab(evt, subId) {
-            document.querySelectorAll('.sub-content').forEach(function(sub) { sub.classList.remove('active'); });
-            document.querySelectorAll('.sub-tab-btn').forEach(function(btn) { btn.classList.remove('active'); });
+            document.querySelectorAll('.sub-content').forEach(sub => sub.classList.remove('active'));
+            document.querySelectorAll('.sub-tab-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(subId).classList.add('active');
             evt.currentTarget.classList.add('active');
         }
