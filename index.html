@@ -1,77 +1,713 @@
-<form id="formPendaftaran">
-  <!-- Kategori Turnamen -->
-  <div class="mb-3">
-    <label class="form-label text-warning fw-bold">Kategori Turnamen</label>
-    <select class="form-select bg-dark text-white border-secondary">
-      <option value="Pelajar (16 Tim)">Pelajar (16 Tim)</option>
-      <option value="Umum (16 Tim)">Umum (16 Tim)</option>
-    </select>
-  </div>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOURNAMENT MLBB INFLY CARNIVAL</title>
 
-  <!-- Nama Tim -->
-  <div class="mb-3">
-    <label class="form-label text-warning fw-bold">Nama Tim</label>
-    <input type="text" class="form-control bg-dark text-white border-secondary" placeholder="Masukkan Nama Tim" required>
-  </div>
+    <!-- FIREBASE SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
-  <!-- Nomor Slot Tim -->
-  <div class="mb-3">
-    <label class="form-label text-warning fw-bold">Nomor Slot Tim (Pilih 1 - 16)</label>
-    <select class="form-select bg-dark text-white border-secondary">
-      <option value="Tim 1">Tim 1</option>
-      <option value="Tim 2">Tim 2</option>
-      <!-- Tambahkan opsi tim 3-16 sesuai kebutuhan -->
-    </select>
-  </div>
+    <style>
+        :root {
+            --accent-yellow: #ffea00;
+            --accent-cyan: #00f2fe;
+            --accent-pink: #ff007f;
+            --bg-card: rgba(30, 8, 60, 0.92);
+            --border-glow: rgba(0, 242, 254, 0.4);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        body {
+            background-color: #120428;
+            background-image: linear-gradient(rgba(10, 2, 25, 0.7), rgba(10, 2, 25, 0.85)), url('logo.jpeg');
+            background-repeat: no-repeat;
+            background-position: center top;
+            background-size: cover;
+            color: #ffffff;
+            padding: 12px;
+            min-height: 100vh;
+        }
 
-  <!-- Nama Kapten -->
-  <div class="mb-3">
-    <label class="form-label text-warning fw-bold">Nama Kapten / Perwakilan</label>
-    <input type="text" class="form-control bg-dark text-white border-secondary" placeholder="Nama Lengkap Kapten" required>
-  </div>
+        #login-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(10, 2, 25, 0.96);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 99999; padding: 15px;
+        }
+        .modal-box {
+            background: var(--bg-card); border: 2px solid var(--accent-yellow); padding: 25px;
+            border-radius: 14px; width: 100%; max-width: 360px; text-align: center;
+            box-shadow: 0 0 30px rgba(255, 234, 0, 0.4);
+        }
+        .modal-box h2 { color: var(--accent-yellow); margin-bottom: 10px; font-size: 1.3rem; text-transform: uppercase; }
+        .modal-box p { color: #cbd5e1; font-size: 0.85rem; margin-bottom: 15px; }
+        .modal-btn { width: 100%; padding: 10px; margin: 6px 0; font-weight: bold; border-radius: 6px; cursor: pointer; border: none; font-size: 0.95rem; }
+        .btn-admin { background: linear-gradient(135deg, #ffea00, #ff9100); color: #120428; }
+        .btn-viewer { background: rgba(0, 242, 254, 0.2); color: var(--accent-cyan); border: 1px solid var(--accent-cyan); }
+        .panitia-box { display: none; margin-top: 10px; }
+        .panitia-box input { width: 100%; padding: 8px; background: rgba(0,0,0,0.6); border: 1px solid var(--accent-cyan); color: #fff; border-radius: 4px; margin-bottom: 8px; text-align: center; }
 
-  <!-- ID MLBB Kapten -->
-  <div class="mb-3">
-    <label class="form-label text-warning fw-bold">ID MLBB Kapten (Server)</label>
-    <input type="text" class="form-control bg-dark text-white border-secondary" placeholder="Contoh: 12345678 (1234)" required>
-  </div>
+        .container { max-width: 1200px; margin: 0 auto; }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; background: rgba(18, 4, 40, 0.85); padding: 10px 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid var(--border-glow); }
+        .role-badge { font-size: 0.85rem; font-weight: bold; padding: 4px 10px; border-radius: 12px; background: rgba(0, 242, 254, 0.2); color: var(--accent-cyan); border: 1px solid var(--accent-cyan); }
+        
+        header { 
+            text-align: center; 
+            margin-bottom: 12px; 
+            padding: 10px; 
+            background: transparent; 
+            border: none;
+        }
+        header h1 { color: var(--accent-yellow); font-size: 1.25rem; text-transform: uppercase; margin-bottom: 3px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+        header p { color: var(--accent-cyan); font-size: 0.75rem; font-weight: bold; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
 
-  <!-- ID MLBB Pemain 2 -->
-  <div class="mb-3">
-    <label class="form-label text-warning fw-bold">ID MLBB Pemain 2 (Server)</label>
-    <input type="text" class="form-control bg-dark text-white border-secondary" placeholder="Contoh: 12345678 (1234)" required>
-  </div>
+        .menu-container {
+            position: relative;
+            margin-bottom: 12px;
+        }
+        .hamburger-btn {
+            background: rgba(18, 4, 40, 0.9);
+            color: var(--accent-yellow);
+            border: 1px solid var(--accent-yellow);
+            padding: 8px 14px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+        }
 
-  <!-- ID MLBB Pemain 3 -->
-  <div class="mb-3">
-    <label class="form-label text-warning fw-bold">ID MLBB Pemain 3 (Server)</label>
-    <input type="text" class="form-control bg-dark text-white border-secondary" placeholder="Contoh: 12345678 (1234)" required>
-  </div>
+        .main-nav { 
+            display: none; 
+            position: absolute;
+            top: 40px;
+            left: 0;
+            background: rgba(18, 4, 40, 0.95);
+            border: 1px solid var(--border-glow);
+            border-radius: 8px;
+            padding: 8px;
+            flex-direction: column; 
+            gap: 6px; 
+            min-width: 220px;
+            z-index: 999;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+        }
+        .main-nav.show {
+            display: flex;
+        }
+        .nav-btn { 
+            background: transparent; 
+            color: var(--accent-cyan); 
+            border: 1px solid transparent; 
+            padding: 9px 12px; 
+            font-size: 0.8rem; 
+            font-weight: bold; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            text-align: left;
+        }
+        .nav-btn.active { 
+            background: linear-gradient(135deg, #ffea00, #ff007f); 
+            color: #fff; 
+            border-color: var(--accent-yellow); 
+        }
 
-  <!-- ID MLBB Pemain 4 -->
-  <div class="mb-3">
-    <label class="form-label text-warning fw-bold">ID MLBB Pemain 4 (Server)</label>
-    <input type="text" class="form-control bg-dark text-white border-secondary" placeholder="Contoh: 12345678 (1234)" required>
-  </div>
+        .tab-section { display: none; }
+        .tab-section.active { display: block; }
 
-  <!-- ID MLBB Pemain 5 -->
-  <div class="mb-3">
-    <label class="form-label text-warning fw-bold">ID MLBB Pemain 5 (Server)</label>
-    <input type="text" class="form-control bg-dark text-white border-secondary" placeholder="Contoh: 12345678 (1234)" required>
-  </div>
+        .card { background: var(--bg-card); border: 1px solid var(--border-glow); padding: 15px; border-radius: 12px; }
+        .card h2 { color: var(--accent-yellow); margin-bottom: 14px; text-align: center; font-size: 1.1rem; }
 
-  <!-- ID MLBB Cadangan (Opsional) -->
-  <div class="mb-3">
-    <label class="form-label text-warning fw-bold">ID MLBB Pemain Cadangan (Opsional)</label>
-    <input type="text" class="form-control bg-dark text-white border-secondary" placeholder="Contoh: 12345678 (1234)">
-  </div>
+        .sub-nav { display: flex; justify-content: center; gap: 8px; margin-bottom: 14px; }
+        .sub-btn { background: rgba(0,0,0,0.4); color: #cbd5e1; border: 1px solid var(--border-glow); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: bold; }
+        .sub-btn.active { background: var(--accent-cyan); color: #120428; }
 
-  <!-- Nomor WhatsApp -->
-  <div class="mb-3">
-    <label class="form-label text-warning fw-bold">Nomor WhatsApp (Aktif)</label>
-    <input type="text" class="form-control bg-dark text-white border-secondary" placeholder="Contoh: 08123456789" required>
-  </div>
+        .team-grid { 
+            display: grid; 
+            grid-template-columns: 1fr; 
+            gap: 10px; 
+            margin-bottom: 15px; 
+        }
+        @media (min-width: 600px) {
+            .team-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px 15px;
+            }
+        }
+        .team-item { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            background: rgba(0,0,0,0.5); 
+            padding: 8px 12px; 
+            border-radius: 8px; 
+            font-size: 0.85rem; 
+            border: 1px solid rgba(0, 242, 254, 0.2);
+        }
+        .team-item span { min-width: 50px; color: var(--accent-cyan); font-weight: bold; }
+        .team-item input { flex: 1; padding: 6px 8px; background: rgba(0,0,0,0.7); border: 1px solid var(--border-glow); color: #fff; border-radius: 6px; font-size: 0.85rem; }
 
-  <!-- Tombol Submit -->
-  <button type="submit" class="btn btn-danger w-100 fw-bold py-2" style="background: linear-gradient(to right, #ff7e5f, #feb47b); border: none;">Kirim Pendaftaran</button>
-</form>
+        /* FORM PENDAFTARAN */
+        .form-group { margin-bottom: 12px; text-align: left; }
+        .form-group label { display: block; color: var(--accent-cyan); font-size: 0.8rem; font-weight: bold; margin-bottom: 4px; }
+        .form-group input, .form-group select { width: 100%; padding: 8px 10px; background: rgba(0,0,0,0.6); border: 1px solid var(--border-glow); color: #fff; border-radius: 6px; font-size: 0.85rem; }
+
+        .btn-action { background: linear-gradient(135deg, #ffea00, #ff007f); color: #fff; border: none; padding: 8px 18px; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 0.85rem; width: 100%; }
+
+        .bracket-scroll { overflow-x: auto; padding-bottom: 10px; -webkit-overflow-scrolling: touch; }
+        .bracket-flex { display: flex; gap: 12px; min-width: 950px; }
+        .round-col { flex: 1; min-width: 190px; display: flex; flex-direction: column; justify-content: space-around; }
+        .round-title { text-align: center; color: var(--accent-yellow); font-size: 0.8rem; font-weight: bold; margin-bottom: 6px; background: rgba(0,0,0,0.5); padding: 4px; border-radius: 4px; border: 1px solid rgba(255,234,0,0.3); }
+
+        .matchup { background: var(--bg-card); border: 1px solid var(--border-glow); border-radius: 6px; margin: 5px 0; overflow: hidden; }
+        .matchup.final { border: 2px solid var(--accent-yellow); }
+        .matchup.third { border: 2px solid var(--accent-cyan); }
+        .match-label { background: rgba(255,0,127,0.4); font-size: 0.65rem; color: #fff; text-align: center; padding: 2px; font-weight: bold; }
+
+        .team-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 7px; font-size: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .team-row:last-child { border-bottom: none; }
+        .team-row.winner { background: rgba(255, 0, 127, 0.35); font-weight: bold; color: var(--accent-yellow); }
+        .team-name { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-right: 5px; }
+
+        .score-in { width: 28px; background: rgba(0,0,0,0.7); border: 1px solid var(--border-glow); color: var(--accent-cyan); text-align: center; padding: 2px; border-radius: 4px; font-weight: bold; font-size: 0.75rem; }
+
+        .history-log { max-height: 300px; overflow-y: auto; background: rgba(0,0,0,0.4); border-radius: 6px; padding: 8px; font-size: 0.75rem; }
+        .log-item { padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; }
+    </style>
+</head>
+<body>
+
+    <div id="login-modal">
+        <div class="modal-box">
+            <h2>Pilih Akses Masuk</h2>
+            <p>Silakan pilih menu masuk di bawah ini:</p>
+            <button class="modal-btn btn-viewer" onclick="setRole('viewer')">👤 Login Peserta</button>
+            <button class="modal-btn btn-admin" onclick="showPanitiaBox()">🛡️ Login Panitia</button>
+            
+            <div id="panitia-box" class="panitia-box">
+                <input type="text" id="panitia-user" placeholder="Username Panitia">
+                <input type="password" id="panitia-pass" placeholder="Password">
+                <button class="modal-btn btn-admin" onclick="verifyPanitiaLogin()">Masuk Panitia</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="top-bar">
+            <span id="role-display" class="role-badge">Status: Peserta</span>
+            <button class="btn-action" style="padding: 3px 8px; font-size: 0.7rem; width: auto;" onclick="logout()">Keluar / Ganti</button>
+        </div>
+
+        <header>
+            <h1>TOURNAMENT MLBB INFLY CARNIVAL</h1>
+            <p>Kategori Pelajar & Umum (16 Tim)</p>
+        </header>
+
+        <div class="menu-container">
+            <button class="hamburger-btn" onclick="toggleMenu()">
+                <span>☰</span> Menu Navigasi
+            </button>
+            <div class="main-nav" id="dropdown-menu">
+                <button class="nav-btn active" onclick="switchTab(event, 'sec-daftar')">📝 Pendaftaran MLBB</button>
+                <button class="nav-btn" onclick="switchTab(event, 'sec-teams')">📋 Daftar Tim</button>
+                <button class="nav-btn" onclick="switchTab(event, 'sec-pelajar')">🎓 Bracket Pelajar</button>
+                <button class="nav-btn" onclick="switchTab(event, 'sec-umum')">🔥 Bracket Umum</button>
+                <button class="nav-btn" id="nav-history" style="display: none;" onclick="switchTab(event, 'sec-history')">📜 Riwayat</button>
+            </div>
+        </div>
+
+        <!-- MENU PENDAFTARAN -->
+        <div id="sec-daftar" class="tab-section active">
+            <div class="card" style="max-width: 500px; margin: 0 auto;">
+                <h2>Formulir Pendaftaran Tim</h2>
+                <div class="form-group">
+                    <label>Kategori Turnamen</label>
+                    <select id="reg-kategori">
+                        <option value="pelajar">Pelajar (16 Tim)</option>
+                        <option value="umum">Umum (16 Tim)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Nama Tim</label>
+                    <input type="text" id="reg-namatim" placeholder="Masukkan Nama Tim">
+                </div>
+                <div class="form-group">
+                    <label>Nomor Slot Tim (Pilih 1 - 16)</label>
+                    <select id="reg-slot">
+                        <option value="0">Tim 1</option>
+                        <option value="1">Tim 2</option>
+                        <option value="2">Tim 3</option>
+                        <option value="3">Tim 4</option>
+                        <option value="4">Tim 5</option>
+                        <option value="5">Tim 6</option>
+                        <option value="6">Tim 7</option>
+                        <option value="7">Tim 8</option>
+                        <option value="8">Tim 9</option>
+                        <option value="9">Tim 10</option>
+                        <option value="10">Tim 11</option>
+                        <option value="11">Tim 12</option>
+                        <option value="12">Tim 13</option>
+                        <option value="13">Tim 14</option>
+                        <option value="14">Tim 15</option>
+                        <option value="15">Tim 16</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Nama Kapten / Perwakilan</label>
+                    <input type="text" id="reg-kapten" placeholder="Nama Lengkap Kapten">
+                </div>
+                <div class="form-group">
+                    <label>ID MLBB Kapten</label>
+                    <input type="text" id="reg-id-kapten" placeholder="Contoh: 12345678 (1234)">
+                </div>
+                <div class="form-group">
+                    <label>ID MLBB Pemain 2</label>
+                    <input type="text" id="reg-id-p2" placeholder="Contoh: 12345678 (1234)">
+                </div>
+                <div class="form-group">
+                    <label>ID MLBB Pemain 3</label>
+                    <input type="text" id="reg-id-p3" placeholder="Contoh: 12345678 (1234)">
+                </div>
+                <div class="form-group">
+                    <label>ID MLBB Pemain 4</label>
+                    <input type="text" id="reg-id-p4" placeholder="Contoh: 12345678 (1234)">
+                </div>
+                <div class="form-group">
+                    <label>ID MLBB Pemain 5</label>
+                    <input type="text" id="reg-id-p5" placeholder="Contoh: 12345678 (1234)">
+                </div>
+                <div class="form-group">
+                    <label>ID MLBB Cadangan</label>
+                    <input type="text" id="reg-id-cadangan" placeholder="Contoh: 12345678 (1234)">
+                </div>
+                <div class="form-group">
+                    <label>Nomor WhatsApp (Aktif)</label>
+                    <input type="text" id="reg-wa" placeholder="Contoh: 08123456789">
+                </div>
+                <button class="btn-action" onclick="submitPendaftaran()">Kirim Pendaftaran</button>
+            </div>
+        </div>
+
+        <div id="sec-teams" class="tab-section">
+            <div class="card">
+                <h2>Daftar Tim Peserta</h2>
+                <div class="sub-nav">
+                    <button class="sub-btn active" onclick="switchSub(event, 'sub-pelajar')">Pelajar (16 Tim)</button>
+                    <button class="sub-btn" onclick="switchSub(event, 'sub-umum')">Umum (16 Tim)</button>
+                </div>
+                <div id="sub-pelajar" class="sub-content">
+                    <div class="team-grid" id="grid-pelajar"></div>
+                    <div id="save-pelajar" style="text-align: center; display: none; margin-top: 15px;">
+                        <button class="btn-action" style="width: auto;" onclick="saveTeams('pelajar')">Simpan Bagan Pelajar</button>
+                    </div>
+                </div>
+                <div id="sub-umum" class="sub-content" style="display: none;">
+                    <div class="team-grid" id="grid-umum"></div>
+                    <div id="save-umum" style="text-align: center; display: none; margin-top: 15px;">
+                        <button class="btn-action" style="width: auto;" onclick="saveTeams('umum')">Simpan Bagan Umum</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="sec-pelajar" class="tab-section">
+            <div class="bracket-scroll">
+                <div class="bracket-flex" id="bracket-pelajar"></div>
+            </div>
+        </div>
+
+        <div id="sec-umum" class="tab-section">
+            <div class="bracket-scroll">
+                <div class="bracket-flex" id="bracket-umum"></div>
+            </div>
+        </div>
+
+        <div id="sec-history" class="tab-section">
+            <div class="card">
+                <h2>Riwayat Perubahan Panitia</h2>
+                <div class="history-log" id="log-list">
+                    <p style="text-align: center; color: #cbd5e1;">Belum ada riwayat aktivitas.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var firebaseConfig = {
+            apiKey: "AIzaSyA093jfB0I5cZhy0-BfAWUaEPUIobBxQXA",
+            authDomain: "tournamen-mlbb-infly-carnival.firebaseapp.com",
+            databaseURL: "https://tournamen-mlbb-infly-carnival-default-rtdb.firebaseio.com",
+            projectId: "tournamen-mlbb-infly-carnival",
+            storageBucket: "tournamen-mlbb-infly-carnival.firebasestorage.app"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        var db = firebase.database();
+
+        var currentUserRole = 'viewer';
+        var currentAdminName = '';
+        var scoreTimer = null;
+
+        var tournamentData = {
+            pelajar: { teams: [], scores: [] },
+            umum: { teams: [], scores: [] }
+        };
+
+        for (var i = 0; i < 16; i++) {
+            tournamentData.pelajar.teams.push("Tim " + (i + 1));
+            tournamentData.umum.teams.push("Tim " + (i + 1));
+            tournamentData.pelajar.scores.push({ s1: 0, s2: 0 });
+            tournamentData.umum.scores.push({ s1: 0, s2: 0 });
+        }
+
+        function toggleMenu() {
+            var menu = document.getElementById('dropdown-menu');
+            menu.classList.toggle('show');
+        }
+
+        window.onclick = function(event) {
+            if (!event.target.matches('.hamburger-btn') && !event.target.matches('.hamburger-btn span')) {
+                var menu = document.getElementById('dropdown-menu');
+                if (menu && menu.classList.contains('show')) {
+                    menu.classList.remove('show');
+                }
+            }
+        }
+
+        function setRole(role, username) {
+            username = username || '';
+            currentUserRole = role;
+            currentAdminName = username;
+
+            localStorage.setItem('infly_role', role);
+            localStorage.setItem('infly_user', username);
+
+            document.getElementById('login-modal').style.display = 'none';
+
+            var badge = document.getElementById('role-display');
+            var navHist = document.getElementById('nav-history');
+            var btnP = document.getElementById('save-pelajar');
+            var btnU = document.getElementById('save-umum');
+
+            if (role === 'admin') {
+                badge.textContent = 'Status: Panitia (' + username.toUpperCase() + ')';
+                if (btnP) btnP.style.display = 'inline-block';
+                if (btnU) btnU.style.display = 'inline-block';
+                if (navHist) navHist.style.display = 'block';
+                setInputsEditable(true);
+            } else {
+                badge.textContent = 'Status: Peserta (Lihat)';
+                if (btnP) btnP.style.display = 'none';
+                if (btnU) btnU.style.display = 'none';
+                if (navHist) navHist.style.display = 'none';
+                setInputsEditable(false);
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('infly_role');
+            localStorage.removeItem('infly_user');
+            localStorage.removeItem('infly_tab');
+            location.reload();
+        }
+
+        function showPanitiaBox() {
+            document.getElementById('panitia-box').style.display = 'block';
+        }
+
+        function verifyPanitiaLogin() {
+            var u = document.getElementById('panitia-user').value.trim().toLowerCase();
+            var p = document.getElementById('panitia-pass').value;
+            var users = { "bentar": "infly2026", "dwi": "infly2026", "rafa": "infly2026", "nuzul": "infly2026", "dimas": "infly2026", "ipank": "infly2026", "dana": "infly2026", "untung": "infly2026" };
+
+            if (users[u] && users[u] === p) {
+                setRole('admin', u);
+            } else {
+                alert('Username atau Password salah!');
+            }
+        }
+
+        // FUNGSI MENDAFTAR TIM OTOMATIS MASUK KE DATABASE & DAFTAR TIM
+        function submitPendaftaran() {
+            var kat = document.getElementById('reg-kategori').value;
+            var namaTim = document.getElementById('reg-namatim').value.trim();
+            var slotIdx = parseInt(document.getElementById('reg-slot').value);
+            var kapten = document.getElementById('reg-kapten').value.trim();
+            var idKapten = document.getElementById('reg-id-kapten').value.trim();
+            var idP2 = document.getElementById('reg-id-p2').value.trim();
+            var idP3 = document.getElementById('reg-id-p3').value.trim();
+            var idP4 = document.getElementById('reg-id-p4').value.trim();
+            var idP5 = document.getElementById('reg-id-p5').value.trim();
+            var idCadangan = document.getElementById('reg-id-cadangan').value.trim();
+            var wa = document.getElementById('reg-wa').value.trim();
+
+            if (!namaTim || !kapten || !idKapten || !idP2 || !idP3 || !idP4 || !idP5 || !wa) {
+                alert('Mohon isi semua data pendaftaran dengan lengkap (kecuali cadangan opsional)!');
+                return;
+            }
+
+            // Masukkan nama tim ke slot yang dipilih
+            tournamentData[kat].teams[slotIdx] = namaTim;
+
+            // Simpan ke Firebase Database agar langsung update ke semua peserta & panitia
+            db.ref('tournament/' + kat + '/teams').set(tournamentData[kat].teams)
+              .then(function() {
+                  alert('Pendaftaran Berhasil! Tim "' + namaTim + '" telah terdaftar di slot Tim ' + (slotIdx + 1) + ' (' + kat.toUpperCase() + ').');
+                  // Reset form
+                  document.getElementById('reg-namatim').value = '';
+                  document.getElementById('reg-kapten').value = '';
+                  document.getElementById('reg-id-kapten').value = '';
+                  document.getElementById('reg-id-p2').value = '';
+                  document.getElementById('reg-id-p3').value = '';
+                  document.getElementById('reg-id-p4').value = '';
+                  document.getElementById('reg-id-p5').value = '';
+                  document.getElementById('reg-id-cadangan').value = '';
+                  document.getElementById('reg-wa').value = '';
+                  // Pindah otomatis ke menu Daftar Tim
+                  switchTab(null, 'sec-teams');
+              })
+              .catch(function(err) {
+                  alert('Gagal mendaftar: ' + err.message);
+              });
+        }
+
+        function renderGrids(category) {
+            var el = document.getElementById('grid-' + category);
+            if (!el) return;
+            var html = '';
+            for (var i = 0; i < 16; i++) {
+                html += '<div class="team-item"><span>Tim ' + (i+1) + ':</span><input type="text" id="' + category + '-in-' + i + '" value="' + tournamentData[category].teams[i] + '"></div>';
+            }
+            el.innerHTML = html;
+        }
+
+        function renderBrackets(category) {
+            var el = document.getElementById('bracket-' + category);
+            if (!el) return;
+
+            var html = '';
+            html += '<div class="round-col"><div class="round-title">16 Besar ' + category.toUpperCase() + '</div>';
+            for (var m = 0; m < 8; m++) { html += createMatchHTML(category, m); }
+            html += '</div>';
+
+            html += '<div class="round-col"><div class="round-title">Perempat Final</div>';
+            for (var m = 8; m < 12; m++) { html += createMatchHTML(category, m); }
+            html += '</div>';
+
+            html += '<div class="round-col"><div class="round-title">Semifinal</div>';
+            for (var m = 12; m < 14; m++) { html += createMatchHTML(category, m); }
+            html += '</div>';
+
+            html += '<div class="round-col" style="justify-content: center;"><div class="round-title">Perebutan Juara</div>';
+            html += createMatchHTML(category, 14, 'final', '👑 Grand Final');
+            html += createMatchHTML(category, 15, 'third', '🥉 Juara 3 & 4');
+            html += '</div>';
+
+            el.innerHTML = html;
+            updateBracketLogic(category);
+        }
+
+        function createMatchHTML(category, matchIdx, exClass, label) {
+            exClass = exClass || '';
+            label = label || '';
+            var pfx = category[0];
+            return '<div class="matchup ' + exClass + '">' +
+                    (label ? '<div class="match-label">' + label + '</div>' : '') +
+                    '<div class="team-row" id="' + pfx + '-m' + matchIdx + '-b1">' +
+                        '<span class="team-name" id="' + pfx + '-m' + matchIdx + '-t1">-</span>' +
+                        '<input type="number" min="0" class="score-in ' + pfx + '-score" id="' + pfx + '-m' + matchIdx + '-s1" value="0" oninput="onScoreInput(\'' + category + '\', ' + matchIdx + ')">' +
+                    '</div>' +
+                    '<div class="team-row" id="' + pfx + '-m' + matchIdx + '-b2">' +
+                        '<span class="team-name" id="' + pfx + '-m' + matchIdx + '-t2">-</span>' +
+                        '<input type="number" min="0" class="score-in ' + pfx + '-score" id="' + pfx + '-m' + matchIdx + '-s2" value="0" oninput="onScoreInput(\'' + category + '\', ' + matchIdx + ')">' +
+                    '</div>' +
+                '</div>';
+        }
+
+        function updateBracketLogic(category) {
+            var pfx = category[0];
+            var data = tournamentData[category];
+            var teams = data.teams;
+            var scores = data.scores;
+
+            var winners = [];
+            var losers = [];
+            for (var i = 0; i < 16; i++) { winners.push("-"); losers.push("-"); }
+
+            for (var m = 0; m < 8; m++) {
+                var t1 = teams[m * 2] || ("Tim " + (m*2+1));
+                var t2 = teams[m * 2 + 1] || ("Tim " + (m*2+2));
+                setMatchDisplay(pfx, m, t1, t2, scores[m]);
+
+                if (scores[m].s1 > scores[m].s2) { winners[m] = t1; losers[m] = t2; }
+                else if (scores[m].s2 > scores[m].s1) { winners[m] = t2; losers[m] = t1; }
+            }
+
+            for (var i = 0; i < 4; i++) {
+                var m = 8 + i;
+                var t1 = winners[i * 2];
+                var t2 = winners[i * 2 + 1];
+                setMatchDisplay(pfx, m, t1, t2, scores[m]);
+
+                if (scores[m].s1 > scores[m].s2 && t1 !== "-") { winners[m] = t1; losers[m] = t2; }
+                else if (scores[m].s2 > scores[m].s1 && t2 !== "-") { winners[m] = t2; losers[m] = t1; }
+            }
+
+            for (var i = 0; i < 2; i++) {
+                var m = 12 + i;
+                var t1 = winners[8 + i * 2];
+                var t2 = winners[8 + i * 2 + 1];
+                setMatchDisplay(pfx, m, t1, t2, scores[m]);
+
+                if (scores[m].s1 > scores[m].s2 && t1 !== "-") { winners[m] = t1; losers[m] = t2; }
+                else if (scores[m].s2 > scores[m].s1 && t2 !== "-") { winners[m] = t2; losers[m] = t1; }
+            }
+
+            setMatchDisplay(pfx, 14, winners[12], winners[13], scores[14]);
+            setMatchDisplay(pfx, 15, losers[12], losers[13], scores[15]);
+        }
+
+        function setMatchDisplay(pfx, matchIdx, t1Name, t2Name, scoreObj) {
+            var elT1 = document.getElementById(pfx + '-m' + matchIdx + '-t1');
+            var elT2 = document.getElementById(pfx + '-m' + matchIdx + '-t2');
+            var elS1 = document.getElementById(pfx + '-m' + matchIdx + '-s1');
+            var elS2 = document.getElementById(pfx + '-m' + matchIdx + '-s2');
+            var b1 = document.getElementById(pfx + '-m' + matchIdx + '-b1');
+            var b2 = document.getElementById(pfx + '-m' + matchIdx + '-b2');
+
+            if (elT1) elT1.textContent = t1Name;
+            if (elT2) elT2.textContent = t2Name;
+            if (elS1 && document.activeElement !== elS1) elS1.value = scoreObj ? scoreObj.s1 : 0;
+            if (elS2 && document.activeElement !== elS2) elS2.value = scoreObj ? scoreObj.s2 : 0;
+
+            if (b1 && b2) {
+                b1.classList.remove('winner');
+                b2.classList.remove('winner');
+                if (scoreObj) {
+                    if (scoreObj.s1 > scoreObj.s2 && t1Name !== "-") b1.classList.add('winner');
+                    else if (scoreObj.s2 > scoreObj.s1 && t2Name !== "-") b2.classList.add('winner');
+                }
+            }
+        }
+
+        function onScoreInput(category, matchIdx) {
+            var pfx = category[0];
+            var s1Val = parseInt(document.getElementById(pfx + '-m' + matchIdx + '-s1').value) || 0;
+            var s2Val = parseInt(document.getElementById(pfx + '-m' + matchIdx + '-s2').value) || 0;
+
+            tournamentData[category].scores[matchIdx] = { s1: s1Val, s2: s2Val };
+            updateBracketLogic(category);
+
+            if (currentUserRole === 'admin' && db) {
+                db.ref('tournament/' + category + '/scores').set(tournamentData[category].scores);
+                clearTimeout(scoreTimer);
+                scoreTimer = setTimeout(function() {
+                    logActivity('Mengubah skor ' + category.toUpperCase() + ' (Match ' + (matchIdx + 1) + ') -> ' + s1Val + '-' + s2Val);
+                }, 1200);
+            }
+        }
+
+        function saveTeams(category) {
+            if (!db) return alert("Database belum terhubung.");
+            var newTeams = [];
+            for (var i = 0; i < 16; i++) {
+                var val = document.getElementById(category + '-in-' + i).value.trim();
+                newTeams.push(val || ("Tim " + (i + 1)));
+            }
+            db.ref('tournament/' + category + '/teams').set(newTeams)
+              .then(function() {
+                  alert('Daftar tim ' + category.toUpperCase() + ' berhasil disimpan!');
+                  logActivity('Memperbarui tim ' + category.toUpperCase());
+              })
+              .catch(function(err) { alert("Gagal menyimpan: " + err.message); });
+        }
+
+        function setInputsEditable(enable) {
+            document.querySelectorAll('.score-in').forEach(function(i) { i.disabled = !enable; });
+            document.querySelectorAll('.team-grid input').forEach(function(i) { i.disabled = !enable; });
+        }
+
+        function switchTab(evt, secId) {
+            document.querySelectorAll('.tab-section').forEach(function(s) { s.classList.remove('active'); });
+            document.querySelectorAll('.nav-btn').forEach(function(b) { b.classList.remove('active'); });
+            
+            var targetSec = document.getElementById(secId);
+            if (targetSec) targetSec.classList.add('active');
+
+            if (evt && evt.currentTarget) {
+                evt.currentTarget.classList.add('active');
+            } else {
+                var btns = document.querySelectorAll('.main-nav .nav-btn');
+                btns.forEach(function(btn) {
+                    if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(secId)) {
+                        btn.classList.add('active');
+                    }
+                });
+            }
+            localStorage.setItem('infly_tab', secId);
+            document.getElementById('dropdown-menu').classList.remove('show');
+        }
+
+        function switchSub(evt, subId) {
+            document.querySelectorAll('.sub-content').forEach(function(s) { s.style.display = 'none'; });
+            document.querySelectorAll('.sub-btn').forEach(function(b) { b.classList.remove('active'); });
+            document.getElementById(subId).style.display = 'block';
+            evt.currentTarget.classList.add('active');
+        }
+
+        // Render awal UI
+        renderGrids('pelajar');
+        renderGrids('umum');
+        renderBrackets('pelajar');
+        renderBrackets('umum');
+
+        // Restore Sesi Login
+        var savedRole = localStorage.getItem('infly_role');
+        var savedUser = localStorage.getItem('infly_user');
+        if (savedRole) {
+            setRole(savedRole, savedUser);
+        }
+
+        // Restore Tab Terakhir
+        var savedTab = localStorage.getItem('infly_tab');
+        if (savedTab && document.getElementById(savedTab)) {
+            switchTab(null, savedTab);
+        }
+
+        // Listener Firebase Data
+        ['pelajar', 'umum'].forEach(function(cat) {
+            db.ref('tournament/' + cat + '/teams').on('value', function(snap) {
+                var val = snap.val();
+                if (val && Array.isArray(val)) {
+                    tournamentData[cat].teams = val;
+                    for (var i = 0; i < 16; i++) {
+                        var field = document.getElementById(cat + '-in-' + i);
+                        if (field && document.activeElement !== field) field.value = val[i] || ("Tim " + (i+1));
+                    }
+                    updateBracketLogic(cat);
+                }
+            });
+
+            db.ref('tournament/' + cat + '/scores').on('value', function(snap) {
+                var val = snap.val();
+                if (val && Array.isArray(val)) {
+                    tournamentData[cat].scores = val;
+                    updateBracketLogic(cat);
+                }
+            });
+        });
+
+        db.ref('tournament/logs').limitToLast(20).on('value', function(snap) {
+            var val = snap.val();
+            // ...
+        });
+    </script>
+</body>
+</html>
