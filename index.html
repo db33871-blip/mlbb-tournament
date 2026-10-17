@@ -21,7 +21,6 @@
         
         body {
             background-color: #120428;
-            /* DIPERBAIKI AGAR PAS DI HP DAN TIDAK RUSAK */
             background-image: linear-gradient(rgba(10, 2, 25, 0.7), rgba(10, 2, 25, 0.85)), url('logo.jpeg');
             background-repeat: no-repeat;
             background-position: center top;
@@ -121,19 +120,40 @@
         .tab-section { display: none; }
         .tab-section.active { display: block; }
 
-        .card { background: var(--bg-card); border: 1px solid var(--border-glow); padding: 12px; border-radius: 10px; }
-        .card h2 { color: var(--accent-yellow); margin-bottom: 10px; text-align: center; font-size: 1rem; }
+        .card { background: var(--bg-card); border: 1px solid var(--border-glow); padding: 15px; border-radius: 12px; }
+        .card h2 { color: var(--accent-yellow); margin-bottom: 14px; text-align: center; font-size: 1.1rem; }
 
-        .sub-nav { display: flex; justify-content: center; gap: 8px; margin-bottom: 10px; }
-        .sub-btn { background: rgba(0,0,0,0.4); color: #cbd5e1; border: 1px solid var(--border-glow); padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: bold; }
+        .sub-nav { display: flex; justify-content: center; gap: 8px; margin-bottom: 14px; }
+        .sub-btn { background: rgba(0,0,0,0.4); color: #cbd5e1; border: 1px solid var(--border-glow); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: bold; }
         .sub-btn.active { background: var(--accent-cyan); color: #120428; }
 
-        .team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 6px; margin-bottom: 10px; }
-        .team-item { display: flex; align-items: center; gap: 6px; background: rgba(0,0,0,0.4); padding: 5px; border-radius: 6px; font-size: 0.8rem; }
-        .team-item span { min-width: 40px; color: var(--accent-cyan); font-weight: bold; }
-        .team-item input { flex: 1; padding: 4px; background: rgba(0,0,0,0.6); border: 1px solid var(--border-glow); color: #fff; border-radius: 4px; }
+        /* PERBAIKAN: DAFTAR TIM DIBUAT 1 KOLOM KE BAWAH DENGAN JARAK YANG PAS */
+        .team-grid { 
+            display: grid; 
+            grid-template-columns: 1fr; 
+            gap: 10px; 
+            margin-bottom: 15px; 
+        }
+        @media (min-width: 600px) {
+            .team-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px 15px;
+            }
+        }
+        .team-item { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            background: rgba(0,0,0,0.5); 
+            padding: 8px 12px; 
+            border-radius: 8px; 
+            font-size: 0.85rem; 
+            border: 1px solid rgba(0, 242, 254, 0.2);
+        }
+        .team-item span { min-width: 50px; color: var(--accent-cyan); font-weight: bold; }
+        .team-item input { flex: 1; padding: 6px 8px; background: rgba(0,0,0,0.7); border: 1px solid var(--border-glow); color: #fff; border-radius: 6px; font-size: 0.85rem; }
 
-        .btn-action { background: linear-gradient(135deg, #ffea00, #ff007f); color: #fff; border: none; padding: 7px 15px; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 0.8rem; }
+        .btn-action { background: linear-gradient(135deg, #ffea00, #ff007f); color: #fff; border: none; padding: 8px 18px; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
 
         .bracket-scroll { overflow-x: auto; padding-bottom: 10px; -webkit-overflow-scrolling: touch; }
         .bracket-flex { display: flex; gap: 12px; min-width: 950px; }
@@ -205,13 +225,13 @@
                 </div>
                 <div id="sub-pelajar" class="sub-content">
                     <div class="team-grid" id="grid-pelajar"></div>
-                    <div id="save-pelajar" style="text-align: center; display: none; margin-top: 10px;">
+                    <div id="save-pelajar" style="text-align: center; display: none; margin-top: 15px;">
                         <button class="btn-action" onclick="saveTeams('pelajar')">Simpan Bagan Pelajar</button>
                     </div>
                 </div>
                 <div id="sub-umum" class="sub-content" style="display: none;">
                     <div class="team-grid" id="grid-umum"></div>
-                    <div id="save-umum" style="text-align: center; display: none; margin-top: 10px;">
+                    <div id="save-umum" style="text-align: center; display: none; margin-top: 15px;">
                         <button class="btn-action" onclick="saveTeams('umum')">Simpan Bagan Umum</button>
                     </div>
                 </div>
