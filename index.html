@@ -93,7 +93,7 @@
             padding: 8px;
             flex-direction: column; 
             gap: 6px; 
-            min-width: 200px;
+            min-width: 220px;
             z-index: 999;
             box-shadow: 0 8px 20px rgba(0,0,0,0.6);
         }
@@ -127,7 +127,6 @@
         .sub-btn { background: rgba(0,0,0,0.4); color: #cbd5e1; border: 1px solid var(--border-glow); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: bold; }
         .sub-btn.active { background: var(--accent-cyan); color: #120428; }
 
-        /* PERBAIKAN: DAFTAR TIM DIBUAT 1 KOLOM KE BAWAH DENGAN JARAK YANG PAS */
         .team-grid { 
             display: grid; 
             grid-template-columns: 1fr; 
@@ -153,7 +152,12 @@
         .team-item span { min-width: 50px; color: var(--accent-cyan); font-weight: bold; }
         .team-item input { flex: 1; padding: 6px 8px; background: rgba(0,0,0,0.7); border: 1px solid var(--border-glow); color: #fff; border-radius: 6px; font-size: 0.85rem; }
 
-        .btn-action { background: linear-gradient(135deg, #ffea00, #ff007f); color: #fff; border: none; padding: 8px 18px; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
+        /* FORM PENDAFTARAN */
+        .form-group { margin-bottom: 12px; text-align: left; }
+        .form-group label { display: block; color: var(--accent-cyan); font-size: 0.8rem; font-weight: bold; margin-bottom: 4px; }
+        .form-group input, .form-group select { width: 100%; padding: 8px 10px; background: rgba(0,0,0,0.6); border: 1px solid var(--border-glow); color: #fff; border-radius: 6px; font-size: 0.85rem; }
+
+        .btn-action { background: linear-gradient(135deg, #ffea00, #ff007f); color: #fff; border: none; padding: 8px 18px; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 0.85rem; width: 100%; }
 
         .bracket-scroll { overflow-x: auto; padding-bottom: 10px; -webkit-overflow-scrolling: touch; }
         .bracket-flex { display: flex; gap: 12px; min-width: 950px; }
@@ -196,7 +200,7 @@
     <div class="container">
         <div class="top-bar">
             <span id="role-display" class="role-badge">Status: Peserta</span>
-            <button class="btn-action" style="padding: 3px 8px; font-size: 0.7rem;" onclick="logout()">Keluar / Ganti</button>
+            <button class="btn-action" style="padding: 3px 8px; font-size: 0.7rem; width: auto;" onclick="logout()">Keluar / Ganti</button>
         </div>
 
         <header>
@@ -209,14 +213,63 @@
                 <span>☰</span> Menu Navigasi
             </button>
             <div class="main-nav" id="dropdown-menu">
-                <button class="nav-btn active" onclick="switchTab(event, 'sec-teams')">📋 Daftar Tim</button>
+                <button class="nav-btn active" onclick="switchTab(event, 'sec-daftar')">📝 Pendaftaran MLBB</button>
+                <button class="nav-btn" onclick="switchTab(event, 'sec-teams')">📋 Daftar Tim</button>
                 <button class="nav-btn" onclick="switchTab(event, 'sec-pelajar')">🎓 Bracket Pelajar</button>
                 <button class="nav-btn" onclick="switchTab(event, 'sec-umum')">🔥 Bracket Umum</button>
                 <button class="nav-btn" id="nav-history" style="display: none;" onclick="switchTab(event, 'sec-history')">📜 Riwayat</button>
             </div>
         </div>
 
-        <div id="sec-teams" class="tab-section active">
+        <!-- MENU PENDAFTARAN -->
+        <div id="sec-daftar" class="tab-section active">
+            <div class="card" style="max-width: 500px; margin: 0 auto;">
+                <h2>Formulir Pendaftaran Tim</h2>
+                <div class="form-group">
+                    <label>Kategori Turnamen</label>
+                    <select id="reg-kategori">
+                        <option value="pelajar">Pelajar (16 Tim)</option>
+                        <option value="umum">Umum (16 Tim)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Nama Tim</label>
+                    <input type="text" id="reg-namatim" placeholder="Masukkan Nama Tim">
+                </div>
+                <div class="form-group">
+                    <label>Nomor Slot Tim (Pilih 1 - 16)</label>
+                    <select id="reg-slot">
+                        <option value="0">Tim 1</option>
+                        <option value="1">Tim 2</option>
+                        <option value="2">Tim 3</option>
+                        <option value="3">Tim 4</option>
+                        <option value="4">Tim 5</option>
+                        <option value="5">Tim 6</option>
+                        <option value="6">Tim 7</option>
+                        <option value="7">Tim 8</option>
+                        <option value="8">Tim 9</option>
+                        <option value="9">Tim 10</option>
+                        <option value="10">Tim 11</option>
+                        <option value="11">Tim 12</option>
+                        <option value="12">Tim 13</option>
+                        <option value="13">Tim 14</option>
+                        <option value="14">Tim 15</option>
+                        <option value="15">Tim 16</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Nama Kapten / Perwakilan</label>
+                    <input type="text" id="reg-kapten" placeholder="Nama Lengkap Kapten">
+                </div>
+                <div class="form-group">
+                    <label>Nomor WhatsApp (Aktif)</label>
+                    <input type="text" id="reg-wa" placeholder="Contoh: 08123456789">
+                </div>
+                <button class="btn-action" onclick="submitPendaftaran()">Kirim Pendaftaran</button>
+            </div>
+        </div>
+
+        <div id="sec-teams" class="tab-section">
             <div class="card">
                 <h2>Daftar Tim Peserta</h2>
                 <div class="sub-nav">
@@ -226,13 +279,13 @@
                 <div id="sub-pelajar" class="sub-content">
                     <div class="team-grid" id="grid-pelajar"></div>
                     <div id="save-pelajar" style="text-align: center; display: none; margin-top: 15px;">
-                        <button class="btn-action" onclick="saveTeams('pelajar')">Simpan Bagan Pelajar</button>
+                        <button class="btn-action" style="width: auto;" onclick="saveTeams('pelajar')">Simpan Bagan Pelajar</button>
                     </div>
                 </div>
                 <div id="sub-umum" class="sub-content" style="display: none;">
                     <div class="team-grid" id="grid-umum"></div>
                     <div id="save-umum" style="text-align: center; display: none; margin-top: 15px;">
-                        <button class="btn-action" onclick="saveTeams('umum')">Simpan Bagan Umum</button>
+                        <button class="btn-action" style="width: auto;" onclick="saveTeams('umum')">Simpan Bagan Umum</button>
                     </div>
                 </div>
             </div>
@@ -321,8 +374,8 @@
 
             if (role === 'admin') {
                 badge.textContent = 'Status: Panitia (' + username.toUpperCase() + ')';
-                if (btnP) btnP.style.display = 'block';
-                if (btnU) btnU.style.display = 'block';
+                if (btnP) btnP.style.display = 'inline-block';
+                if (btnU) btnU.style.display = 'inline-block';
                 if (navHist) navHist.style.display = 'block';
                 setInputsEditable(true);
             } else {
@@ -355,6 +408,38 @@
             } else {
                 alert('Username atau Password salah!');
             }
+        }
+
+        // FUNGSI MENDAFTAR TIM OTOMATIS MASUK KE DATABASE & DAFTAR TIM
+        function submitPendaftaran() {
+            var kat = document.getElementById('reg-kategori').value;
+            var namaTim = document.getElementById('reg-namatim').value.trim();
+            var slotIdx = parseInt(document.getElementById('reg-slot').value);
+            var kapten = document.getElementById('reg-kapten').value.trim();
+            var wa = document.getElementById('reg-wa').value.trim();
+
+            if (!namaTim || !kapten || !wa) {
+                alert('Mohon isi semua data pendaftaran dengan lengkap!');
+                return;
+            }
+
+            // Masukkan nama tim ke slot yang dipilih
+            tournamentData[kat].teams[slotIdx] = namaTim;
+
+            // Simpan ke Firebase Database agar langsung update ke semua peserta & panitia
+            db.ref('tournament/' + kat + '/teams').set(tournamentData[kat].teams)
+              .then(function() {
+                  alert('Pendaftaran Berhasil! Tim "' + namaTim + '" telah terdaftar di slot Tim ' + (slotIdx + 1) + ' (' + kat.toUpperCase() + ').');
+                  // Reset form
+                  document.getElementById('reg-namatim').value = '';
+                  document.getElementById('reg-kapten').value = '';
+                  document.getElementById('reg-wa').value = '';
+                  // Pindah otomatis ke menu Daftar Tim
+                  switchTab(null, 'sec-teams');
+              })
+              .catch(function(err) {
+                  alert('Gagal mendaftar: ' + err.message);
+              });
         }
 
         function renderGrids(category) {
@@ -506,16 +591,6 @@
                   logActivity('Memperbarui tim ' + category.toUpperCase());
               })
               .catch(function(err) { alert("Gagal menyimpan: " + err.message); });
-        }
-
-        function logActivity(msg) {
-            if (!db || currentUserRole !== 'admin') return;
-            var logData = {
-                user: currentAdminName.toUpperCase() || "PANITIA",
-                action: msg,
-                timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
-            };
-            db.ref('tournament/logs').push(logData);
         }
 
         function setInputsEditable(enable) {
