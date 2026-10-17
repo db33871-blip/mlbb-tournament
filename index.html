@@ -12,12 +12,12 @@
     <style>
         :root {
             --bg-dark: #080312;
-            --bg-card: rgba(16, 12, 34, 0.75);
-            --bg-input: rgba(6, 4, 18, 0.65);
+            --bg-card: rgba(16, 12, 34, 0.85);
+            --bg-input: rgba(6, 4, 18, 0.7);
             --accent-gold: #fbbf24;
             --accent-pink: #ec4899;
             --accent-cyan: #22d3ee;
-            --border-subtle: rgba(34, 211, 238, 0.25);
+            --border-subtle: rgba(34, 211, 238, 0.3);
             --border-focus: rgba(236, 72, 153, 0.6);
             --text-main: #f8fafc;
             --text-muted: #cbd5e1;
@@ -63,7 +63,7 @@
         .panitia-box { display: none; margin-top: 14px; }
         .panitia-box input { width: 100%; padding: 10px; background: var(--bg-input); border: 1px solid var(--border-subtle); color: #fff; border-radius: 8px; margin-bottom: 8px; text-align: center; font-size: 0.85rem; }
 
-        .container { max-width: 1100px; margin: 0 auto; }
+        .container { max-width: 1200px; margin: 0 auto; }
         .top-bar { display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); padding: 10px 16px; border-radius: 12px; margin-bottom: 16px; border: 1px solid var(--border-subtle); backdrop-filter: blur(12px); box-shadow: var(--shadow-card); }
         .role-badge { font-size: 0.8rem; font-weight: 600; padding: 5px 12px; border-radius: 20px; background: rgba(34, 211, 238, 0.12); color: var(--accent-cyan); border: 1px solid var(--border-subtle); }
         
@@ -184,22 +184,26 @@
         .btn-action { background: linear-gradient(135deg, #ec4899, #c026d3); color: #ffffff; border: none; padding: 11px 18px; font-weight: 700; border-radius: 8px; cursor: pointer; font-size: 0.875rem; width: 100%; transition: all 0.2s ease; box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3); }
         .btn-action:hover { opacity: 0.95; transform: translateY(-1px); }
 
+        /* TAMPILAN BRACKET SEPERTI GAMBAR CONTOH */
         .bracket-scroll { overflow-x: auto; padding-bottom: 10px; -webkit-overflow-scrolling: touch; }
-        .bracket-flex { display: flex; gap: 14px; min-width: 950px; }
-        .round-col { flex: 1; min-width: 190px; display: flex; flex-direction: column; justify-content: space-around; }
-        .round-title { text-align: center; color: var(--accent-gold); font-size: 0.775rem; font-weight: 700; margin-bottom: 8px; background: var(--bg-input); padding: 6px; border-radius: 6px; border: 1px solid var(--border-subtle); text-transform: uppercase; letter-spacing: 0.5px; }
+        .bracket-flex { display: flex; gap: 14px; min-width: 1050px; justify-content: center; align-items: stretch; }
+        .round-col { flex: 1; min-width: 180px; display: flex; flex-direction: column; justify-content: space-around; }
+        .round-title { text-align: center; color: #ffffff; font-size: 0.75rem; font-weight: 800; margin-bottom: 8px; background: rgba(2, 132, 199, 0.4); padding: 6px; border-radius: 6px; border: 1px solid var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 0 10px rgba(34, 211, 238, 0.2); }
 
-        .matchup { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; margin: 6px 0; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.4); backdrop-filter: blur(10px); }
-        .matchup.final { border: 1px solid var(--accent-gold); }
-        .matchup.third { border: 1px solid var(--accent-cyan); }
-        .match-label { background: rgba(236, 72, 153, 0.25); font-size: 0.65rem; color: #fff; text-align: center; padding: 4px; font-weight: 700; border-bottom: 1px solid var(--border-subtle); }
+        .center-col { display: flex; flex-direction: column; justify-content: space-around; align-items: center; min-width: 220px; }
+        .champ-title { background: linear-gradient(135deg, #fbbf24, #d97706); color: #080312; font-weight: 900; padding: 6px 14px; border-radius: 6px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 0 15px rgba(251, 191, 36, 0.5); }
 
-        .team-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; font-size: 0.75rem; border-bottom: 1px solid var(--border-subtle); }
+        .matchup { background: rgba(12, 18, 36, 0.85); border: 1px solid rgba(34, 211, 238, 0.4); border-radius: 8px; margin: 4px 0; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.5); backdrop-filter: blur(8px); }
+        .matchup.final { border: 2px solid var(--accent-gold); box-shadow: 0 0 15px rgba(251, 191, 36, 0.3); }
+        .matchup.third { border: 2px solid var(--accent-cyan); box-shadow: 0 0 15px rgba(34, 211, 238, 0.3); }
+        .match-label { background: rgba(236, 72, 153, 0.3); font-size: 0.65rem; color: #fff; text-align: center; padding: 3px; font-weight: 800; border-bottom: 1px solid var(--border-subtle); text-transform: uppercase; }
+
+        .team-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; font-size: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.08); }
         .team-row:last-child { border-bottom: none; }
-        .team-row.winner { background: rgba(236, 72, 153, 0.2); font-weight: 700; color: var(--accent-gold); }
-        .team-name { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-right: 6px; color: var(--text-main); }
+        .team-row.winner { background: rgba(236, 72, 153, 0.3); font-weight: 800; color: var(--accent-gold); }
+        .team-name { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-right: 6px; color: var(--text-main); font-weight: 600; }
 
-        .score-in { width: 30px; background: var(--bg-input); border: 1px solid var(--border-subtle); color: var(--accent-cyan); text-align: center; padding: 3px; border-radius: 4px; font-weight: 700; font-size: 0.75rem; }
+        .score-in { width: 30px; background: var(--bg-input); border: 1px solid var(--border-subtle); color: var(--accent-cyan); text-align: center; padding: 3px; border-radius: 4px; font-weight: 800; font-size: 0.75rem; }
 
         .history-log { max-height: 300px; overflow-y: auto; background: var(--bg-input); border-radius: 8px; padding: 10px; font-size: 0.75rem; border: 1px solid var(--border-subtle); }
         .log-item { padding: 6px 0; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; }
@@ -582,26 +586,51 @@
             el.innerHTML = html;
         }
 
+        /* RENDER BRACKET KIRI - TENGAH - KANAN SEPERTI GAMBAR CONTOH */
         function renderBrackets(category) {
             var el = document.getElementById('bracket-' + category);
             if (!el) return;
 
             var html = '';
-            html += '<div class="round-col"><div class="round-title">16 Besar ' + category.toUpperCase() + '</div>';
-            for (var m = 0; m < 8; m++) { html += createMatchHTML(category, m); }
+
+            // ROUND OF 16 KIRI (Team 1 - Team 8 / Match 0 - 3)
+            html += '<div class="round-col"><div class="round-title">Round of 16</div>';
+            for (var m = 0; m < 4; m++) { html += createMatchHTML(category, m); }
             html += '</div>';
 
-            html += '<div class="round-col"><div class="round-title">Perempat Final</div>';
-            for (var m = 8; m < 12; m++) { html += createMatchHTML(category, m); }
+            // QUARTER-FINALS KIRI (Match 8 & 9)
+            html += '<div class="round-col"><div class="round-title">Quarter-Finals</div>';
+            for (var m = 8; m < 10; m++) { html += createMatchHTML(category, m); }
             html += '</div>';
 
-            html += '<div class="round-col"><div class="round-title">Semifinal</div>';
-            for (var m = 12; m < 14; m++) { html += createMatchHTML(category, m); }
+            // CENTER: SEMI-FINALS, GRAND FINAL, & 3RD PLACE
+            html += '<div class="center-col">';
+            html += '<div class="champ-title">👑 CHAMPION</div>';
+            
+            // Grand Final
+            html += createMatchHTML(category, 14, 'final', 'Grand Final');
+
+            // Semi Finals (Match 12 & 13)
+            html += '<div style="width: 100%;"><div class="round-title" style="margin-top:10px;">Semi-Finals</div>';
+            html += createMatchHTML(category, 12, '', 'Finalist 1');
+            html += createMatchHTML(category, 13, '', 'Finalist 2');
             html += '</div>';
 
-            html += '<div class="round-col" style="justify-content: center;"><div class="round-title">Perebutan Juara</div>';
-            html += createMatchHTML(category, 14, 'final', '👑 Grand Final');
-            html += createMatchHTML(category, 15, 'third', '🥉 Juara 3 & 4');
+            // 3rd Place Match
+            html += '<div style="width: 100%; margin-top:10px;">';
+            html += createMatchHTML(category, 15, 'third', '3rd Place Match (Juara 3)');
+            html += '</div>';
+
+            html += '</div>';
+
+            // QUARTER-FINALS KANAN (Match 10 & 11)
+            html += '<div class="round-col"><div class="round-title">Quarter-Finals</div>';
+            for (var m = 10; m < 12; m++) { html += createMatchHTML(category, m); }
+            html += '</div>';
+
+            // ROUND OF 16 KANAN (Team 9 - Team 16 / Match 4 - 7)
+            html += '<div class="round-col"><div class="round-title">Round of 16</div>';
+            for (var m = 4; m < 8; m++) { html += createMatchHTML(category, m); }
             html += '</div>';
 
             el.innerHTML = html;
