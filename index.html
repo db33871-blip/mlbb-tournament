@@ -184,7 +184,7 @@
         .btn-action { background: linear-gradient(135deg, #ec4899, #c026d3); color: #ffffff; border: none; padding: 11px 18px; font-weight: 700; border-radius: 8px; cursor: pointer; font-size: 0.875rem; width: 100%; transition: all 0.2s ease; box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3); }
         .btn-action:hover { opacity: 0.95; transform: translateY(-1px); }
 
-        /* TAMPILAN BRACKET 7 KOLOM (SEMIFINAL 1 - GRAND FINAL - SEMIFINAL 2) */
+        /* TAMPILAN BRACKET 7 KOLOM */
         .bracket-scroll { overflow-x: auto; padding-bottom: 10px; -webkit-overflow-scrolling: touch; }
         .bracket-flex { display: flex; gap: 12px; min-width: 1150px; justify-content: center; align-items: stretch; }
         .round-col { flex: 1; min-width: 160px; display: flex; flex-direction: column; justify-content: space-around; }
@@ -208,7 +208,7 @@
         .history-log { max-height: 300px; overflow-y: auto; background: var(--bg-input); border-radius: 8px; padding: 10px; font-size: 0.75rem; border: 1px solid var(--border-subtle); }
         .log-item { padding: 6px 0; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; }
         
-        /* TIM TERDAFTAR CARD */
+        /* TIM TERDAFTAR CARD & ACC BUTTONS */
         .registered-card {
             background: var(--bg-input);
             border: 1px solid var(--border-subtle);
@@ -237,6 +237,19 @@
             color: var(--accent-cyan);
             font-weight: 600;
         }
+        .acc-status-pending {
+            display: inline-block; padding: 3px 8px; border-radius: 4px; background: rgba(251, 191, 36, 0.15); color: var(--accent-gold); border: 1px solid rgba(251, 191, 36, 0.3); font-size: 0.7rem; font-weight: 700; margin-left: 8px;
+        }
+        .acc-status-approved {
+            display: inline-block; padding: 3px 8px; border-radius: 4px; background: rgba(34, 197, 94, 0.15); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.3); font-size: 0.7rem; font-weight: 700; margin-left: 8px;
+        }
+        .btn-acc {
+            background: #22c55e; color: #000; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 0.75rem; margin-right: 6px; transition: opacity 0.2s;
+        }
+        .btn-reject {
+            background: #ef4444; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 0.75rem; transition: opacity 0.2s;
+        }
+        .btn-acc:hover, .btn-reject:hover { opacity: 0.85; }
     </style>
 </head>
 <body>
@@ -497,6 +510,11 @@
                 if (navHist) navHist.style.display = 'none';
                 setInputsEditable(false);
             }
+
+            // Reload data pendaftaran untuk menyesuaikan tombol ACC
+            ['pelajar', 'umum'].forEach(function(cat) {
+                loadRegisteredTeams(cat);
+            });
         }
 
         function logout() {
@@ -522,6 +540,7 @@
             }
         }
 
+        /* FITUR PENDAFTARAN: MENUNGGU ACC PANITIA */
         function submitPendaftaran() {
             var kat = document.getElementById('reg-kategori').value;
             var namaTim = document.getElementById('reg-namatim').value.trim();
@@ -550,16 +569,13 @@
                 idP4: idP4,
                 idP5: idP5,
                 idCadangan: idCadangan || '-',
-                wa: wa
+                wa: wa,
+                status: 'pending' // Menunggu ACC dari Panitia
             };
 
-            db.ref('registered_teams/' + kat).push(newTeamData);
-
-            tournamentData[kat].teams[slotIdx] = namaTim;
-
-            db.ref('tournament/' + kat + '/teams').set(tournamentData[kat].teams)
+            db.ref('registered_teams/' + kat).push(newTeamData)
               .then(function() {
-                  alert('Pendaftaran Berhasil! Tim "' + namaTim + '" telah terdaftar di slot Tim ' + (slotIdx + 1) + ' (' + kat.toUpperCase() + ').');
+                  alert('Pendaftaran Berhasil Dikirim!\nPendaftaran Tim "' + namaTim + '" sedang menunggu ACC / Persetujuan dari Panitia.');
                   document.getElementById('reg-namatim').value = '';
                   document.getElementById('reg-kapten').value = '';
                   document.getElementById('reg-id-kapten').value = '';
@@ -574,6 +590,35 @@
               .catch(function(err) {
                   alert('Gagal mendaftar: ' + err.message);
               });
+        }
+
+        /* FITUR ACC PANITIA: TIM DITERIMA -> MASUK KE DAFTAR TIM & BRACKET */
+        function accTeam(cat, key, namaTim, slot) {
+            if (currentUserRole !== 'admin') return alert('Akses ditolak!');
+            var slotIdx = slot - 1;
+
+            // 1. Ubah status pendaftaran di Firebase menjadi approved
+            db.ref('registered_teams/' + cat + '/' + key + '/status').set('approved');
+
+            // 2. Masukkan tim ke daftar tim turnamen & bracket
+            tournamentData[cat].teams[slotIdx] = namaTim;
+            db.ref('tournament/' + cat + '/teams').set(tournamentData[cat].teams)
+              .then(function() {
+                  alert('Tim "' + namaTim + '" berhasil di-ACC! Otomatis masuk ke Daftar Tim & Bracket.');
+                  logActivity('Menyetujui (ACC) Tim "' + namaTim + '" di Slot ' + slot + ' (' + cat.toUpperCase() + ')');
+              });
+        }
+
+        /* FITUR TOLAK PENDAFTARAN OLEH PANITIA */
+        function rejectTeam(cat, key, namaTim) {
+            if (currentUserRole !== 'admin') return alert('Akses ditolak!');
+            if (confirm('Apakah Anda yakin ingin menolak pendaftaran Tim "' + namaTim + '"?')) {
+                db.ref('registered_teams/' + cat + '/' + key).remove()
+                  .then(function() {
+                      alert('Pendaftaran Tim "' + namaTim + '" telah ditolak / dihapus.');
+                      logActivity('Menolak Tim "' + namaTim + '" (' + cat.toUpperCase() + ')');
+                  });
+            }
         }
 
         function renderGrids(category) {
@@ -792,6 +837,45 @@
             evt.currentTarget.classList.add('active');
         }
 
+        function loadRegisteredTeams(cat) {
+            db.ref('registered_teams/' + cat).on('value', function(snap) {
+                var container = document.getElementById('list-registered-' + cat);
+                var val = snap.val();
+                if (!val) {
+                    container.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Belum ada tim terdaftar.</p>';
+                    return;
+                }
+                var html = '';
+                for (var key in val) {
+                    var item = val[key];
+                    var statusBadge = (item.status === 'approved') 
+                        ? '<span class="acc-status-approved">✅ Disetujui Panitia</span>' 
+                        : '<span class="acc-status-pending">⏳ Menunggu ACC Panitia</span>';
+                    
+                    var adminActionButtons = '';
+                    if (currentUserRole === 'admin' && item.status !== 'approved') {
+                        adminActionButtons = '<div style="margin-top: 10px;">' +
+                            '<button class="btn-acc" onclick="accTeam(\'' + cat + '\', \'' + key + '\', \'' + item.namaTim + '\', ' + item.slot + ')">✅ ACC Tim</button>' +
+                            '<button class="btn-reject" onclick="rejectTeam(\'' + cat + '\', \'' + key + '\', \'' + item.namaTim + '\')">❌ Tolak Tim</button>' +
+                        '</div>';
+                    }
+
+                    html += '<div class="registered-card">' +
+                                '<h3>' + item.namaTim + ' (Slot Tim ' + item.slot + ')' + statusBadge + '</h3>' +
+                                '<p><span>Kapten:</span> ' + item.kapten + ' (ID: ' + item.idKapten + ')</p>' +
+                                '<p><span>Pemain 2 ID:</span> ' + item.idP2 + '</p>' +
+                                '<p><span>Pemain 3 ID:</span> ' + item.idP3 + '</p>' +
+                                '<p><span>Pemain 4 ID:</span> ' + item.idP4 + '</p>' +
+                                '<p><span>Pemain 5 ID:</span> ' + item.idP5 + '</p>' +
+                                '<p><span>Cadangan ID:</span> ' + item.idCadangan + '</p>' +
+                                '<p><span>WhatsApp:</span> ' + item.wa + '</p>' +
+                                adminActionButtons +
+                            '</div>';
+                }
+                container.innerHTML = html;
+            });
+        }
+
         renderGrids('pelajar');
         renderGrids('umum');
         renderBrackets('pelajar');
@@ -829,29 +913,7 @@
                 }
             });
 
-            db.ref('registered_teams/' + cat).on('value', function(snap) {
-                var container = document.getElementById('list-registered-' + cat);
-                var val = snap.val();
-                if (!val) {
-                    container.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Belum ada tim terdaftar.</p>';
-                    return;
-                }
-                var html = '';
-                for (var key in val) {
-                    var item = val[key];
-                    html += '<div class="registered-card">' +
-                                '<h3>' + item.namaTim + ' (Slot Tim ' + item.slot + ')</h3>' +
-                                '<p><span>Kapten:</span> ' + item.kapten + ' (ID: ' + item.idKapten + ')</p>' +
-                                '<p><span>Pemain 2 ID:</span> ' + item.idP2 + '</p>' +
-                                '<p><span>Pemain 3 ID:</span> ' + item.idP3 + '</p>' +
-                                '<p><span>Pemain 4 ID:</span> ' + item.idP4 + '</p>' +
-                                '<p><span>Pemain 5 ID:</span> ' + item.idP5 + '</p>' +
-                                '<p><span>Cadangan ID:</span> ' + item.idCadangan + '</p>' +
-                                '<p><span>WhatsApp:</span> ' + item.wa + '</p>' +
-                            '</div>';
-                }
-                container.innerHTML = html;
-            });
+            loadRegisteredTeams(cat);
         });
 
         db.ref('tournament/logs').limitToLast(20).on('value', function(snap) {
