@@ -410,6 +410,18 @@
             tournamentData.umum.scores.push({ s1: 0, s2: 0 });
         }
 
+        // Fungsi mencatat riwayat aktivitas panitia
+        function logActivity(text) {
+            if (db && currentAdminName) {
+                var now = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                db.ref('tournament/logs').push({
+                    user: currentAdminName.toUpperCase(),
+                    action: text,
+                    time: now
+                });
+            }
+        }
+
         function toggleMenu() {
             var menu = document.getElementById('dropdown-menu');
             menu.classList.toggle('show');
@@ -752,4 +764,65 @@
             db.ref('tournament/' + cat + '/teams').on('value', function(snap) {
                 var val = snap.val();
                 if (val && Array.isArray(val)) {
-                    tournamentData
+                    tournamentData[cat].teams = val;
+                    for (var i = 0; i < 16; i++) {
+                        var field = document.getElementById(cat + '-in-' + i);
+                        if (field && document.activeElement !== field) field.value = val[i] || ("Tim " + (i+1));
+                    }
+                    updateBracketLogic(cat);
+                }
+            });
+
+            db.ref('tournament/' + cat + '/scores').on('value', function(snap) {
+                var val = snap.val();
+                if (val && Array.isArray(val)) {
+                    tournamentData[cat].scores = val;
+                    updateBracketLogic(cat);
+                }
+            });
+
+            // Listener Data Tim Terdaftar
+            db.ref('registered_teams/' + cat).on('value', function(snap) {
+                var container = document.getElementById('list-registered-' + cat);
+                var val = snap.val();
+                if (!val) {
+                    container.innerHTML = '<p style="text-align:center; color:#cbd5e1;">Belum ada tim terdaftar.</p>';
+                    return;
+                }
+                var html = '';
+                for (var key in val) {
+                    var item = val[key];
+                    html += '<div class="registered-card">' +
+                                '<h3>' + item.namaTim + ' (Slot Tim ' + item.slot + ')</h3>' +
+                                '<p><span>Kapten:</span> ' + item.kapten + ' (ID: ' + item.idKapten + ')</p>' +
+                                '<p><span>Pemain 2 ID:</span> ' + item.idP2 + '</p>' +
+                                '<p><span>Pemain 3 ID:</span> ' + item.idP3 + '</p>' +
+                                '<p><span>Pemain 4 ID:</span> ' + item.idP4 + '</p>' +
+                                '<p><span>Pemain 5 ID:</span> ' + item.idP5 + '</p>' +
+                                '<p><span>Cadangan ID:</span> ' + item.idCadangan + '</p>' +
+                                '<p><span>WhatsApp:</span> ' + item.wa + '</p>' +
+                            '</div>';
+                }
+                container.innerHTML = html;
+            });
+        });
+
+        // Listener Riwayat Log Panitia
+        db.ref('tournament/logs').limitToLast(20).on('value', function(snap) {
+            var val = snap.val();
+            var logList = document.getElementById('log-list');
+            if (!val) {
+                logList.innerHTML = '<p style="text-align: center; color: #cbd5e1;">Belum ada riwayat aktivitas.</p>';
+                return;
+            }
+            var html = '';
+            var keys = Object.keys(val).reverse();
+            keys.forEach(function(k) {
+                var item = val[k];
+                html += '<div class="log-item"><span><strong>' + item.user + ':</strong> ' + item.action + '</span><span style="color:var(--accent-cyan);">' + item.time + '</span></div>';
+            });
+            logList.innerHTML = html;
+        });
+    </script>
+</body>
+</html>
