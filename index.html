@@ -191,7 +191,7 @@
         .round-title { text-align: center; color: #ffffff; font-size: 0.75rem; font-weight: 800; margin-bottom: 8px; background: rgba(2, 132, 199, 0.4); padding: 6px; border-radius: 6px; border: 1px solid var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 0 10px rgba(34, 211, 238, 0.2); }
 
         .center-col { display: flex; flex-direction: column; justify-content: space-around; align-items: center; min-width: 220px; }
-        .champ-title { background: linear-gradient(135deg, #fbbf24, #d97706); color: #080312; font-weight: 900; padding: 6px 14px; border-radius: 6px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 0 15px rgba(251, 191, 36, 0.5); }
+        .champ-title { background: linear-gradient(135deg, #fbbf24, #d97706); color: #080312; font-weight: 900; padding: 6px 14px; border-radius: 6px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 0 15px rgba(251, 191, 36, 0.5); margin-bottom: 6px; }
 
         .matchup { background: rgba(12, 18, 36, 0.85); border: 1px solid rgba(34, 211, 238, 0.4); border-radius: 8px; margin: 4px 0; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.5); backdrop-filter: blur(8px); }
         .matchup.final { border: 2px solid var(--accent-gold); box-shadow: 0 0 15px rgba(251, 191, 36, 0.3); }
@@ -586,7 +586,7 @@
             el.innerHTML = html;
         }
 
-        /* RENDER BRACKET KIRI - TENGAH - KANAN SEPERTI GAMBAR CONTOH */
+        /* RENDER BRACKET: GRAND FINAL DI TENGAH SEMIFINAL 1 DAN SEMIFINAL 2 */
         function renderBrackets(category) {
             var el = document.getElementById('bracket-' + category);
             if (!el) return;
@@ -603,21 +603,27 @@
             for (var m = 8; m < 10; m++) { html += createMatchHTML(category, m); }
             html += '</div>';
 
-            // CENTER: SEMI-FINALS, GRAND FINAL, & 3RD PLACE
+            // CENTER: SEMIFINAL 1 -> GRAND FINAL -> SEMIFINAL 2 -> 3RD PLACE MATCH
             html += '<div class="center-col">';
-            html += '<div class="champ-title">👑 CHAMPION</div>';
             
-            // Grand Final
-            html += createMatchHTML(category, 14, 'final', 'Grand Final');
-
-            // Semi Finals (Match 12 & 13)
-            html += '<div style="width: 100%;"><div class="round-title" style="margin-top:10px;">Semi-Finals</div>';
+            // Semifinal 1 (Finalist 1)
+            html += '<div style="width: 100%;"><div class="round-title">Semi-Finals</div>';
             html += createMatchHTML(category, 12, '', 'Finalist 1');
+            html += '</div>';
+
+            // Grand Final (di Tengah-Tengah)
+            html += '<div style="width: 100%; text-align: center; margin: 10px 0;">';
+            html += '<div class="champ-title">👑 CHAMPION</div>';
+            html += createMatchHTML(category, 14, 'final', 'Grand Final');
+            html += '</div>';
+
+            // Semifinal 2 (Finalist 2)
+            html += '<div style="width: 100%;">';
             html += createMatchHTML(category, 13, '', 'Finalist 2');
             html += '</div>';
 
             // 3rd Place Match
-            html += '<div style="width: 100%; margin-top:10px;">';
+            html += '<div style="width: 100%; margin-top: 10px;">';
             html += createMatchHTML(category, 15, 'third', '3rd Place Match (Juara 3)');
             html += '</div>';
 
