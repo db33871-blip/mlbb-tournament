@@ -178,6 +178,31 @@
 
         .history-log { max-height: 300px; overflow-y: auto; background: rgba(0,0,0,0.4); border-radius: 6px; padding: 8px; font-size: 0.75rem; }
         .log-item { padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; }
+        
+        /* TIM TERDAFTAR CARD */
+        .registered-card {
+            background: rgba(0,0,0,0.5);
+            border: 1px solid var(--border-glow);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+        .registered-card h3 {
+            color: var(--accent-yellow);
+            font-size: 0.95rem;
+            margin-bottom: 6px;
+            border-bottom: 1px solid var(--border-glow);
+            padding-bottom: 4px;
+        }
+        .registered-card p {
+            font-size: 0.8rem;
+            color: #cbd5e1;
+            margin: 3px 0;
+        }
+        .registered-card span {
+            color: var(--accent-cyan);
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -214,6 +239,7 @@
             </button>
             <div class="main-nav" id="dropdown-menu">
                 <button class="nav-btn active" onclick="switchTab(event, 'sec-daftar')">📝 Pendaftaran MLBB</button>
+                <button class="nav-btn" onclick="switchTab(event, 'sec-registered')">📜 Tim Terdaftar</button>
                 <button class="nav-btn" onclick="switchTab(event, 'sec-teams')">📋 Daftar Tim</button>
                 <button class="nav-btn" onclick="switchTab(event, 'sec-pelajar')">🎓 Bracket Pelajar</button>
                 <button class="nav-btn" onclick="switchTab(event, 'sec-umum')">🔥 Bracket Umum</button>
@@ -290,6 +316,23 @@
                     <input type="text" id="reg-wa" placeholder="Contoh: 08123456789">
                 </div>
                 <button class="btn-action" onclick="submitPendaftaran()">Kirim Pendaftaran</button>
+            </div>
+        </div>
+
+        <!-- MENU TIM TERDAFTAR -->
+        <div id="sec-registered" class="tab-section">
+            <div class="card">
+                <h2>Data Tim Terdaftar</h2>
+                <div class="sub-nav">
+                    <button class="sub-btn active" onclick="switchSubReg(event, 'sub-reg-pelajar')">Pelajar</button>
+                    <button class="sub-btn" onclick="switchSubReg(event, 'sub-reg-umum')">Umum</button>
+                </div>
+                <div id="sub-reg-pelajar" class="sub-reg-content">
+                    <div id="list-registered-pelajar"><p style="text-align:center; color:#cbd5e1;">Belum ada tim terdaftar.</p></div>
+                </div>
+                <div id="sub-reg-umum" class="sub-reg-content" style="display: none;">
+                    <div id="list-registered-umum"><p style="text-align:center; color:#cbd5e1;">Belum ada tim terdaftar.</p></div>
+                </div>
             </div>
         </div>
 
@@ -453,6 +496,22 @@
                 return;
             }
 
+            // Simpan data detail tim terdaftar ke Firebase
+            var newTeamData = {
+                namaTim: namaTim,
+                slot: slotIdx + 1,
+                kapten: kapten,
+                idKapten: idKapten,
+                idP2: idP2,
+                idP3: idP3,
+                idP4: idP4,
+                idP5: idP5,
+                idCadangan: idCadangan || '-',
+                wa: wa
+            };
+
+            db.ref('registered_teams/' + kat).push(newTeamData);
+
             // Masukkan nama tim ke slot yang dipilih
             tournamentData[kat].teams[slotIdx] = namaTim;
 
@@ -470,8 +529,8 @@
                   document.getElementById('reg-id-p5').value = '';
                   document.getElementById('reg-id-cadangan').value = '';
                   document.getElementById('reg-wa').value = '';
-                  // Pindah otomatis ke menu Daftar Tim
-                  switchTab(null, 'sec-teams');
+                  // Pindah otomatis ke menu Tim Terdaftar
+                  switchTab(null, 'sec-registered');
               })
               .catch(function(err) {
                   alert('Gagal mendaftar: ' + err.message);
@@ -662,6 +721,13 @@
             evt.currentTarget.classList.add('active');
         }
 
+        function switchSubReg(evt, subId) {
+            document.querySelectorAll('.sub-reg-content').forEach(function(s) { s.style.display = 'none'; });
+            document.querySelectorAll('#sec-registered .sub-btn').forEach(function(b) { b.classList.remove('active'); });
+            document.getElementById(subId).style.display = 'block';
+            evt.currentTarget.classList.add('active');
+        }
+
         // Render awal UI
         renderGrids('pelajar');
         renderGrids('umum');
@@ -686,28 +752,4 @@
             db.ref('tournament/' + cat + '/teams').on('value', function(snap) {
                 var val = snap.val();
                 if (val && Array.isArray(val)) {
-                    tournamentData[cat].teams = val;
-                    for (var i = 0; i < 16; i++) {
-                        var field = document.getElementById(cat + '-in-' + i);
-                        if (field && document.activeElement !== field) field.value = val[i] || ("Tim " + (i+1));
-                    }
-                    updateBracketLogic(cat);
-                }
-            });
-
-            db.ref('tournament/' + cat + '/scores').on('value', function(snap) {
-                var val = snap.val();
-                if (val && Array.isArray(val)) {
-                    tournamentData[cat].scores = val;
-                    updateBracketLogic(cat);
-                }
-            });
-        });
-
-        db.ref('tournament/logs').limitToLast(20).on('value', function(snap) {
-            var val = snap.val();
-            // ...
-        });
-    </script>
-</body>
-</html>
+                    tournamentData
