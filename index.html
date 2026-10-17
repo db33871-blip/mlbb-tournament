@@ -300,7 +300,7 @@
                 <h2>Formulir Pendaftaran Tim</h2>
                 <div class="form-group">
                     <label>Kategori Turnamen</label>
-                    <select id="reg-kategori">
+                    <select id="reg-kategori" onchange="updateAvailableSlots()">
                         <option value="pelajar">Pelajar (16 Tim)</option>
                         <option value="umum">Umum (16 Tim)</option>
                     </select>
@@ -310,7 +310,7 @@
                     <input type="text" id="reg-namatim" placeholder="Masukkan Nama Tim">
                 </div>
                 <div class="form-group">
-                    <label>Nomor Slot Tim (Pilih 1 - 16)</label>
+                    <label>Nomor Slot Tim (Pilih Slot Kosong)</label>
                     <select id="reg-slot">
                         <option value="0">Tim 1</option>
                         <option value="1">Tim 2</option>
@@ -445,6 +445,8 @@
         var currentAdminName = '';
         var scoreTimer = null;
 
+        var registeredDataStore = { pelajar: {}, umum: {} };
+
         var tournamentData = {
             pelajar: { teams: [], scores: [] },
             umum: { teams: [], scores: [] }
@@ -511,7 +513,6 @@
                 setInputsEditable(false);
             }
 
-            // Reload data pendaftaran untuk menyesuaikan tombol ACC
             ['pelajar', 'umum'].forEach(function(cat) {
                 loadRegisteredTeams(cat);
             });
@@ -540,11 +541,70 @@
             }
         }
 
-        /* FITUR PENDAFTARAN: MENUNGGU ACC PANITIA */
+        /* FITUR AUTO SELECT & UPDATE SLOT KOSONG */
+        function updateAvailableSlots() {
+            var kat = document.getElementById('reg-kategori').value;
+            var regSelect = document.getElementById('reg-slot');
+            var takenSlots = {};
+
+            // Cek slot mana saja yang sudah terisi di pendaftaran
+            var dataCat = registeredDataStore[kat];
+            if (dataCat) {
+                for (var k in dataCat) {
+                    var sNum = parseInt(dataCat[k].slot);
+                    takenSlots[sNum] = true;
+                }
+            }
+
+            var firstAvailable = -1;
+            var optionsHtml = '';
+
+            for (var i = 0; i < 16; i++) {
+                var slotNum = i + 1;
+                var isOccupied = takenSlots[slotNum];
+
+                if (isOccupied) {
+                    optionsHtml += '<option value="' + i + '" disabled>Tim ' + slotNum + ' (Sudah Terisi)</option>';
+                } else {
+                    if (firstAvailable === -1) firstAvailable = i;
+                    optionsHtml += '<option value="' + i + '">Tim ' + slotNum + '</option>';
+                }
+            }
+
+            regSelect.innerHTML = optionsHtml;
+            if (firstAvailable !== -1) {
+                regSelect.value = firstAvailable;
+            } else {
+                regSelect.innerHTML += '<option value="-1" disabled selected>Semua Slot Penuh (16/16)</option>';
+            }
+        }
+
+        /* FITUR PENDAFTARAN DENGAN CEK SLOT KOSONG */
         function submitPendaftaran() {
             var kat = document.getElementById('reg-kategori').value;
             var namaTim = document.getElementById('reg-namatim').value.trim();
-            var slotIdx = parseInt(document.getElementById('reg-slot').value);
+            var slotSelectVal = document.getElementById('reg-slot').value;
+            
+            if (slotSelectVal === "-1" || slotSelectVal === null || slotSelectVal === "") {
+                alert('Maaf, semua slot pendaftaran untuk kategori ini sudah penuh!');
+                return;
+            }
+
+            var slotIdx = parseInt(slotSelectVal);
+            var slotNum = slotIdx + 1;
+
+            // Validasi ulang agar slot tidak terisi ganda
+            var dataCat = registeredDataStore[kat];
+            if (dataCat) {
+                for (var k in dataCat) {
+                    if (parseInt(dataCat[k].slot) === slotNum) {
+                        alert('Maaf, Slot Tim ' + slotNum + ' baru saja diisi oleh pendaftar lain. Silakan pilih slot lain!');
+                        updateAvailableSlots();
+                        return;
+                    }
+                }
+            }
+
             var kapten = document.getElementById('reg-kapten').value.trim();
             var idKapten = document.getElementById('reg-id-kapten').value.trim();
             var idP2 = document.getElementById('reg-id-p2').value.trim();
@@ -561,7 +621,7 @@
 
             var newTeamData = {
                 namaTim: namaTim,
-                slot: slotIdx + 1,
+                slot: slotNum,
                 kapten: kapten,
                 idKapten: idKapten,
                 idP2: idP2,
@@ -570,12 +630,12 @@
                 idP5: idP5,
                 idCadangan: idCadangan || '-',
                 wa: wa,
-                status: 'pending' // Menunggu ACC dari Panitia
+                status: 'pending' // Menunggu ACC Panitia
             };
 
             db.ref('registered_teams/' + kat).push(newTeamData)
               .then(function() {
-                  alert('Pendaftaran Berhasil Dikirim!\nPendaftaran Tim "' + namaTim + '" sedang menunggu ACC / Persetujuan dari Panitia.');
+                  alert('Pendaftaran Berhasil Dikirim!\nPendaftaran Tim "' + namaTim + '" pada Slot Tim ' + slotNum + ' sedang menunggu ACC / Persetujuan dari Panitia.');
                   document.getElementById('reg-namatim').value = '';
                   document.getElementById('reg-kapten').value = '';
                   document.getElementById('reg-id-kapten').value = '';
@@ -841,6 +901,11 @@
             db.ref('registered_teams/' + cat).on('value', function(snap) {
                 var container = document.getElementById('list-registered-' + cat);
                 var val = snap.val();
+                registeredDataStore[cat] = val || {};
+
+                // Update slot pendaftaran secara otomatis saat ada pendaftar baru
+                updateAvailableSlots();
+
                 if (!val) {
                     container.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Belum ada tim terdaftar.</p>';
                     return;
