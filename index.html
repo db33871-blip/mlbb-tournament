@@ -222,6 +222,10 @@
         :fullscreen .fs-title { display: block !important; }
         :-webkit-full-screen .fs-title { display: block !important; }
 
+        /* TAMPILKAN JUDUL UTAMA DI HALAMAN UTAMA HANYA SAAT TIDAK FULLSCREEN (agar tidak dobel/tertutup) */
+        :fullscreen header { display: none !important; }
+        :-webkit-full-screen header { display: none !important; }
+
         /* TAMPILAN BRACKET 7 KOLOM */
         .bracket-scroll { margin-top: 75px; overflow-x: auto; padding-bottom: 10px; -webkit-overflow-scrolling: touch; position: relative; z-index: 1; }
         
@@ -515,6 +519,19 @@
             <div class="card" style="max-width: 500px; margin: 0 auto;">
                 <h2>Pengaturan Tampilan (Panitia)</h2>
                 
+                <!-- PENGATURAN BACKGROUND UTAMA -->
+                <div class="form-group" style="padding-bottom: 20px; border-bottom: 1px solid var(--border-subtle);">
+                    <label>Background Utama Web</label>
+                    <input type="file" id="file-bg-main" accept="image/*" style="display: none;" onchange="handleMainFileUpload(event)">
+                    <button class="btn-action" style="background: linear-gradient(135deg, #10b981, #059669); margin-bottom: 10px;" onclick="document.getElementById('file-bg-main').click()">🖼️ Pilih dari Galeri HP / Komputer</button>
+                    
+                    <p style="text-align: center; font-size: 0.75rem; margin: 5px 0; color: var(--text-muted);">-- ATAU --</p>
+                    
+                    <input type="text" id="input-bg-main" placeholder="Masukkan URL Gambar / Nama File (cth: logo.jpeg)">
+                    <button class="btn-action" style="margin-top: 10px; background: var(--bg-input); border: 1px solid var(--accent-cyan); color: var(--accent-cyan);" onclick="updateMainBackground()">Simpan dari URL/Teks</button>
+                    <div id="loading-main" style="display:none; color: var(--accent-gold); font-size: 0.85rem; text-align: center; margin-top: 10px; font-weight: bold;">⏳ Memproses & Mengunggah Gambar...</div>
+                </div>
+
                 <!-- PENGATURAN PELAJAR -->
                 <div class="form-group" style="padding-bottom: 20px; border-bottom: 1px solid var(--border-subtle);">
                     <label>Background Bracket Pelajar</label>
@@ -682,6 +699,75 @@
                     document.msExitFullscreen();
                 }
             }
+        }
+
+        function updateMainBackground() {
+            var url = document.getElementById('input-bg-main').value.trim();
+            if (!url) return alert("Masukkan URL atau nama file gambar terlebih dahulu.");
+            
+            db.ref('tournament/settings/bg_main').set(url)
+              .then(function() {
+                  alert('Background utama berhasil diubah untuk semua orang!');
+                  document.getElementById('input-bg-main').value = '';
+                  logActivity('Mengubah link/URL gambar background utama');
+              })
+              .catch(function(err) {
+                  alert('Gagal mengubah background utama: ' + err.message);
+              });
+        }
+
+        function handleMainFileUpload(event) {
+            var file = event.target.files[0];
+            if (!file) return;
+
+            var loadingEl = document.getElementById('loading-main');
+            if (loadingEl) loadingEl.style.display = 'block';
+
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var img = new Image();
+                img.onload = function() {
+                    var canvas = document.createElement('canvas');
+                    var ctx = canvas.getContext('2d');
+                    
+                    var MAX_WIDTH = 1280;
+                    var MAX_HEIGHT = 1280;
+                    var width = img.width;
+                    var height = img.height;
+
+                    if (width > height) {
+                        if (width > MAX_WIDTH) {
+                            height *= MAX_WIDTH / width;
+                            width = MAX_WIDTH;
+                        }
+                    } else {
+                        if (height > MAX_HEIGHT) {
+                            width *= MAX_HEIGHT / height;
+                            height = MAX_HEIGHT;
+                        }
+                    }
+                    
+                    canvas.width = width;
+                    canvas.height = height;
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    var dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                    
+                    db.ref('tournament/settings/bg_main').set(dataUrl)
+                      .then(function() {
+                          alert('Gambar dari Galeri berhasil diterapkan sebagai Background Utama!');
+                          logActivity('Mengunggah gambar background utama dari Galeri');
+                          if (loadingEl) loadingEl.style.display = 'none';
+                          event.target.value = '';
+                      })
+                      .catch(function(err) {
+                          alert('Gagal mengunggah gambar: ' + err.message);
+                          if (loadingEl) loadingEl.style.display = 'none';
+                      });
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
         }
 
         function updateBackground(category) {
@@ -1201,6 +1287,12 @@
         db.ref('tournament/settings').on('value', function(snap) {
             var val = snap.val();
             if (val) {
+                if (val.bg_main) {
+                    document.body.style.backgroundImage = "linear-gradient(180deg, rgba(8, 3, 18, 0.65) 0%, rgba(8, 3, 18, 0.85) 100%), url('" + val.bg_main + "')";
+                } else {
+                    document.body.style.backgroundImage = "linear-gradient(180deg, rgba(8, 3, 18, 0.65) 0%, rgba(8, 3, 18, 0.85) 100%), url('logo.jpeg')";
+                }
+
                 if (val.bg_pelajar) {
                     document.getElementById('sec-pelajar').style.backgroundImage = "url('" + val.bg_pelajar + "')";
                 } else {
