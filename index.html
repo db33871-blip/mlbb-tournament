@@ -206,9 +206,16 @@
             z-index: 0;
         }
 
+        /* PERBAIKAN TAMPILAN SAAT LAYAR PENUH (VIDEOTRON) */
+        #sec-pelajar:fullscreen, #sec-umum:fullscreen { border-radius: 0; border: none; overflow-y: auto; padding: 40px 20px; }
+        #sec-pelajar:-webkit-full-screen, #sec-umum:-webkit-full-screen { border-radius: 0; border: none; overflow-y: auto; padding: 40px 20px; }
+
         /* TAMPILAN BRACKET 7 KOLOM */
         .bracket-scroll { overflow-x: auto; padding-bottom: 10px; -webkit-overflow-scrolling: touch; position: relative; z-index: 1; }
+        
+        /* DIUBAH: justify-content: flex-start agar tidak terpotong di HP */
         .bracket-flex { display: flex; gap: 12px; min-width: 1150px; justify-content: flex-start; align-items: stretch; }
+        
         .round-col { flex: 1; min-width: 160px; display: flex; flex-direction: column; justify-content: space-around; }
         .round-title { text-align: center; color: #ffffff; font-size: 0.75rem; font-weight: 800; margin-bottom: 8px; background: rgba(2, 132, 199, 0.4); padding: 6px; border-radius: 6px; border: 1px solid var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 0 10px rgba(34, 211, 238, 0.2); }
 
@@ -431,8 +438,13 @@
 
         <!-- MENU BRACKET PELAJAR -->
         <div id="sec-pelajar" class="tab-section">
-            <h2 style="text-align: center; color: var(--accent-gold); margin-bottom: 20px; position: relative; z-index: 2; text-shadow: 0 4px 15px rgba(0,0,0,0.9); font-size: 1.4rem; font-weight: 800; text-transform: uppercase;">Kategori Pelajar</h2>
+            <h2 style="text-align: center; color: var(--accent-gold); margin-bottom: 10px; position: relative; z-index: 2; text-shadow: 0 4px 15px rgba(0,0,0,0.9); font-size: 1.4rem; font-weight: 800; text-transform: uppercase;">Kategori Pelajar</h2>
             
+            <!-- Tombol Layar Penuh Pelajar -->
+            <div style="text-align: center; margin-bottom: 15px; position: relative; z-index: 2;">
+                <button class="btn-action" style="width: auto; padding: 6px 16px; font-size: 0.8rem; background: rgba(34, 211, 238, 0.2); border: 1px solid var(--accent-cyan); color: var(--text-main);" onclick="toggleFullScreen('sec-pelajar')">🔲 Tampilkan Layar Penuh (Videotron)</button>
+            </div>
+
             <div class="bracket-scroll">
                 <div class="bracket-flex" id="bracket-pelajar"></div>
             </div>
@@ -440,8 +452,13 @@
 
         <!-- MENU BRACKET UMUM -->
         <div id="sec-umum" class="tab-section">
-            <h2 style="text-align: center; color: var(--accent-gold); margin-bottom: 20px; position: relative; z-index: 2; text-shadow: 0 4px 15px rgba(0,0,0,0.9); font-size: 1.4rem; font-weight: 800; text-transform: uppercase;">Kategori Umum</h2>
+            <h2 style="text-align: center; color: var(--accent-gold); margin-bottom: 10px; position: relative; z-index: 2; text-shadow: 0 4px 15px rgba(0,0,0,0.9); font-size: 1.4rem; font-weight: 800; text-transform: uppercase;">Kategori Umum</h2>
             
+            <!-- Tombol Layar Penuh Umum -->
+            <div style="text-align: center; margin-bottom: 15px; position: relative; z-index: 2;">
+                <button class="btn-action" style="width: auto; padding: 6px 16px; font-size: 0.8rem; background: rgba(34, 211, 238, 0.2); border: 1px solid var(--accent-cyan); color: var(--text-main);" onclick="toggleFullScreen('sec-umum')">🔲 Tampilkan Layar Penuh (Videotron)</button>
+            </div>
+
             <div class="bracket-scroll">
                 <div class="bracket-flex" id="bracket-umum"></div>
             </div>
@@ -606,6 +623,28 @@
                 setRole('admin', u);
             } else {
                 alert('Username atau Password salah!');
+            }
+        }
+
+        /* FITUR LAYAR PENUH (FULLSCREEN) UNTUK VIDEOTRON */
+        function toggleFullScreen(elemId) {
+            var elem = document.getElementById(elemId);
+            if (!document.fullscreenElement) {
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen();
+                } else if (elem.webkitRequestFullscreen) { /* Safari */
+                    elem.webkitRequestFullscreen();
+                } else if (elem.msRequestFullscreen) { /* IE11 */
+                    elem.msRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) { /* Safari */
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) { /* IE11 */
+                    document.msExitFullscreen();
+                }
             }
         }
 
