@@ -201,7 +201,7 @@
             content: "";
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(8, 3, 18, 0.3);
+            background: rgba(8, 3, 18, 0); /* Sepenuhnya transparan */
             border-radius: 16px;
             z-index: 0;
         }
@@ -272,6 +272,10 @@
             background: #ef4444; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 0.75rem; transition: opacity 0.2s;
         }
         .btn-acc:hover, .btn-reject:hover { opacity: 0.85; }
+        
+        /* GANTI BACKGROUND ADMIN INPUT */
+        .bg-admin-box { display: none; text-align: center; margin-bottom: 15px; position: relative; z-index: 2; }
+        .bg-admin-box input { padding: 8px; border-radius: 6px; border: 1px solid var(--accent-pink); background: rgba(0,0,0,0.6); color: white; margin-right: 5px; width: 60%; max-width: 300px; font-size: 0.8rem; }
     </style>
 </head>
 <body>
@@ -428,14 +432,26 @@
         </div>
 
         <div id="sec-pelajar" class="tab-section">
-            <h2 style="text-align: center; color: var(--accent-gold); margin-bottom: 20px; position: relative; z-index: 2; text-shadow: 0 4px 15px rgba(0,0,0,0.9); font-size: 1.4rem; font-weight: 800; text-transform: uppercase;">Kategori Pelajar</h2>
+            <h2 style="text-align: center; color: var(--accent-gold); margin-bottom: 10px; position: relative; z-index: 2; text-shadow: 0 4px 15px rgba(0,0,0,0.9); font-size: 1.4rem; font-weight: 800; text-transform: uppercase;">Kategori Pelajar</h2>
+            
+            <div id="admin-bg-pelajar" class="bg-admin-box">
+                <input type="text" id="input-bg-pelajar" placeholder="Nama File (cth: 222767.jpg) atau URL">
+                <button class="btn-action" style="width: auto; padding: 8px 14px; font-size: 0.75rem;" onclick="updateBackground('pelajar')">Ubah Background</button>
+            </div>
+
             <div class="bracket-scroll">
                 <div class="bracket-flex" id="bracket-pelajar"></div>
             </div>
         </div>
 
         <div id="sec-umum" class="tab-section">
-            <h2 style="text-align: center; color: var(--accent-gold); margin-bottom: 20px; position: relative; z-index: 2; text-shadow: 0 4px 15px rgba(0,0,0,0.9); font-size: 1.4rem; font-weight: 800; text-transform: uppercase;">Kategori Umum</h2>
+            <h2 style="text-align: center; color: var(--accent-gold); margin-bottom: 10px; position: relative; z-index: 2; text-shadow: 0 4px 15px rgba(0,0,0,0.9); font-size: 1.4rem; font-weight: 800; text-transform: uppercase;">Kategori Umum</h2>
+            
+            <div id="admin-bg-umum" class="bg-admin-box">
+                <input type="text" id="input-bg-umum" placeholder="Nama File (cth: 222767.jpg) atau URL">
+                <button class="btn-action" style="width: auto; padding: 8px 14px; font-size: 0.75rem;" onclick="updateBackground('umum')">Ubah Background</button>
+            </div>
+
             <div class="bracket-scroll">
                 <div class="bracket-flex" id="bracket-umum"></div>
             </div>
@@ -522,18 +538,24 @@
             var navHist = document.getElementById('nav-history');
             var btnP = document.getElementById('save-pelajar');
             var btnU = document.getElementById('save-umum');
+            var adminBgP = document.getElementById('admin-bg-pelajar');
+            var adminBgU = document.getElementById('admin-bg-umum');
 
             if (role === 'admin') {
                 badge.textContent = 'Status: Panitia (' + username.toUpperCase() + ')';
                 if (btnP) btnP.style.display = 'inline-block';
                 if (btnU) btnU.style.display = 'inline-block';
                 if (navHist) navHist.style.display = 'block';
+                if (adminBgP) adminBgP.style.display = 'block';
+                if (adminBgU) adminBgU.style.display = 'block';
                 setInputsEditable(true);
             } else {
                 badge.textContent = 'Status: Peserta (Lihat)';
                 if (btnP) btnP.style.display = 'none';
                 if (btnU) btnU.style.display = 'none';
                 if (navHist) navHist.style.display = 'none';
+                if (adminBgP) adminBgP.style.display = 'none';
+                if (adminBgU) adminBgU.style.display = 'none';
                 setInputsEditable(false);
             }
 
@@ -563,6 +585,21 @@
             } else {
                 alert('Username atau Password salah!');
             }
+        }
+
+        function updateBackground(category) {
+            var url = document.getElementById('input-bg-' + category).value.trim();
+            if (!url) return alert("Masukkan URL atau nama file gambar terlebih dahulu.");
+            
+            db.ref('tournament/settings/bg_' + category).set(url)
+              .then(function() {
+                  alert('Background bracket ' + category.toUpperCase() + ' berhasil diubah untuk semua orang!');
+                  document.getElementById('input-bg-' + category).value = '';
+                  logActivity('Mengubah gambar background bracket ' + category.toUpperCase());
+              })
+              .catch(function(err) {
+                  alert('Gagal mengubah background: ' + err.message);
+              });
         }
 
         /* FITUR AUTO SELECT & UPDATE SLOT KOSONG */
@@ -1003,6 +1040,24 @@
             });
 
             loadRegisteredTeams(cat);
+        });
+
+        /* MENDENGARKAN PERUBAHAN BACKGROUND SECARA REALTIME */
+        db.ref('tournament/settings').on('value', function(snap) {
+            var val = snap.val();
+            if (val) {
+                if (val.bg_pelajar) {
+                    document.getElementById('sec-pelajar').style.backgroundImage = "url('" + val.bg_pelajar + "')";
+                } else {
+                    document.getElementById('sec-pelajar').style.backgroundImage = "url('222767.jpg')";
+                }
+                
+                if (val.bg_umum) {
+                    document.getElementById('sec-umum').style.backgroundImage = "url('" + val.bg_umum + "')";
+                } else {
+                    document.getElementById('sec-umum').style.backgroundImage = "url('222767.jpg')";
+                }
+            }
         });
 
         db.ref('tournament/logs').limitToLast(20).on('value', function(snap) {
