@@ -201,7 +201,7 @@
             content: "";
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(8, 3, 18, 0); /* Sepenuhnya transparan */
+            background: rgba(8, 3, 18, 0);
             border-radius: 16px;
             z-index: 0;
         }
@@ -210,23 +210,18 @@
         #sec-pelajar:fullscreen, #sec-umum:fullscreen { border-radius: 0; border: none; overflow-y: auto; padding: 50px 20px; }
         #sec-pelajar:-webkit-full-screen, #sec-umum:-webkit-full-screen { border-radius: 0; border: none; overflow-y: auto; padding: 50px 20px; }
         
-        /* KETIKA LAYAR PENUH, BERI JARAK LEBIH ATAS AGAR LOGO TIDAK TERTUTUP */
         #sec-pelajar:fullscreen .bracket-scroll, #sec-umum:fullscreen .bracket-scroll { margin-top: 110px; }
         #sec-pelajar:-webkit-full-screen .bracket-scroll, #sec-umum:-webkit-full-screen .bracket-scroll { margin-top: 110px; }
 
-        /* SEMBUNYIKAN TOMBOL KETIKA LAYAR PENUH */
         :fullscreen .fs-btn-container { display: none !important; }
         :-webkit-full-screen .fs-btn-container { display: none !important; }
 
-        /* TAMPILKAN JUDUL KHUSUS KETIKA LAYAR PENUH */
         :fullscreen .fs-title { display: block !important; }
         :-webkit-full-screen .fs-title { display: block !important; }
 
-        /* TAMPILKAN JUDUL UTAMA DI HALAMAN UTAMA HANYA SAAT TIDAK FULLSCREEN (agar tidak dobel/tertutup) */
         :fullscreen header { display: none !important; }
         :-webkit-full-screen header { display: none !important; }
 
-        /* TAMPILAN BRACKET 7 KOLOM */
         .bracket-scroll { margin-top: 75px; overflow-x: auto; padding-bottom: 10px; -webkit-overflow-scrolling: touch; position: relative; z-index: 1; }
         
         .bracket-flex { display: flex; gap: 12px; min-width: 1150px; justify-content: flex-start; align-items: stretch; }
@@ -267,7 +262,6 @@
         .history-log { max-height: 300px; overflow-y: auto; background: var(--bg-input); border-radius: 8px; padding: 10px; font-size: 0.75rem; border: 1px solid var(--border-subtle); }
         .log-item { padding: 6px 0; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; }
         
-        /* TIM TERDAFTAR CARD & ACC BUTTONS */
         .registered-card {
             background: var(--bg-input);
             border: 1px solid var(--border-subtle);
@@ -468,14 +462,12 @@
 
         <!-- MENU BRACKET PELAJAR -->
         <div id="sec-pelajar" class="tab-section">
-            <!-- Judul Khusus Layar Penuh (Videotron) -->
             <div class="fs-title" style="display: none; text-align: center; margin-bottom: 10px; position: relative; z-index: 2;">
                 <h1 style="color: var(--accent-gold); font-size: 1.8rem; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 1px; font-weight: 900; text-shadow: 0 4px 15px rgba(0,0,0,0.9);">TOURNAMENT MLBB INFLY CARNIVAL</h1>
             </div>
 
             <h2 style="text-align: center; color: var(--accent-gold); margin-bottom: 10px; position: relative; z-index: 2; text-shadow: 0 4px 15px rgba(0,0,0,0.9); font-size: 1.4rem; font-weight: 800; text-transform: uppercase;">Kategori Pelajar</h2>
             
-            <!-- Tombol Layar Penuh Pelajar -->
             <div class="fs-btn-container" style="text-align: center; margin-bottom: 15px; position: relative; z-index: 2;">
                 <button class="btn-action" style="width: auto; padding: 6px 16px; font-size: 0.8rem; background: rgba(34, 211, 238, 0.2); border: 1px solid var(--accent-cyan); color: var(--text-main);" onclick="toggleFullScreen('sec-pelajar')">🔲 Tampilkan Layar Penuh (Videotron)</button>
             </div>
@@ -487,14 +479,12 @@
 
         <!-- MENU BRACKET UMUM -->
         <div id="sec-umum" class="tab-section">
-            <!-- Judul Khusus Layar Penuh (Videotron) -->
             <div class="fs-title" style="display: none; text-align: center; margin-bottom: 10px; position: relative; z-index: 2;">
                 <h1 style="color: var(--accent-gold); font-size: 1.8rem; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 1px; font-weight: 900; text-shadow: 0 4px 15px rgba(0,0,0,0.9);">TOURNAMENT MLBB INFLY CARNIVAL</h1>
             </div>
 
             <h2 style="text-align: center; color: var(--accent-gold); margin-bottom: 10px; position: relative; z-index: 2; text-shadow: 0 4px 15px rgba(0,0,0,0.9); font-size: 1.4rem; font-weight: 800; text-transform: uppercase;">Kategori Umum</h2>
             
-            <!-- Tombol Layar Penuh Umum -->
             <div class="fs-btn-container" style="text-align: center; margin-bottom: 15px; position: relative; z-index: 2;">
                 <button class="btn-action" style="width: auto; padding: 6px 16px; font-size: 0.8rem; background: rgba(34, 211, 238, 0.2); border: 1px solid var(--accent-cyan); color: var(--text-main);" onclick="toggleFullScreen('sec-umum')">🔲 Tampilkan Layar Penuh (Videotron)</button>
             </div>
@@ -527,8 +517,12 @@
                     
                     <p style="text-align: center; font-size: 0.75rem; margin: 5px 0; color: var(--text-muted);">-- ATAU --</p>
                     
-                    <input type="text" id="input-bg-main" placeholder="Masukkan URL Gambar / Nama File (cth: logo.jpeg)">
+                    <input type="text" id="input-bg-main" placeholder="Masukkan URL Gambar / Nama File">
                     <button class="btn-action" style="margin-top: 10px; background: var(--bg-input); border: 1px solid var(--accent-cyan); color: var(--accent-cyan);" onclick="updateMainBackground()">Simpan dari URL/Teks</button>
+                    
+                    <!-- TOMBOL HAPUS BACKGROUND UTAMA -->
+                    <button class="btn-action" style="margin-top: 8px; background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #ef4444;" onclick="removeBackground('main')">🗑️ Hapus Background Utama (Reset)</button>
+                    
                     <div id="loading-main" style="display:none; color: var(--accent-gold); font-size: 0.85rem; text-align: center; margin-top: 10px; font-weight: bold;">⏳ Memproses & Mengunggah Gambar...</div>
                 </div>
 
@@ -540,8 +534,12 @@
                     
                     <p style="text-align: center; font-size: 0.75rem; margin: 5px 0; color: var(--text-muted);">-- ATAU --</p>
                     
-                    <input type="text" id="input-bg-pelajar" placeholder="Masukkan URL Gambar / Nama File (cth: 222767.jpg)">
+                    <input type="text" id="input-bg-pelajar" placeholder="Masukkan URL Gambar / Nama File">
                     <button class="btn-action" style="margin-top: 10px; background: var(--bg-input); border: 1px solid var(--accent-cyan); color: var(--accent-cyan);" onclick="updateBackground('pelajar')">Simpan dari URL/Teks</button>
+                    
+                    <!-- TOMBOL HAPUS BACKGROUND PELAJAR -->
+                    <button class="btn-action" style="margin-top: 8px; background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #ef4444;" onclick="removeBackground('pelajar')">🗑️ Hapus Background Pelajar (Reset)</button>
+
                     <div id="loading-pelajar" style="display:none; color: var(--accent-gold); font-size: 0.85rem; text-align: center; margin-top: 10px; font-weight: bold;">⏳ Memproses & Mengunggah Gambar...</div>
                 </div>
                 
@@ -553,8 +551,12 @@
                     
                     <p style="text-align: center; font-size: 0.75rem; margin: 5px 0; color: var(--text-muted);">-- ATAU --</p>
                     
-                    <input type="text" id="input-bg-umum" placeholder="Masukkan URL Gambar / Nama File (cth: 222767.jpg)">
+                    <input type="text" id="input-bg-umum" placeholder="Masukkan URL Gambar / Nama File">
                     <button class="btn-action" style="margin-top: 10px; background: var(--bg-input); border: 1px solid var(--accent-cyan); color: var(--accent-cyan);" onclick="updateBackground('umum')">Simpan dari URL/Teks</button>
+                    
+                    <!-- TOMBOL HAPUS BACKGROUND UMUM -->
+                    <button class="btn-action" style="margin-top: 8px; background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #ef4444;" onclick="removeBackground('umum')">🗑️ Hapus Background Umum (Reset)</button>
+
                     <div id="loading-umum" style="display:none; color: var(--accent-gold); font-size: 0.85rem; text-align: center; margin-top: 10px; font-weight: bold;">⏳ Memproses & Mengunggah Gambar...</div>
                 </div>
             </div>
@@ -679,23 +681,22 @@
             }
         }
 
-        /* FITUR LAYAR PENUH (FULLSCREEN) UNTUK VIDEOTRON */
         function toggleFullScreen(elemId) {
             var elem = document.getElementById(elemId);
             if (!document.fullscreenElement) {
                 if (elem.requestFullscreen) {
                     elem.requestFullscreen();
-                } else if (elem.webkitRequestFullscreen) { /* Safari */
+                } else if (elem.webkitRequestFullscreen) {
                     elem.webkitRequestFullscreen();
-                } else if (elem.msRequestFullscreen) { /* IE11 */
+                } else if (elem.msRequestFullscreen) {
                     elem.msRequestFullscreen();
                 }
             } else {
                 if (document.exitFullscreen) {
                     document.exitFullscreen();
-                } else if (document.webkitExitFullscreen) { /* Safari */
+                } else if (document.webkitExitFullscreen) {
                     document.webkitExitFullscreen();
-                } else if (document.msExitFullscreen) { /* IE11 */
+                } else if (document.msExitFullscreen) {
                     document.msExitFullscreen();
                 }
             }
@@ -785,7 +786,6 @@
               });
         }
 
-        /* FITUR UPLOAD GAMBAR DARI GALERI */
         function handleFileUpload(event, category) {
             var file = event.target.files[0];
             if (!file) return;
@@ -797,7 +797,6 @@
             reader.onload = function(e) {
                 var img = new Image();
                 img.onload = function() {
-                    // Fitur kompresi gambar agar database Firebase tidak penuh (max lebar/tinggi 1280px)
                     var canvas = document.createElement('canvas');
                     var ctx = canvas.getContext('2d');
                     
@@ -822,16 +821,14 @@
                     canvas.height = height;
                     ctx.drawImage(img, 0, 0, width, height);
                     
-                    // Kompres jadi JPEG dengan kualitas 70%
                     var dataUrl = canvas.toDataURL('image/jpeg', 0.7);
                     
-                    // Simpan gambar (berformat text Base64) ke Firebase Realtime Database
                     db.ref('tournament/settings/bg_' + category).set(dataUrl)
                       .then(function() {
                           alert('Gambar dari Galeri berhasil diterapkan sebagai Background ' + category.toUpperCase() + '!');
                           logActivity('Mengunggah gambar background ' + category.toUpperCase() + ' dari Galeri');
                           if (loadingEl) loadingEl.style.display = 'none';
-                          event.target.value = ''; // Reset input file
+                          event.target.value = '';
                       })
                       .catch(function(err) {
                           alert('Gagal mengunggah gambar: ' + err.message);
@@ -843,13 +840,26 @@
             reader.readAsDataURL(file);
         }
 
-        /* FITUR AUTO SELECT & UPDATE SLOT KOSONG */
+        /* FUNGSI HAPUS / RESET BACKGROUND */
+        function removeBackground(type) {
+            if (currentUserRole !== 'admin') return alert('Akses ditolak!');
+            if (confirm('Apakah Anda yakin ingin menghapus/mereset background ' + type.toUpperCase() + ' ke setelan awal?')) {
+                db.ref('tournament/settings/bg_' + type).remove()
+                  .then(function() {
+                      alert('Background ' + type.toUpperCase() + ' berhasil dihapus/direset!');
+                      logActivity('Menghapus background ' + type.toUpperCase());
+                  })
+                  .catch(function(err) {
+                      alert('Gagal menghapus background: ' + err.message);
+                  });
+            }
+        }
+
         function updateAvailableSlots() {
             var kat = document.getElementById('reg-kategori').value;
             var regSelect = document.getElementById('reg-slot');
             var takenSlots = {};
 
-            // Cek slot mana saja yang sudah terisi di pendaftaran
             var dataCat = registeredDataStore[kat];
             if (dataCat) {
                 for (var k in dataCat) {
@@ -881,7 +891,6 @@
             }
         }
 
-        /* FITUR PENDAFTARAN DENGAN CEK SLOT KOSONG */
         function submitPendaftaran() {
             var kat = document.getElementById('reg-kategori').value;
             var namaTim = document.getElementById('reg-namatim').value.trim();
@@ -895,7 +904,6 @@
             var slotIdx = parseInt(slotSelectVal);
             var slotNum = slotIdx + 1;
 
-            // Validasi ulang agar slot tidak terisi ganda
             var dataCat = registeredDataStore[kat];
             if (dataCat) {
                 for (var k in dataCat) {
@@ -932,7 +940,7 @@
                 idP5: idP5,
                 idCadangan: idCadangan || '-',
                 wa: wa,
-                status: 'pending' // Menunggu ACC Panitia
+                status: 'pending'
             };
 
             db.ref('registered_teams/' + kat).push(newTeamData)
@@ -954,15 +962,12 @@
               });
         }
 
-        /* FITUR ACC PANITIA: TIM DITERIMA -> MASUK KE DAFTAR TIM & BRACKET */
         function accTeam(cat, key, namaTim, slot) {
             if (currentUserRole !== 'admin') return alert('Akses ditolak!');
             var slotIdx = slot - 1;
 
-            // 1. Ubah status pendaftaran di Firebase menjadi approved
             db.ref('registered_teams/' + cat + '/' + key + '/status').set('approved');
 
-            // 2. Masukkan tim ke daftar tim turnamen & bracket
             tournamentData[cat].teams[slotIdx] = namaTim;
             db.ref('tournament/' + cat + '/teams').set(tournamentData[cat].teams)
               .then(function() {
@@ -971,7 +976,6 @@
               });
         }
 
-        /* FITUR TOLAK PENDAFTARAN OLEH PANITIA */
         function rejectTeam(cat, key, namaTim) {
             if (currentUserRole !== 'admin') return alert('Akses ditolak!');
             if (confirm('Apakah Anda yakin ingin menolak pendaftaran Tim "' + namaTim + '"?')) {
@@ -993,29 +997,24 @@
             el.innerHTML = html;
         }
 
-        /* RENDER BRACKET: SEMIFINAL 1 (KIRI) | GRAND FINAL (TENGAH) | SEMIFINAL 2 (KANAN) */
         function renderBrackets(category) {
             var el = document.getElementById('bracket-' + category);
             if (!el) return;
 
             var html = '';
 
-            // 1. ROUND OF 16 KIRI (Team 1 - Team 8 / Match 0 - 3)
             html += '<div class="round-col"><div class="round-title">Round of 16</div>';
             for (var m = 0; m < 4; m++) { html += createMatchHTML(category, m); }
             html += '</div>';
 
-            // 2. QUARTER-FINALS KIRI (Match 8 & 9)
             html += '<div class="round-col"><div class="round-title">Quarter-Finals</div>';
             for (var m = 8; m < 10; m++) { html += createMatchHTML(category, m); }
             html += '</div>';
 
-            // 3. SEMI-FINAL 1 (Match 12 - Di sebelah kiri Grand Final)
             html += '<div class="round-col"><div class="round-title">Semi-Finals</div>';
             html += createMatchHTML(category, 12, '', 'Finalist 1');
             html += '</div>';
 
-            // 4. GRAND FINAL & PEREBUTAN JUARA 3 (TENGAH)
             html += '<div class="center-col">';
             html += '<div class="champ-title">👑 CHAMPION</div>';
             html += createMatchHTML(category, 14, 'final', 'Grand Final');
@@ -1025,17 +1024,14 @@
             html += '</div>';
             html += '</div>';
 
-            // 5. SEMI-FINAL 2 (Match 13 - Di sebelah kanan Grand Final)
             html += '<div class="round-col"><div class="round-title">Semi-Finals</div>';
             html += createMatchHTML(category, 13, '', 'Finalist 2');
             html += '</div>';
 
-            // 6. QUARTER-FINALS KANAN (Match 10 & 11)
             html += '<div class="round-col"><div class="round-title">Quarter-Finals</div>';
             for (var m = 10; m < 12; m++) { html += createMatchHTML(category, m); }
             html += '</div>';
 
-            // 7. ROUND OF 16 KANAN (Team 9 - Team 16 / Match 4 - 7)
             html += '<div class="round-col"><div class="round-title">Round of 16</div>';
             for (var m = 4; m < 8; m++) { html += createMatchHTML(category, m); }
             html += '</div>';
@@ -1205,7 +1201,6 @@
                 var val = snap.val();
                 registeredDataStore[cat] = val || {};
 
-                // Update slot pendaftaran secara otomatis saat ada pendaftar baru
                 updateAvailableSlots();
 
                 if (!val) {
@@ -1282,6 +1277,7 @@
 
             loadRegisteredTeams(cat);
         });
+
         /* MENDENGARKAN PERUBAHAN BACKGROUND SECARA REALTIME */
         db.ref('tournament/settings').on('value', function(snap) {
             var val = snap.val();
@@ -1303,6 +1299,10 @@
                 } else {
                     document.getElementById('sec-umum').style.backgroundImage = "url('222767.jpg')";
                 }
+            } else {
+                document.body.style.backgroundImage = "linear-gradient(180deg, rgba(8, 3, 18, 0.65) 0%, rgba(8, 3, 18, 0.85) 100%), url('logo.jpeg')";
+                document.getElementById('sec-pelajar').style.backgroundImage = "url('222767.jpg')";
+                document.getElementById('sec-umum').style.backgroundImage = "url('222767.jpg')";
             }
         });
 
