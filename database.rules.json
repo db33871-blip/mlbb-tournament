@@ -1,0 +1,78 @@
+{
+  "rules": {
+    "admins": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid"
+      }
+    },
+
+    "tournament": {
+      ".write": "auth != null && root.child('admins/' + auth.uid).exists()",
+      "pelajar": { ".read": true },
+      "umum": { ".read": true },
+      "settings": {
+        ".read": true,
+        "$bg": {
+          ".validate": "($bg === 'bg_main' || $bg === 'bg_pelajar' || $bg === 'bg_umum') && newData.isString() && newData.val().length < 2000000"
+        }
+      },
+      "logs": {
+        ".read": "auth != null && root.child('admins/' + auth.uid).exists()",
+        "$id": {
+          ".validate": "newData.hasChildren(['user', 'action', 'time'])"
+        }
+      }
+    },
+
+    "registered_teams": {
+      ".read": true,
+      "$kat": {
+        ".validate": "$kat === 'pelajar' || $kat === 'umum'",
+        "$key": {
+          ".write": "(!data.exists() && newData.exists()) || (auth != null && root.child('admins/' + auth.uid).exists())",
+          ".validate": "newData.hasChildren(['namaTim', 'slot', 'kapten', 'idKapten', 'idP2', 'idP3', 'idP4', 'idP5', 'idCadangan', 'status'])",
+          "namaTim":    { ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 40" },
+          "kapten":     { ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 40" },
+          "idKapten":   { ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 30" },
+          "idP2":       { ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 30" },
+          "idP3":       { ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 30" },
+          "idP4":       { ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 30" },
+          "idP5":       { ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 30" },
+          "idCadangan": { ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 30" },
+          "slot": {
+            ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 16 && (newData.parent().parent().parent().parent().child('slot_claims/' + $kat + '/' + newData.val()).val() === $key || (auth != null && root.child('admins/' + auth.uid).exists()))"
+          },
+          "status": {
+            ".validate": "newData.val() === 'pending' || (newData.val() === 'approved' && auth != null && root.child('admins/' + auth.uid).exists())"
+          },
+          "wa": {
+            ".validate": "auth != null && root.child('admins/' + auth.uid).exists()"
+          },
+          "$other": { ".validate": false }
+        }
+      }
+    },
+
+    "registered_contacts": {
+      "$kat": {
+        ".read": "auth != null && root.child('admins/' + auth.uid).exists()",
+        "$key": {
+          ".write": "(!data.exists() && newData.exists()) || (auth != null && root.child('admins/' + auth.uid).exists())",
+          ".validate": "newData.hasChildren(['wa']) && newData.parent().parent().parent().child('registered_teams/' + $kat + '/' + $key).exists()",
+          "wa": { ".validate": "newData.isString() && newData.val().matches(/^[0-9+ -]{8,20}$/)" },
+          "$other": { ".validate": false }
+        }
+      }
+    },
+
+    "slot_claims": {
+      ".read": true,
+      "$kat": {
+        "$slot": {
+          ".write": "(!data.exists() && newData.exists()) || (auth != null && root.child('admins/' + auth.uid).exists())",
+          ".validate": "$slot.matches(/^([1-9]|1[0-6])$/) && newData.isString() && newData.parent().parent().parent().child('registered_teams/' + $kat + '/' + newData.val()).exists()"
+        }
+      }
+    }
+  }
+}

@@ -8,6 +8,8 @@
     <!-- FIREBASE SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app-check.js"></script>
 
     <style>
         :root {
@@ -570,13 +572,33 @@
             authDomain: "tournamen-mlbb-infly-carnival.firebaseapp.com",
             databaseURL: "https://tournamen-mlbb-infly-carnival-default-rtdb.firebaseio.com",
             projectId: "tournamen-mlbb-infly-carnival",
-            storageBucket: "tournamen-mlbb-infly-carnival.firebasestorage.app"
+            storageBucket: "tournamen-mlbb-infly-carnival.firebasestorage.app",
+            // Wajib untuk App Check: salin dari Project settings → General → Your apps (Web app).
+            appId: ""
         };
+
+        // Site key reCAPTCHA v3 yang didaftarkan untuk domain mlbb.inflycarnival.com.
+        // Kosong = App Check belum aktif (website tetap jalan).
+        var RECAPTCHA_SITE_KEY = "";
+
+        // Login panitia memakai Firebase Authentication (Email/Password).
+        // Username "bentar" → email "bentar@mlbb.inflycarnival.com".
+        var PANITIA_EMAIL_DOMAIN = "mlbb.inflycarnival.com";
 
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
+        if (RECAPTCHA_SITE_KEY && firebaseConfig.appId) {
+            firebase.appCheck().activate(RECAPTCHA_SITE_KEY, true);
+        }
         var db = firebase.database();
+        var auth = firebase.auth();
+
+        function escapeHtml(value) {
+            return String(value == null ? '' : value)
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
 
         var currentUserRole = 'viewer';
         var currentAdminName = '';
@@ -626,8 +648,10 @@
             currentUserRole = role;
             currentAdminName = username;
 
-            localStorage.setItem('infly_role', role);
-            localStorage.setItem('infly_user', username);
+            // Hanya peran peserta yang diingat di browser. Status panitia SELALU
+            // berasal dari sesi Firebase Auth + node admins/{uid} (lihat onAuthStateChanged).
+            if (role === 'viewer') localStorage.setItem('infly_role', 'viewer');
+            localStorage.removeItem('infly_user');
 
             document.getElementById('login-modal').style.display = 'none';
 
@@ -644,6 +668,8 @@
                 if (navHist) navHist.style.display = 'block';
                 if (navPengaturan) navPengaturan.style.display = 'block';
                 setInputsEditable(true);
+                startAdminListeners();
+                migrateLegacyRegistrations();
             } else {
                 badge.textContent = 'Status: Peserta (Lihat)';
                 if (btnP) btnP.style.display = 'none';
@@ -654,7 +680,7 @@
             }
 
             ['pelajar', 'umum'].forEach(function(cat) {
-                loadRegisteredTeams(cat);
+                renderRegisteredTeams(cat);
             });
         }
 
@@ -662,23 +688,97 @@
             localStorage.removeItem('infly_role');
             localStorage.removeItem('infly_user');
             localStorage.removeItem('infly_tab');
-            location.reload();
+            auth.signOut().then(function() { location.reload(); }, function() { location.reload(); });
         }
 
         function showPanitiaBox() {
             document.getElementById('panitia-box').style.display = 'block';
         }
 
+        // Akun panitia dibuat di Firebase Console → Authentication, lalu UID-nya
+        // didaftarkan di node admins/{uid} = "nama". Tanpa entri itu, login ditolak.
+        function grantAdminIfListed(user, silent) {
+            return db.ref('admins/' + user.uid).once('value').then(function(snap) {
+                if (snap.exists()) {
+                    setRole('admin', String(snap.val() || user.email.split('@')[0]));
+                } else {
+                    auth.signOut();
+                    if (!silent) alert('Akun ini belum terdaftar sebagai panitia.');
+                }
+            }).catch(function() {
+                auth.signOut();
+                if (!silent) alert('Akun ini belum terdaftar sebagai panitia.');
+            });
+        }
+
         function verifyPanitiaLogin() {
             var u = document.getElementById('panitia-user').value.trim().toLowerCase();
             var p = document.getElementById('panitia-pass').value;
-            var users = { "bentar": "infly2026", "dwi": "infly2026", "rafa": "infly2026", "nuzul": "infly2026", "dimas": "infly2026", "ipank": "infly2026", "dana": "infly2026", "untung": "infly2026" };
+            if (!u || !p) return alert('Isi username dan password panitia.');
 
-            if (users[u] && users[u] === p) {
-                setRole('admin', u);
-            } else {
-                alert('Username atau Password salah!');
-            }
+            var email = u.indexOf('@') === -1 ? u + '@' + PANITIA_EMAIL_DOMAIN : u;
+            auth.signInWithEmailAndPassword(email, p)
+                .then(function(cred) { return grantAdminIfListed(cred.user, false); })
+                .catch(function() { alert('Username atau Password salah!'); });
+        }
+
+        auth.onAuthStateChanged(function(user) {
+            if (user && currentUserRole !== 'admin') grantAdminIfListed(user, true);
+        });
+
+        var adminListenersStarted = false;
+        var registeredContactsStore = { pelajar: {}, umum: {} };
+
+        function startAdminListeners() {
+            if (adminListenersStarted) return;
+            adminListenersStarted = true;
+
+            ['pelajar', 'umum'].forEach(function(cat) {
+                db.ref('registered_contacts/' + cat).on('value', function(snap) {
+                    registeredContactsStore[cat] = snap.val() || {};
+                    renderRegisteredTeams(cat);
+                });
+            });
+
+            db.ref('tournament/logs').limitToLast(20).on('value', function(snap) {
+                var val = snap.val();
+                var logList = document.getElementById('log-list');
+                if (!val) {
+                    logList.innerHTML = '<p style="text-align: center; color: var(--text-muted);">Belum ada riwayat aktivitas.</p>';
+                    return;
+                }
+                var html = '';
+                var keys = Object.keys(val).reverse();
+                keys.forEach(function(k) {
+                    var item = val[k];
+                    html += '<div class="log-item"><span><strong>' + escapeHtml(item.user) + ':</strong> ' + escapeHtml(item.action) + '</span><span style="color:var(--accent-cyan);">' + escapeHtml(item.time) + '</span></div>';
+                });
+                logList.innerHTML = html;
+            });
+        }
+
+        // Data pendaftaran lama (sebelum rules diperketat) masih menyimpan "wa" di node
+        // publik dan belum punya slot_claims. Dipindahkan sekali saat panitia login.
+        function migrateLegacyRegistrations() {
+            ['pelajar', 'umum'].forEach(function(cat) {
+                db.ref('registered_teams/' + cat).once('value').then(function(snap) {
+                    var val = snap.val() || {};
+                    Object.keys(val).forEach(function(key) {
+                        var item = val[key];
+                        if (item.wa) {
+                            db.ref('registered_contacts/' + cat + '/' + key).set({ wa: String(item.wa) })
+                              .then(function() { return db.ref('registered_teams/' + cat + '/' + key + '/wa').remove(); })
+                              .catch(function(err) { console.warn('Migrasi WA gagal', key, err.message); });
+                        }
+                        var slot = parseInt(item.slot);
+                        if (slot >= 1 && slot <= 16) {
+                            db.ref('slot_claims/' + cat + '/' + slot).transaction(function(cur) {
+                                return cur === null ? key : undefined;
+                            }).catch(function() {});
+                        }
+                    });
+                });
+            });
         }
 
         function toggleFullScreen(elemId) {
@@ -939,11 +1039,18 @@
                 idP4: idP4,
                 idP5: idP5,
                 idCadangan: idCadangan || '-',
-                wa: wa,
                 status: 'pending'
             };
 
-            db.ref('registered_teams/' + kat).push(newTeamData)
+            // Ditulis atomik ke 3 lokasi: data tim (publik), nomor WA (hanya panitia),
+            // dan klaim slot (rules menolak bila slot sudah diambil tim lain).
+            var key = db.ref('registered_teams/' + kat).push().key;
+            var updates = {};
+            updates['registered_teams/' + kat + '/' + key] = newTeamData;
+            updates['registered_contacts/' + kat + '/' + key] = { wa: wa };
+            updates['slot_claims/' + kat + '/' + slotNum] = key;
+
+            db.ref().update(updates)
               .then(function() {
                   alert('Pendaftaran Berhasil Dikirim!\nPendaftaran Tim "' + namaTim + '" pada Slot Tim ' + slotNum + ' sedang menunggu ACC / Persetujuan dari Panitia.');
                   document.getElementById('reg-namatim').value = '';
@@ -958,32 +1065,53 @@
                   switchTab(null, 'sec-registered');
               })
               .catch(function(err) {
-                  alert('Gagal mendaftar: ' + err.message);
+                  if (String(err.code || err.message).toUpperCase().indexOf('PERMISSION') !== -1) {
+                      alert('Gagal mendaftar: Slot Tim ' + slotNum + ' sudah diambil tim lain atau data tidak valid. Silakan pilih slot lain / periksa isian.');
+                      updateAvailableSlots();
+                  } else {
+                      alert('Gagal mendaftar: ' + err.message);
+                  }
               });
         }
 
-        function accTeam(cat, key, namaTim, slot) {
+        function accTeam(cat, key) {
             if (currentUserRole !== 'admin') return alert('Akses ditolak!');
+            var item = registeredDataStore[cat][key];
+            if (!item) return;
+            var namaTim = item.namaTim;
+            var slot = parseInt(item.slot);
             var slotIdx = slot - 1;
 
-            db.ref('registered_teams/' + cat + '/' + key + '/status').set('approved');
-
             tournamentData[cat].teams[slotIdx] = namaTim;
-            db.ref('tournament/' + cat + '/teams').set(tournamentData[cat].teams)
+            var updates = {};
+            updates['registered_teams/' + cat + '/' + key + '/status'] = 'approved';
+            updates['tournament/' + cat + '/teams'] = tournamentData[cat].teams;
+
+            db.ref().update(updates)
               .then(function() {
                   alert('Tim "' + namaTim + '" berhasil di-ACC! Otomatis masuk ke Daftar Tim & Bracket.');
                   logActivity('Menyetujui (ACC) Tim "' + namaTim + '" di Slot ' + slot + ' (' + cat.toUpperCase() + ')');
-              });
+              })
+              .catch(function(err) { alert('Gagal ACC: ' + err.message); });
         }
 
-        function rejectTeam(cat, key, namaTim) {
+        function rejectTeam(cat, key) {
             if (currentUserRole !== 'admin') return alert('Akses ditolak!');
+            var item = registeredDataStore[cat][key];
+            if (!item) return;
+            var namaTim = item.namaTim;
             if (confirm('Apakah Anda yakin ingin menolak pendaftaran Tim "' + namaTim + '"?')) {
-                db.ref('registered_teams/' + cat + '/' + key).remove()
-                  .then(function() {
-                      alert('Pendaftaran Tim "' + namaTim + '" telah ditolak / dihapus.');
-                      logActivity('Menolak Tim "' + namaTim + '" (' + cat.toUpperCase() + ')');
-                  });
+                var updates = {};
+                updates['registered_teams/' + cat + '/' + key] = null;
+                updates['registered_contacts/' + cat + '/' + key] = null;
+                db.ref('slot_claims/' + cat + '/' + item.slot).once('value').then(function(snap) {
+                    // Lepas slot hanya bila memang dipegang pendaftaran ini.
+                    if (snap.val() === key) updates['slot_claims/' + cat + '/' + item.slot] = null;
+                    return db.ref().update(updates);
+                }).then(function() {
+                    alert('Pendaftaran Tim "' + namaTim + '" telah ditolak / dihapus.');
+                    logActivity('Menolak Tim "' + namaTim + '" (' + cat.toUpperCase() + ')');
+                }).catch(function(err) { alert('Gagal menolak: ' + err.message); });
             }
         }
 
@@ -1197,45 +1325,57 @@
 
         function loadRegisteredTeams(cat) {
             db.ref('registered_teams/' + cat).on('value', function(snap) {
-                var container = document.getElementById('list-registered-' + cat);
-                var val = snap.val();
-                registeredDataStore[cat] = val || {};
-
+                registeredDataStore[cat] = snap.val() || {};
                 updateAvailableSlots();
-
-                if (!val) {
-                    container.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Belum ada tim terdaftar.</p>';
-                    return;
-                }
-                var html = '';
-                for (var key in val) {
-                    var item = val[key];
-                    var statusBadge = (item.status === 'approved') 
-                        ? '<span class="acc-status-approved">✅ Disetujui Panitia</span>' 
-                        : '<span class="acc-status-pending">⏳ Menunggu ACC Panitia</span>';
-                    
-                    var adminActionButtons = '';
-                    if (currentUserRole === 'admin' && item.status !== 'approved') {
-                        adminActionButtons = '<div style="margin-top: 10px;">' +
-                            '<button class="btn-acc" onclick="accTeam(\'' + cat + '\', \'' + key + '\', \'' + item.namaTim + '\', ' + item.slot + ')">✅ ACC Tim</button>' +
-                            '<button class="btn-reject" onclick="rejectTeam(\'' + cat + '\', \'' + key + '\', \'' + item.namaTim + '\')">❌ Tolak Tim</button>' +
-                        '</div>';
-                    }
-
-                    html += '<div class="registered-card">' +
-                                '<h3>' + item.namaTim + ' (Slot Tim ' + item.slot + ')' + statusBadge + '</h3>' +
-                                '<p><span>Kapten:</span> ' + item.kapten + ' (ID: ' + item.idKapten + ')</p>' +
-                                '<p><span>Pemain 2 ID:</span> ' + item.idP2 + '</p>' +
-                                '<p><span>Pemain 3 ID:</span> ' + item.idP3 + '</p>' +
-                                '<p><span>Pemain 4 ID:</span> ' + item.idP4 + '</p>' +
-                                '<p><span>Pemain 5 ID:</span> ' + item.idP5 + '</p>' +
-                                '<p><span>Cadangan ID:</span> ' + item.idCadangan + '</p>' +
-                                '<p><span>WhatsApp:</span> ' + item.wa + '</p>' +
-                                adminActionButtons +
-                            '</div>';
-                }
-                container.innerHTML = html;
+                renderRegisteredTeams(cat);
             });
+        }
+
+        function renderRegisteredTeams(cat) {
+            var container = document.getElementById('list-registered-' + cat);
+            if (!container) return;
+            var val = registeredDataStore[cat];
+            var keys = Object.keys(val || {});
+
+            if (!keys.length) {
+                container.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Belum ada tim terdaftar.</p>';
+                return;
+            }
+            var isAdmin = currentUserRole === 'admin';
+            var html = '';
+            keys.forEach(function(key) {
+                var item = val[key];
+                var statusBadge = (item.status === 'approved')
+                    ? '<span class="acc-status-approved">✅ Disetujui Panitia</span>'
+                    : '<span class="acc-status-pending">⏳ Menunggu ACC Panitia</span>';
+
+                var adminActionButtons = '';
+                if (isAdmin && item.status !== 'approved') {
+                    adminActionButtons = '<div style="margin-top: 10px;">' +
+                        '<button class="btn-acc" onclick="accTeam(\'' + cat + '\', \'' + key + '\')">✅ ACC Tim</button>' +
+                        '<button class="btn-reject" onclick="rejectTeam(\'' + cat + '\', \'' + key + '\')">❌ Tolak Tim</button>' +
+                    '</div>';
+                }
+
+                // Nomor WA hanya bisa dibaca panitia (node registered_contacts).
+                var contact = registeredContactsStore[cat][key];
+                var waRow = isAdmin
+                    ? '<p><span>WhatsApp:</span> ' + escapeHtml(contact ? contact.wa : (item.wa || '-')) + '</p>'
+                    : '';
+
+                html += '<div class="registered-card">' +
+                            '<h3>' + escapeHtml(item.namaTim) + ' (Slot Tim ' + escapeHtml(item.slot) + ')' + statusBadge + '</h3>' +
+                            '<p><span>Kapten:</span> ' + escapeHtml(item.kapten) + ' (ID: ' + escapeHtml(item.idKapten) + ')</p>' +
+                            '<p><span>Pemain 2 ID:</span> ' + escapeHtml(item.idP2) + '</p>' +
+                            '<p><span>Pemain 3 ID:</span> ' + escapeHtml(item.idP3) + '</p>' +
+                            '<p><span>Pemain 4 ID:</span> ' + escapeHtml(item.idP4) + '</p>' +
+                            '<p><span>Pemain 5 ID:</span> ' + escapeHtml(item.idP5) + '</p>' +
+                            '<p><span>Cadangan ID:</span> ' + escapeHtml(item.idCadangan) + '</p>' +
+                            waRow +
+                            adminActionButtons +
+                        '</div>';
+            });
+            container.innerHTML = html;
         }
 
         renderGrids('pelajar');
@@ -1243,10 +1383,9 @@
         renderBrackets('pelajar');
         renderBrackets('umum');
 
-        var savedRole = localStorage.getItem('infly_role');
-        var savedUser = localStorage.getItem('infly_user');
-        if (savedRole) {
-            setRole(savedRole, savedUser);
+        // Panitia dipulihkan otomatis dari sesi Firebase Auth (onAuthStateChanged).
+        if (localStorage.getItem('infly_role') === 'viewer') {
+            setRole('viewer');
         }
 
         var savedTab = localStorage.getItem('infly_tab');
@@ -1304,22 +1443,6 @@
                 document.getElementById('sec-pelajar').style.backgroundImage = "url('222767.jpg')";
                 document.getElementById('sec-umum').style.backgroundImage = "url('222767.jpg')";
             }
-        });
-
-        db.ref('tournament/logs').limitToLast(20).on('value', function(snap) {
-            var val = snap.val();
-            var logList = document.getElementById('log-list');
-            if (!val) {
-                logList.innerHTML = '<p style="text-align: center; color: var(--text-muted);">Belum ada riwayat aktivitas.</p>';
-                return;
-            }
-            var html = '';
-            var keys = Object.keys(val).reverse();
-            keys.forEach(function(k) {
-                var item = val[k];
-                html += '<div class="log-item"><span><strong>' + item.user + ':</strong> ' + item.action + '</span><span style="color:var(--accent-cyan);">' + item.time + '</span></div>';
-            });
-            logList.innerHTML = html;
         });
     </script>
 </body>
