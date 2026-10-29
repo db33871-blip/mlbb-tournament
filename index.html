@@ -93,15 +93,10 @@
         .sub-btn { background: var(--bg-input); color: var(--text-muted); border: 1px solid var(--border-subtle); padding: 8px 18px; border-radius: 20px; cursor: pointer; font-size: 0.825rem; font-weight: 700; }
         .sub-btn.active { background: var(--accent-cyan); color: #080312; border-color: var(--accent-cyan); }
 
-        /* ATURAN FULLSCREEN / VIDEOTRON (MENYEMBUNYIKAN TOMBOL ACAK SAAT FULLSCREEN) */
+        /* ATURAN SEMBUNYIKAN TOMBOL ACAK SAAT VIDEOTRON / LAYAR PENUH */
         :fullscreen .btn-random-nav,
         :-webkit-full-screen .btn-random-nav {
             display: none !important;
-        }
-
-        :fullscreen .sub-nav,
-        :-webkit-full-screen .sub-nav {
-            margin-bottom: 10px;
         }
 
         /* FORM PENDAFTARAN & GRID SEEDING */
