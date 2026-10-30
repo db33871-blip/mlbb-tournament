@@ -89,9 +89,22 @@
         .card h2 { color: var(--accent-gold); margin-bottom: 16px; text-align: center; font-size: 1.2rem; font-weight: 800; }
 
         /* SUB NAV BRACKET */
-        .sub-nav { display: flex; justify-content: center; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
-        .sub-btn { background: var(--bg-input); color: var(--text-muted); border: 1px solid var(--border-subtle); padding: 8px 18px; border-radius: 20px; cursor: pointer; font-size: 0.825rem; font-weight: 700; }
+        .sub-nav { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
+        .sub-btn { background: var(--bg-input); color: var(--text-muted); border: 1px solid var(--border-subtle); padding: 8px 18px; border-radius: 20px; cursor: pointer; font-size: 0.825rem; font-weight: 700; transition: all 0.2s ease; }
         .sub-btn.active { background: var(--accent-cyan); color: #080312; border-color: var(--accent-cyan); }
+        
+        /* TOMBOL ACAK BAGAN */
+        .btn-random-nav {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b) !important;
+            color: #0f172a !important;
+            font-weight: 800 !important;
+            border: 1px solid var(--accent-gold) !important;
+            box-shadow: 0 0 10px rgba(251, 191, 36, 0.3);
+        }
+        .btn-random-nav:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 0 15px rgba(251, 191, 36, 0.5);
+        }
 
         /* ATURAN SEMBUNYIKAN TOMBOL ACAK SAAT VIDEOTRON / LAYAR PENUH */
         :fullscreen .btn-random-nav,
@@ -201,7 +214,7 @@
                 <div class="sub-nav">
                     <button id="btn-cat-pelajar" class="sub-btn active" onclick="switchCategory('pelajar')">Kategori Pelajar</button>
                     <button id="btn-cat-umum" class="sub-btn" onclick="switchCategory('umum')">Kategori Umum</button>
-                    <button id="btn-random-bracket" class="sub-btn btn-random-nav" onclick="randomizeCurrentBracket()" style="background: rgba(251,191,36,0.2); color: var(--accent-gold);">🎲 Acak Bagan</button>
+                    <button id="btn-random-bracket" class="sub-btn btn-random-nav" onclick="randomizeCurrentBracket()">🎲 Acak Bagan</button>
                     <button class="sub-btn" onclick="toggleFullscreen()" style="border-color: var(--accent-gold); color: var(--accent-gold);">📺 Mode Videotron / Fullscreen</button>
                 </div>
 
