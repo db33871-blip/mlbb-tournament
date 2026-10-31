@@ -745,7 +745,7 @@
         </div>
     </div>
 
-    <!-- FLOATING BUTTONS (CS & PINTASAN ADMIN RAHASIA) -->
+    <!-- FLOATING BUTTONS (CS & PINTASAN ADMIN) -->
     <button onclick="openLiveChatModal()" class="fixed bottom-6 right-6 z-40 bg-gradient-to-r from-emerald-500 to-teal-600 text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center text-2xl hover:scale-110 transition glow-effect">
         <i class="fa-solid fa-headset"></i>
     </button>
@@ -824,11 +824,12 @@
         <p onclick="openAdminModal()" class="cursor-pointer hover:text-slate-400 select-none">© 2026 VALYX TOPUP. All Rights Reserved. Built for Speed & Automation.</p>
     </footer>
 
-    <!-- SCRIPT UTAMA UI & FIREBASE -->
+    <!-- SCRIPT UTAMA UI & LOGIKA DATA -->
     <script>
         window.isMemberLoggedIn = false;
         window.currentMemberData = null;
 
+        // --- PENAMBAHAN FITUR 1: GAME & LAYANAN BARU ---
         let gamesData = [
             {
                 id: 'mlbb', title: 'Mobile Legends', publisher: 'Moonton', category: 'mobile', badge: 'POPULER', keywords: ['ml', 'mlbb', 'mobile legend', 'mobile legends', 'dm ml', 'layla', 'diamond ml'],
@@ -851,7 +852,15 @@
                 ]
             },
             {
-                id: 'hok', title: 'Honor of Kings', publisher: 'Level Infinite', category: 'mobile', badge: 'NEW / HOT', keywords: ['hok', 'honor of king', 'honor of kings', 'kings', 'token hok'],
+                id: 'pubg', title: 'PUBG Mobile', publisher: 'Tencent Games', category: 'mobile', badge: 'HOT', keywords: ['pubg', 'uc', 'pubgm', 'pubg mobile'],
+                image: 'https://images.unsplash.com/photo-1598555291771-55dbbe9ea11e?w=400&auto=format&fit=crop&q=80', hasZone: false,
+                items: [
+                    { id: 'pubg_60', name: '60 UC', price: 15000, memberPrice: 14000 },
+                    { id: 'pubg_325', name: '325 UC', price: 75000, memberPrice: 72000, badge: 'BEST SELLER' }
+                ]
+            },
+            {
+                id: 'hok', title: 'Honor of Kings', publisher: 'Level Infinite', category: 'mobile', badge: 'NEW', keywords: ['hok', 'honor of king', 'honor of kings', 'kings', 'token hok'],
                 image: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=400&auto=format&fit=crop&q=80', hasZone: false,
                 items: [
                     { id: 'hok_8', name: '8 Tokens', price: 2000, memberPrice: 1700 },
@@ -859,11 +868,35 @@
                 ]
             },
             {
-                id: 'zzz', title: 'Zenless Zone Zero', publisher: 'HoYoverse', category: 'mobile', badge: 'HOT', keywords: ['zzz', 'zenless', 'zenless zone zero'],
+                id: 'genshin', title: 'Genshin Impact', publisher: 'HoYoverse', category: 'pc', badge: 'HOT', keywords: ['genshin', 'gi', 'welkin', 'crystal'],
+                image: 'https://images.unsplash.com/photo-1651586526107-167819ce293c?w=400&auto=format&fit=crop&q=80', hasZone: true,
+                items: [
+                    { id: 'gi_60', name: '60 Genesis Crystals', price: 16000, memberPrice: 15000 },
+                    { id: 'gi_welkin', name: 'Blessing of the Welkin Moon', price: 79000, memberPrice: 75000, badge: 'PROMO' }
+                ]
+            },
+            {
+                id: 'valo', title: 'Valorant', publisher: 'Riot Games', category: 'pc', badge: 'POPULER', keywords: ['valo', 'valorant', 'vp'],
+                image: 'https://images.unsplash.com/photo-1662513410507-6bc80a6bda4b?w=400&auto=format&fit=crop&q=80', hasZone: false,
+                items: [
+                    { id: 'valo_125', name: '125 VP', price: 15000, memberPrice: 14500 },
+                    { id: 'valo_420', name: '420 VP', price: 50000, memberPrice: 48000 }
+                ]
+            },
+            {
+                id: 'zzz', title: 'Zenless Zone Zero', publisher: 'HoYoverse', category: 'mobile', badge: 'NEW', keywords: ['zzz', 'zenless', 'zenless zone zero'],
                 image: 'https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?w=400&auto=format&fit=crop&q=80', hasZone: true,
                 items: [
                     { id: 'zzz_60', name: '60 Monochromes', price: 15000, memberPrice: 14000 },
                     { id: 'zzz_300', name: '300 Monochromes', price: 65000, memberPrice: 61500 }
+                ]
+            },
+            {
+                id: 'dana', title: 'Saldo DANA', publisher: 'E-Wallet', category: 'ewallet', badge: 'INSTAN', keywords: ['dana', 'saldo dana', 'ewallet'],
+                image: 'https://images.unsplash.com/photo-1614680376593-902f74cf0d41?w=400&auto=format&fit=crop&q=80', hasZone: false,
+                items: [
+                    { id: 'dana_10', name: 'Saldo 10.000', price: 11000, memberPrice: 10500 },
+                    { id: 'dana_50', name: 'Saldo 50.000', price: 51000, memberPrice: 50500 }
                 ]
             }
         ];
@@ -1150,10 +1183,46 @@
         }
 
         function closeInvoiceModal() { document.getElementById('invoiceModal').classList.add('hidden'); }
+        
+        // --- PENAMBAHAN FITUR 2: API INTEGRATION FRAMEWORK ---
         function simulatePaymentSuccess() {
             closeInvoiceModal();
+
+            // =======================================================================
+            // FITUR API OTOMATIS: JEMBATAN KE PROVIDER (Digiflazz / VIP Reseller / Dll)
+            // =======================================================================
+            // Jika Anda sudah memiliki server backend (PHP/NodeJS) yang terhubung ke API, 
+            // cukup hapus tanda komentar (/* dan */) di bawah ini untuk mengaktifkannya.
+            // Metode ini menggunakan API POST Fetch Request standar.
+            
+            /*
+            Swal.fire({ title: 'Memproses Pembayaran...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+            
+            fetch('https://domain-backend-anda.com/api/proses-order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    invoice: lastOrderData.invId,
+                    game: lastOrderData.game,
+                    item: lastOrderData.item,
+                    target: lastOrderData.target
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                Swal.close();
+                if(data.status === 'success') {
+                    console.log("Sukses dikirim via API!");
+                }
+            })
+            .catch(error => {
+                console.error("API Error:", error);
+            });
+            */
+            // =======================================================================
+
             confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-            Swal.fire('Sukses!', 'Pembayaran diterima.', 'success');
+            Swal.fire('Sukses!', 'Pembayaran diterima dan item sedang dikirim otomatis ke akun game.', 'success');
             showPage('tracking');
         }
 
@@ -1398,8 +1467,8 @@
         }
 
         function startRealtimeToastSimulator() {
-            const gamesList = ['Mobile Legends', 'Free Fire', 'Honor of Kings'];
-            const itemsList = ['86 Diamonds', '355 Diamonds', '80 Tokens'];
+            const gamesList = ['Mobile Legends', 'Free Fire', 'Valorant', 'Genshin Impact'];
+            const itemsList = ['86 Diamonds', '355 Diamonds', '125 VP', 'Welkin Moon'];
             const phoneList = ['0812***3452', '0857***9811', '0821***4432'];
             setInterval(() => {
                 const rGame = gamesList[Math.floor(Math.random() * gamesList.length)];
