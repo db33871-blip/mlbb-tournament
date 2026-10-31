@@ -1,707 +1,1623 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TOURNAMENT MLBB INFLY CARNIVAL</title>
-
-    <style>
-        :root {
-            --bg-dark: #080312;
-            --bg-card: rgba(16, 12, 34, 0.92);
-            --bg-input: rgba(6, 4, 18, 0.85);
-            --accent-gold: #fbbf24;
-            --accent-pink: #ec4899;
-            --accent-cyan: #22d3ee;
-            --accent-green: #22c55e;
-            --accent-red: #ef4444;
-            --border-subtle: rgba(34, 211, 238, 0.35);
-            --text-main: #f8fafc;
-            --text-muted: #cbd5e1;
-            --shadow-card: 0 12px 32px rgba(0, 0, 0, 0.7);
-            
-            /* Variabel Background yang bisa diubah via pengaturan */
-            --bg-utama-url: url('https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1920&q=80');
-            --bg-bracket-url: none;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
-
-        body {
-            background-color: var(--bg-dark);
-            background-image: linear-gradient(180deg, rgba(8, 3, 18, 0.82) 0%, rgba(8, 3, 18, 0.96) 100%), var(--bg-utama-url);
-            background-repeat: no-repeat;
-            background-position: center top;
-            background-size: cover;
-            background-attachment: fixed;
-            color: var(--text-main);
-            padding: 16px 12px;
-            min-height: 100vh;
-            transition: background-image 0.5s ease;
-        }
-
-        /* MODAL LOGIN */
-        #login-modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(5, 2, 12, 0.95);
-            backdrop-filter: blur(12px);
-            display: flex; justify-content: center; align-items: center;
-            z-index: 99999; padding: 15px;
-        }
-        .modal-box {
-            background: var(--bg-card);
-            border: 1px solid var(--border-subtle);
-            padding: 32px 24px;
-            border-radius: 16px; width: 100%; max-width: 380px; text-align: center;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
-        }
-        .modal-box h2 { color: var(--accent-gold); margin-bottom: 8px; font-size: 1.3rem; text-transform: uppercase; font-weight: 800; }
-        .modal-box p { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px; }
-        .modal-btn { width: 100%; padding: 12px; margin: 6px 0; font-weight: 700; border-radius: 8px; cursor: pointer; border: none; font-size: 0.9rem; transition: all 0.2s ease; }
-        .btn-admin { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #0f172a; }
-        .btn-viewer { background: rgba(34, 211, 238, 0.12); color: var(--accent-cyan); border: 1px solid var(--border-subtle); }
-        .panitia-box { display: none; margin-top: 14px; }
-        .panitia-box input { width: 100%; padding: 10px; background: var(--bg-input); border: 1px solid var(--border-subtle); color: #fff; border-radius: 8px; margin-bottom: 8px; text-align: center; font-size: 0.9rem; }
-
-        /* CONTAINER & HEADER UTAMA */
-        .container { max-width: 1350px; margin: 0 auto; }
-        .top-bar { display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); padding: 10px 16px; border-radius: 12px; margin-bottom: 14px; border: 1px solid var(--border-subtle); }
-        .role-badge { font-size: 0.8rem; font-weight: 700; padding: 5px 12px; border-radius: 20px; background: rgba(34, 211, 238, 0.15); color: var(--accent-cyan); border: 1px solid var(--border-subtle); }
-
-        header { text-align: center; margin-bottom: 16px; padding: 8px; }
-        header h1 { color: var(--accent-gold); font-size: 1.5rem; text-transform: uppercase; margin-bottom: 4px; font-weight: 900; letter-spacing: 1px; }
-        header p { color: var(--accent-cyan); font-size: 0.825rem; font-weight: 700; }
-
-        /* MENU UTAMA NAVIGASI */
-        .menu-container { position: relative; margin-bottom: 14px; }
-        .hamburger-btn { background: var(--bg-card); color: var(--accent-gold); border: 1px solid var(--border-subtle); padding: 9px 16px; font-size: 0.85rem; font-weight: 700; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
-        .main-nav { display: none; position: absolute; top: 44px; left: 0; background: rgba(12, 8, 28, 0.96); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 8px; flex-direction: column; gap: 4px; min-width: 250px; z-index: 999; box-shadow: 0 15px 35px rgba(0,0,0,0.8); }
-        .main-nav.show { display: flex; }
-        .nav-btn { background: transparent; color: var(--text-muted); border: none; padding: 10px 14px; font-size: 0.85rem; font-weight: 600; border-radius: 6px; cursor: pointer; text-align: left; transition: all 0.15s ease; }
-        .nav-btn:hover { color: #fff; background: rgba(34, 211, 238, 0.15); }
-        .nav-btn.active { background: linear-gradient(135deg, var(--accent-pink), #c026d3); color: #ffffff; font-weight: 700; }
-        .admin-nav { border-left: 3px solid var(--accent-gold); display: none; } /* Hanya untuk Panitia */
-
-        /* TAB SEKSI */
-        .tab-section { display: none; }
-        .tab-section.active { display: block; }
-        .card { background: var(--bg-card); border: 1px solid var(--border-subtle); padding: 18px; border-radius: 14px; box-shadow: var(--shadow-card); margin-bottom: 16px; }
-
-        /* SUB NAV KATEGORI */
-        .category-switcher { display: flex; justify-content: center; gap: 10px; margin-bottom: 14px; }
-        .sub-btn { background: var(--bg-input); color: var(--text-muted); border: 1px solid var(--border-subtle); padding: 8px 18px; border-radius: 20px; cursor: pointer; font-size: 0.825rem; font-weight: 700; }
-        .sub-btn.active { background: var(--accent-cyan); color: #080312; border-color: var(--accent-cyan); }
-
-        /* HEADER DALAM BRACKET */
-        .bracket-card-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: rgba(8, 4, 22, 0.7); border-bottom: 1px solid var(--border-subtle); border-radius: 12px 12px 0 0; margin-bottom: 16px; }
-        .logo-box-left, .logo-box-right { display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.95); padding: 6px 14px; border-radius: 8px; min-width: 120px; font-weight: 900; font-size: 0.85rem; color: #0f172a; }
-        .bracket-title-area { text-align: center; }
-        .bracket-title-area h2 { color: var(--accent-gold); font-size: 1.25rem; font-weight: 900; text-transform: uppercase; margin-bottom: 6px; }
-        .controls-row { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
-        .vt-btn { background: rgba(34, 211, 238, 0.12); color: var(--accent-cyan); border: 1px solid var(--accent-cyan); padding: 6px 14px; border-radius: 20px; font-size: 0.78rem; font-weight: 700; cursor: pointer; }
-        
-        .btn-acak-bagan { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #080312; border: 1px solid var(--accent-gold); padding: 6px 16px; border-radius: 20px; font-size: 0.78rem; font-weight: 800; cursor: pointer; }
-
-        :fullscreen .controls-row, :-webkit-full-screen .controls-row { display: none !important; }
-
-        /* BRACKET DESIGN */
-        .bracket-wrapper { 
-            position: relative; 
-            background-color: rgba(8, 3, 18, 0.85);
-            background-image: var(--bg-bracket-url); /* Background dari pengaturan */
-            background-size: cover; background-position: center; background-blend-mode: overlay;
-            border-radius: 12px; padding: 16px 8px; border: 1px solid var(--border-subtle); overflow-x: auto; 
-            transition: background-image 0.5s ease;
-        }
-        .bracket-flex { display: flex; gap: 16px; min-width: 1150px; justify-content: space-between; align-items: stretch; }
-        .round-col { flex: 1; min-width: 190px; display: flex; flex-direction: column; justify-content: space-around; }
-        .round-title { text-align: center; color: #fff; font-size: 0.75rem; font-weight: 800; margin-bottom: 10px; background: rgba(12, 18, 36, 0.9); padding: 6px; border-radius: 6px; border: 1px solid var(--accent-cyan); }
-
-        .matchup { background: rgba(16, 12, 34, 0.92); border: 1px solid rgba(34, 211, 238, 0.4); border-radius: 8px; margin: 8px 0; overflow: hidden; }
-        .matchup.final { border: 2px solid var(--accent-gold); }
-        .matchup.third { border: 2px solid var(--accent-cyan); }
-
-        .match-header { background: rgba(236, 72, 153, 0.25); font-size: 0.65rem; padding: 4px 8px; text-align: center; color: var(--accent-gold); font-weight: 700; text-transform: uppercase; }
-        .team-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 10px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.8rem; }
-        .team-row.winner { background: rgba(34, 197, 94, 0.2); font-weight: 700; color: var(--accent-gold); }
-        .team-name { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 8px; }
-        .score-btn { background: rgba(34, 211, 238, 0.15); color: #fff; border: 1px solid var(--border-subtle); padding: 2px 7px; border-radius: 4px; font-weight: 700; font-size: 0.72rem; cursor: pointer; }
-
-        /* PODIUM */
-        .podium-box { margin-top: 18px; background: rgba(16, 12, 34, 0.95); border: 2px solid var(--accent-gold); border-radius: 12px; padding: 14px; text-align: center; }
-        .podium-title { color: var(--accent-gold); font-size: 1rem; font-weight: 800; margin-bottom: 10px; }
-        .podium-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .podium-item { background: rgba(0,0,0,0.4); padding: 10px; border-radius: 8px; border: 1px solid var(--border-subtle); }
-        .podium-rank { font-size: 0.72rem; font-weight: 800; margin-bottom: 4px; }
-        .rank-1 { color: #fbbf24; } .rank-2 { color: #94a3b8; } .rank-3 { color: #b45309; }
-        .podium-name { font-size: 0.85rem; font-weight: 700; color: #fff; }
-
-        /* TABEL & DAFTAR TIM */
-        .table-responsive { overflow-x: auto; margin-top: 10px; }
-        table { width: 100%; border-collapse: collapse; font-size: 0.825rem; text-align: left; }
-        th, td { padding: 10px 12px; border-bottom: 1px solid var(--border-subtle); }
-        th { background: rgba(34, 211, 238, 0.1); color: var(--accent-cyan); font-weight: 700; }
-        .badge-status { padding: 4px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 700; }
-        .badge-pending { background: rgba(251, 191, 36, 0.2); color: var(--accent-gold); }
-        .badge-approved { background: rgba(34, 197, 94, 0.2); color: var(--accent-green); }
-        .badge-rejected { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); }
-
-        .team-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 15px; }
-        @media (min-width: 640px) { .team-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } }
-        .team-item { display: flex; align-items: center; gap: 10px; background: var(--bg-input); padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-subtle); }
-        
-        .form-group { margin-bottom: 14px; text-align: left; }
-        .form-group label { display: block; color: var(--accent-cyan); font-size: 0.775rem; font-weight: 700; margin-bottom: 6px; }
-        .form-group input, .form-group select { width: 100%; padding: 10px 12px; background: var(--bg-input); border: 1px solid var(--border-subtle); color: #fff; border-radius: 8px; font-size: 0.85rem; }
-        .btn-action { background: linear-gradient(135deg, #ec4899, #c026d3); color: #ffffff; border: none; padding: 11px 18px; font-weight: 700; border-radius: 8px; cursor: pointer; width: 100%; margin-top: 10px; }
-
-        .riwayat-item { background: var(--bg-input); padding: 12px; border-left: 4px solid var(--accent-pink); border-radius: 6px; margin-bottom: 8px; font-size: 0.85rem; display: flex; justify-content: space-between;}
-    </style>
-</head>
-<body>
-
-    <!-- MODAL AKSES / LOGIN -->
-    <div id="login-modal">
-        <div class="modal-box">
-            <h2>Pilih Hak Akses</h2>
-            <p>Turnamen Mobile Legends Infly Carnival</p>
-            <button class="modal-btn btn-viewer" onclick="setRole('viewer')">PENONTON / PUBLIK</button>
-            <button class="modal-btn btn-admin" onclick="showPanitiaBox()">PANITIA / ADMIN</button>
-            <div id="panitia-box" class="panitia-box">
-                <input type="password" id="pin-input" placeholder="Masukkan PIN Panitia" />
-                <button class="modal-btn btn-admin" onclick="verifyPin()">MASUK PANITIA</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="container">
-        <!-- BAR ATAS -->
-        <div class="top-bar">
-            <div><strong>STATUS:</strong> <span id="role-display" class="role-badge">Penonton</span></div>
-            <div><button class="sub-btn" onclick="openLoginModal()" style="font-size:0.75rem;">Ganti Akses</button></div>
-        </div>
-
-        <header>
-            <h1>TOURNAMENT MLBB INFLY CARNIVAL</h1>
-            <p>Papan Bagan Pertandingan & Pendaftaran Resmi</p>
-        </header>
-
-        <!-- MENU NAVIGASI UTAMA -->
-        <div class="menu-container">
-            <button class="hamburger-btn" onclick="toggleNav()"><span>☰ MENU UTAMA</span></button>
-            <div id="main-nav" class="main-nav">
-                <!-- Menu Publik -->
-                <button class="nav-btn active" onclick="switchTab('sec-bracket')">🏆 Bagan Pertandingan</button>
-                <button class="nav-btn" onclick="switchTab('sec-daftar')">📝 Form Pendaftaran</button>
-                <button class="nav-btn" onclick="switchTab('sec-daftar-tim')">🛡️ Daftar Tim Resmi</button>
-                <button class="nav-btn" onclick="switchTab('sec-riwayat')">📜 Riwayat Pertandingan</button>
-                
-                <!-- Menu Khusus Panitia -->
-                <button id="nav-admin-reg" class="nav-btn admin-nav" onclick="switchTab('sec-tim-terdaftar')">📋 Tim Terdaftar (Menunggu ACC)</button>
-                <button id="nav-pengaturan" class="nav-btn admin-nav" onclick="switchTab('sec-pengaturan')">⚙️ Pengaturan Sistem</button>
-            </div>
-        </div>
-
-        <!-- TAB 1: BAGAN PERTANDINGAN -->
-        <div id="sec-bracket" class="tab-section active">
-            <div class="category-switcher">
-                <button id="btn-cat-pelajar" class="sub-btn active" onclick="switchCategory('pelajar')">Kategori Pelajar</button>
-                <button id="btn-cat-umum" class="sub-btn" onclick="switchCategory('umum')">Kategori Umum</button>
-            </div>
-
-            <div class="card" style="padding: 12px;">
-                <div class="bracket-card-header">
-                    <div class="logo-box-left">INFLY NETWORKS</div>
-                    <div class="bracket-title-area">
-                        <h2 id="header-cat-title">KATEGORI PELAJAR</h2>
-                        <div class="controls-row">
-                            <button class="vt-btn" onclick="toggleFullscreen()">📺 Tampilkan Layar Penuh (Videotron)</button>
-                            <button class="btn-acak-bagan" onclick="randomizeCurrentBracket()">🎲 ACAK BAGAN</button>
-                        </div>
-                    </div>
-                    <div class="logo-box-right">infly Carnival</div>
-                </div>
-
-                <div id="bracket-container" class="bracket-wrapper">
-                    <!-- Dynamic Bracket -->
-                </div>
-
-                <!-- PODIUM -->
-                <div class="podium-box">
-                    <div class="podium-title">🥇 PODIUM JUARA <span id="podium-cat-title">PELAJAR</span> 🥇</div>
-                    <div class="podium-grid">
-                        <div class="podium-item"><div class="podium-rank rank-2">🥈 JUARA 2</div><div id="podium-2" class="podium-name">-</div></div>
-                        <div class="podium-item" style="border-color: var(--accent-gold);"><div class="podium-rank rank-1">🏆 JUARA 1</div><div id="podium-1" class="podium-name">-</div></div>
-                        <div class="podium-item"><div class="podium-rank rank-3">🥉 JUARA 3</div><div id="podium-3" class="podium-name">-</div></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB 2: FORM PENDAFTARAN -->
-        <div id="sec-daftar" class="tab-section">
-            <div class="card" style="max-width: 600px; margin: 0 auto;">
-                <h2 style="color:var(--accent-gold); text-align:center;">Formulir Pendaftaran Tim</h2>
-                <form id="form-registrasi" onsubmit="handleRegistration(event)">
-                    <div class="form-group">
-                        <label>Kategori Turnamen</label>
-                        <select id="reg-kategori" required><option value="pelajar">Pelajar</option><option value="umum">Umum</option></select>
-                    </div>
-                    <div class="form-group"><label>Nama Tim</label><input type="text" id="reg-namatim" required /></div>
-                    <div class="form-group"><label>Nama Kapten</label><input type="text" id="reg-kapten" required /></div>
-                    <div class="form-group"><label>No. WhatsApp Kapten</label><input type="tel" id="reg-wa" required /></div>
-                    <button type="submit" class="btn-action">KIRIM PENDAFTARAN</button>
-                </form>
-            </div>
-        </div>
-
-        <!-- TAB 3: DAFTAR TIM (RESMI DI ACC) -->
-        <div id="sec-daftar-tim" class="tab-section">
-            <div class="card">
-                <h2 style="color:var(--accent-gold); text-align:center;">Daftar Tim Resmi (Disetujui)</h2>
-                <div class="category-switcher">
-                    <button class="sub-btn" onclick="renderDaftarTim('pelajar')">Kategori Pelajar</button>
-                    <button class="sub-btn" onclick="renderDaftarTim('umum')">Kategori Umum</button>
-                </div>
-                <div class="table-responsive">
-                    <table>
-                        <thead><tr><th>No</th><th>Nama Tim</th><th>Kapten</th><th>Status Slot Bagan</th></tr></thead>
-                        <tbody id="list-tim-resmi"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB 4: RIWAYAT PERTANDINGAN -->
-        <div id="sec-riwayat" class="tab-section">
-            <div class="card" style="max-width: 800px; margin: 0 auto;">
-                <h2 style="color:var(--accent-gold); text-align:center;">Riwayat Hasil Pertandingan</h2>
-                <div id="history-container">
-                    <!-- Dynamic History -->
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB 5: TIM TERDAFTAR (KHUSUS PANITIA) -->
-        <div id="sec-tim-terdaftar" class="tab-section">
-            <div class="card">
-                <h2 style="color:var(--accent-gold); text-align:center;">Data Pendaftaran Tim (Menunggu ACC)</h2>
-                <p style="text-align:center; font-size:0.8rem; color:var(--text-muted); margin-bottom:15px;">Klik <strong>Setujui</strong> agar tim otomatis masuk ke Bagan Pertandingan & Daftar Tim Resmi.</p>
-                <div class="table-responsive">
-                    <table>
-                        <thead><tr><th>Waktu</th><th>Kategori</th><th>Nama Tim</th><th>Kapten / WA</th><th>Status</th><th>Aksi Panitia</th></tr></thead>
-                        <tbody id="pendaftar-list"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB 6: PENGATURAN (KHUSUS PANITIA) -->
-        <div id="sec-pengaturan" class="tab-section">
-            <div class="card" style="max-width: 800px; margin: 0 auto;">
-                <h2 style="color:var(--accent-gold); text-align:center;">⚙️ Pengaturan Sistem</h2>
-                
-                <h3 style="margin-top:20px; color:var(--accent-cyan); font-size:1rem;">1. Pengaturan Tampilan (Background)</h3>
-                <div class="form-group">
-                    <label>Link URL Background Utama Website</label>
-                    <input type="text" id="setting-bg-utama" placeholder="Contoh: https://link-gambar.com/bg.jpg" />
-                </div>
-                <div class="form-group">
-                    <label>Link URL Background Kotak Bagan (Bracket)</label>
-                    <input type="text" id="setting-bg-bracket" placeholder="Kosongkan jika ingin warna solid, atau masukkan link URL" />
-                </div>
-                <button class="btn-action" onclick="simpanPengaturanBG()" style="margin-bottom:20px;">SIMPAN BACKGROUND</button>
-                
-                <hr style="border-color:var(--border-subtle); margin:20px 0;">
-
-                <h3 style="color:var(--accent-cyan); font-size:1rem;">2. Edit Slot Tim Manual</h3>
-                <div class="category-switcher" style="justify-content: flex-start;">
-                    <button class="sub-btn active" onclick="renderSeedingInputs('pelajar')">Slot Pelajar</button>
-                    <button class="sub-btn" onclick="renderSeedingInputs('umum')">Slot Umum</button>
-                </div>
-                <div id="seed-inputs" class="team-grid"></div>
-                <button class="btn-action" onclick="saveSeedSettings()">SIMPAN NAMA TIM MANUAL</button>
-
-                <hr style="border-color:var(--border-subtle); margin:20px 0;">
-                
-                <h3 style="color:var(--accent-red); font-size:1rem;">3. Zona Bahaya (Reset Skor)</h3>
-                <button class="btn-action" style="background:var(--accent-red); width:auto;" onclick="resetBracketData('pelajar')">⚠️ Reset Skor Kategori Pelajar</button>
-                <button class="btn-action" style="background:var(--accent-red); width:auto; margin-left:10px;" onclick="resetBracketData('umum')">⚠️ Reset Skor Kategori Umum</button>
-            </div>
-        </div>
-
-    </div>
-
+    <title>VALYX TOPUP - Web Top Up Game & Digital Otomatis 24 Jam</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        // --- STATE & DATA DEFAULT ---
-        const ADMIN_PIN = "1234";
-        let currentRole = "viewer";
-        let currentCategory = "pelajar";
-        let seedEditCategory = "pelajar";
-
-        let appState = {
-            pelajar: { teams: Array.from({length: 16}, (_, i) => `Tim ${i+1}`), matches: createEmptyMatches() },
-            umum: { teams: Array.from({length: 16}, (_, i) => `Tim ${i+1}`), matches: createEmptyMatches() },
-            registrations: [],
-            history: [],
-            settings: { bgUtama: "", bgBracket: "" }
-        };
-
-        function createEmptyMatches() {
-            return {
-                r16: Array.from({length: 8}, () => ({ s1: 0, s2: 0, w: null })),
-                qf: Array.from({length: 4}, () => ({ s1: 0, s2: 0, w: null })),
-                sf: Array.from({length: 2}, () => ({ s1: 0, s2: 0, w: null })),
-                f: { s1: 0, s2: 0, w: null },
-                t3: { s1: 0, s2: 0, w: null }
-            };
-        }
-
-        // --- INIT DATA ---
-        function loadSavedState() {
-            const saved = localStorage.getItem('infly_mlbb_state_v2');
-            if (saved) {
-                try {
-                    let parsed = JSON.parse(saved);
-                    appState = { ...appState, ...parsed };
-                } catch(e) { console.error(e); }
-            }
-            terapkanBackground();
-        }
-
-        function saveState() {
-            localStorage.setItem('infly_mlbb_state_v2', JSON.stringify(appState));
-            renderBracket();
-            renderPodium();
-            renderAdminRegistrations();
-            renderDaftarTim(currentCategory);
-            renderRiwayat();
-        }
-
-        // --- AUTH & ROLE ---
-        function setRole(role) {
-            currentRole = role;
-            document.getElementById('role-display').innerText = role === 'admin' ? 'PANITIA' : 'PENONTON';
-            document.getElementById('role-display').style.color = role === 'admin' ? 'var(--accent-gold)' : 'var(--accent-cyan)';
-            
-            const adminMenus = document.querySelectorAll('.admin-nav');
-            adminMenus.forEach(menu => menu.style.display = role === 'admin' ? 'block' : 'none');
-            
-            document.getElementById('login-modal').style.display = 'none';
-            renderBracket();
-        }
-
-        function showPanitiaBox() { document.getElementById('panitia-box').style.display = 'block'; }
-        function openLoginModal() { document.getElementById('login-modal').style.display = 'flex'; }
-        function verifyPin() {
-            const pin = document.getElementById('pin-input').value;
-            if (pin === ADMIN_PIN || pin === "INFLY2026") { setRole('admin'); } 
-            else { alert("PIN Salah!"); }
-        }
-
-        // --- NAVIGATION ---
-        function toggleNav() { document.getElementById('main-nav').classList.toggle('show'); }
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-section').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            document.getElementById('main-nav').classList.remove('show');
-
-            if (tabId === 'sec-pengaturan') {
-                document.getElementById('setting-bg-utama').value = appState.settings.bgUtama || '';
-                document.getElementById('setting-bg-bracket').value = appState.settings.bgBracket || '';
-                renderSeedingInputs(seedEditCategory);
-            }
-            if (tabId === 'sec-riwayat') renderRiwayat();
-            if (tabId === 'sec-daftar-tim') renderDaftarTim('pelajar');
-        }
-
-        function switchCategory(cat) {
-            currentCategory = cat;
-            document.getElementById('btn-cat-pelajar').classList.toggle('active', cat === 'pelajar');
-            document.getElementById('btn-cat-umum').classList.toggle('active', cat === 'umum');
-            document.getElementById('header-cat-title').innerText = `KATEGORI ${cat.toUpperCase()}`;
-            document.getElementById('podium-cat-title').innerText = cat.toUpperCase();
-            renderBracket(); renderPodium();
-        }
-
-        // --- BACKGROUND SETTINGS ---
-        function simpanPengaturanBG() {
-            appState.settings.bgUtama = document.getElementById('setting-bg-utama').value;
-            appState.settings.bgBracket = document.getElementById('setting-bg-bracket').value;
-            saveState();
-            terapkanBackground();
-            alert("Background berhasil diperbarui!");
-        }
-
-        function terapkanBackground() {
-            if (appState.settings.bgUtama) {
-                document.documentElement.style.setProperty('--bg-utama-url', `url('${appState.settings.bgUtama}')`);
-            }
-            if (appState.settings.bgBracket) {
-                document.documentElement.style.setProperty('--bg-bracket-url', `url('${appState.settings.bgBracket}')`);
-            } else {
-                document.documentElement.style.setProperty('--bg-bracket-url', `none`);
-            }
-        }
-
-        // --- REGISTRATION & AUTO-FILL BAGAN ---
-        function handleRegistration(e) {
-            e.preventDefault();
-            const reg = {
-                id: Date.now(),
-                time: new Date().toLocaleDateString('id-ID'),
-                kategori: document.getElementById('reg-kategori').value,
-                namatim: document.getElementById('reg-namatim').value,
-                kapten: document.getElementById('reg-kapten').value,
-                wa: document.getElementById('reg-wa').value,
-                status: 'Menunggu'
-            };
-
-            appState.registrations.push(reg);
-            saveState();
-            document.getElementById('form-registrasi').reset();
-            alert("Pendaftaran Berhasil! Silakan tunggu Panitia melakukan ACC.");
-        }
-
-        function renderAdminRegistrations() {
-            const list = document.getElementById('pendaftar-list');
-            if (appState.registrations.length === 0) { list.innerHTML = `<tr><td colspan="6" style="text-align:center;">Belum ada pendaftaran.</td></tr>`; return; }
-
-            list.innerHTML = appState.registrations.map(r => `
-                <tr>
-                    <td>${r.time}</td>
-                    <td><strong style="text-transform:uppercase;">${r.kategori}</strong></td>
-                    <td><strong>${r.namatim}</strong></td>
-                    <td>${r.kapten}<br/><span style="color:var(--accent-cyan); font-size:0.75rem;">${r.wa}</span></td>
-                    <td><span class="badge-status ${r.status === 'Disetujui' ? 'badge-approved' : (r.status === 'Ditolak' ? 'badge-rejected' : 'badge-pending')}">${r.status}</span></td>
-                    <td>
-                        ${r.status === 'Menunggu' ? `
-                            <button class="score-btn" style="background:var(--accent-green);" onclick="accPendaftaran(${r.id}, 'Disetujui')">Setujui & Masukkan Bagan</button>
-                            <button class="score-btn" style="background:var(--accent-red); margin-top:4px;" onclick="accPendaftaran(${r.id}, 'Ditolak')">Tolak</button>
-                        ` : '-'}
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function accPendaftaran(id, status) {
-            const reg = appState.registrations.find(r => r.id === id);
-            if (reg) {
-                reg.status = status;
-                
-                // AUTOMATION: Auto-fill empty slot in bracket
-                if (status === 'Disetujui') {
-                    // Cari slot dengan nama berawalan 'Tim ' (berarti masih kosong)
-                    const emptyIdx = appState[reg.kategori].teams.findIndex(t => t.toLowerCase().startsWith('tim '));
-                    if (emptyIdx !== -1) {
-                        appState[reg.kategori].teams[emptyIdx] = reg.namatim;
-                        alert(`SUKSES! Tim ${reg.namatim} otomatis masuk ke slot Bagan ${reg.kategori.toUpperCase()} No. ${emptyIdx + 1}`);
-                    } else {
-                        alert(`Tim disetujui, tapi Bagan Kategori ${reg.kategori.toUpperCase()} sudah penuh (16 Tim)!`);
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            100: '#1e293b',
+                            200: '#0f172a',
+                            300: '#0b0f19',
+                            400: '#060911'
+                        },
+                        primary: {
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9'
+                        },
+                        accent: {
+                            500: '#06b6d4',
+                            600: '#0891b2'
+                        }
                     }
                 }
-                saveState();
             }
         }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 
-        function renderDaftarTim(kategori) {
-            const list = document.getElementById('list-tim-resmi');
-            // Menampilkan tim yang sudah ada di slot (baik dari ACC pendaftaran maupun edit manual)
-            const teams = appState[kategori].teams;
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0b0f19;
+            color: #f3f4f6;
+        }
+        .glass-card {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-nav {
+            background: rgba(11, 15, 25, 0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glow-effect {
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.35);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #a855f7 0%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        @keyframes marquee {
+            0% { transform: translateX(0%); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+            display: flex;
+            width: 200%;
+            animation: marquee 25s linear infinite;
+        }
+        .animate-marquee:hover {
+            animation-play-state: paused;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0b0f19;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #8b5cf6;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between antialiased selection:bg-purple-500 selection:text-white">
+
+    <!-- TOP RUNNING TICKER -->
+    <div class="bg-slate-900 border-b border-slate-800 text-xs py-2 overflow-hidden select-none">
+        <div id="runningTickerContent" class="animate-marquee whitespace-nowrap flex items-center gap-8 text-slate-300">
+            <span class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-400"></i> User <b>0812***4321</b> berhasil top up <b>86 Diamonds Mobile Legends</b> (Rp 20.000) - 1 detik lalu</span>
+            <span class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-400"></i> User <b>0857***9812</b> berhasil beli <b>Tokens Honor of Kings 80 Tokens</b> (Rp 15.000) - 2 detik lalu</span>
+            <span class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-400"></i> User <b>0821***1102</b> berhasil isi <b>Pulsa Telkomsel 50.000</b> (Rp 50.800) - 5 detik lalu</span>
+            <span class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-400"></i> User <b>0895***7781</b> berhasil top up <b>Zenless Zone Zero 300 Monochromes</b> (Rp 65.000) - 8 detik lalu</span>
+        </div>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="sticky top-0 z-40 glass-nav">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Brand -->
+                <a href="#" onclick="showPage('home')" class="flex items-center gap-3 group">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 to-cyan-500 flex items-center justify-center text-white font-extrabold text-xl shadow-lg group-hover:scale-105 transition-transform">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+                    <div>
+                        <span class="text-xl font-extrabold tracking-wider gradient-text uppercase">VALYX<span class="text-white">TOPUP</span></span>
+                        <span class="block text-[10px] text-slate-400 font-medium tracking-widest -mt-1">AUTOMATED SYSTEM 24/7</span>
+                    </div>
+                </a>
+
+                <!-- Nav Links Desktop -->
+                <div class="hidden md:flex items-center gap-1">
+                    <button onclick="showPage('home')" class="px-4 py-2 rounded-lg text-sm font-semibold text-slate-200 hover:text-white hover:bg-slate-800/60 transition flex items-center gap-2">
+                        <i class="fa-solid fa-house text-purple-400"></i> Beranda
+                    </button>
+                    <button onclick="showPage('tracking')" class="px-4 py-2 rounded-lg text-sm font-semibold text-slate-200 hover:text-white hover:bg-slate-800/60 transition flex items-center gap-2">
+                        <i class="fa-solid fa-magnifying-glass text-cyan-400"></i> Cek Pesanan
+                    </button>
+                    <button onclick="showPage('pricelist')" class="px-4 py-2 rounded-lg text-sm font-semibold text-slate-200 hover:text-white hover:bg-slate-800/60 transition flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-emerald-400"></i> Daftar Harga
+                    </button>
+                    <button onclick="showPage('calc')" class="px-4 py-2 rounded-lg text-sm font-semibold text-slate-200 hover:text-white hover:bg-slate-800/60 transition flex items-center gap-2">
+                        <i class="fa-solid fa-calculator text-amber-400"></i> Kalkulator ML
+                    </button>
+                    <button onclick="showPage('leaderboard')" class="px-4 py-2 rounded-lg text-sm font-semibold text-slate-200 hover:text-white hover:bg-slate-800/60 transition flex items-center gap-2">
+                        <i class="fa-solid fa-trophy text-yellow-400"></i> Top Sultan
+                    </button>
+                </div>
+
+                <!-- Right Actions -->
+                <div class="hidden md:flex items-center gap-3">
+                    <button onclick="openCartModal()" class="relative p-2.5 rounded-xl text-slate-200 border border-slate-700 hover:border-purple-500 hover:text-white transition bg-slate-900/80">
+                        <i class="fa-solid fa-cart-shopping text-cyan-400"></i>
+                        <span id="cartBadgeCount" class="absolute -top-1.5 -right-1.5 bg-rose-500 text-white text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center hidden">0</span>
+                    </button>
+
+                    <button onclick="openMemberModal()" class="px-3.5 py-2 rounded-xl text-xs font-bold text-slate-200 border border-slate-700 hover:border-purple-500 hover:text-white transition flex items-center gap-2 bg-slate-900/80">
+                        <i class="fa-solid fa-user-gear text-purple-400"></i>
+                        <span id="memberNavText">Login / Daftar</span>
+                    </button>
+
+                    <a href="https://wa.me/6281234567890" target="_blank" class="px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 shadow-md transition flex items-center gap-2">
+                        <i class="fa-brands fa-whatsapp text-sm"></i> CS WA
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button onclick="toggleMobileMenu()" class="md:hidden text-slate-300 hover:text-white text-2xl focus:outline-none">
+                    <i class="fa-solid fa-bars-staggered"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Drawer -->
+        <div id="mobileMenu" class="hidden md:hidden bg-slate-900/95 border-b border-slate-800 px-4 pt-2 pb-6 space-y-2">
+            <button onclick="showPage('home'); toggleMobileMenu()" class="w-full text-left px-4 py-3 rounded-lg text-sm font-medium text-slate-200 hover:bg-slate-800 flex items-center gap-3">
+                <i class="fa-solid fa-house text-purple-400"></i> Beranda
+            </button>
+            <button onclick="showPage('tracking'); toggleMobileMenu()" class="w-full text-left px-4 py-3 rounded-lg text-sm font-medium text-slate-200 hover:bg-slate-800 flex items-center gap-3">
+                <i class="fa-solid fa-magnifying-glass text-cyan-400"></i> Cek Pesanan
+            </button>
+            <button onclick="showPage('pricelist'); toggleMobileMenu()" class="w-full text-left px-4 py-3 rounded-lg text-sm font-medium text-slate-200 hover:bg-slate-800 flex items-center gap-3">
+                <i class="fa-solid fa-list-check text-emerald-400"></i> Daftar Harga
+            </button>
+            <button onclick="showPage('calc'); toggleMobileMenu()" class="w-full text-left px-4 py-3 rounded-lg text-sm font-medium text-slate-200 hover:bg-slate-800 flex items-center gap-3">
+                <i class="fa-solid fa-calculator text-amber-400"></i> Kalkulator ML
+            </button>
+            <button onclick="showPage('leaderboard'); toggleMobileMenu()" class="w-full text-left px-4 py-3 rounded-lg text-sm font-medium text-slate-200 hover:bg-slate-800 flex items-center gap-3">
+                <i class="fa-solid fa-trophy text-yellow-400"></i> Top Sultan / Leaderboard
+            </button>
+            <div class="pt-2 border-t border-slate-800 flex flex-col gap-2">
+                <button onclick="openCartModal(); toggleMobileMenu()" class="w-full py-2.5 rounded-lg text-xs font-bold text-cyan-300 border border-cyan-500/40 text-center">
+                    <i class="fa-solid fa-cart-shopping mr-1"></i> Keranjang Belanja
+                </button>
+                <button onclick="openMemberModal(); toggleMobileMenu()" class="w-full py-2.5 rounded-lg text-xs font-bold text-purple-300 border border-purple-500/40 text-center">
+                    <i class="fa-solid fa-user-gear mr-1"></i> Area Member & Akun
+                </button>
+                <a href="https://wa.me/6281234567890" target="_blank" class="w-full py-2.5 rounded-lg text-xs font-bold text-white bg-emerald-600 text-center flex items-center justify-center gap-2">
+                    <i class="fa-brands fa-whatsapp"></i> Hubungi Customer Service
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT CONTAINERS -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- PAGE 1: HOME -->
+        <div id="page-home" class="space-y-10">
+            <!-- Hero Banner -->
+            <div class="relative rounded-3xl overflow-hidden shadow-2xl border border-slate-800 bg-gradient-to-r from-slate-900 via-purple-950 to-slate-900 p-6 sm:p-10">
+                <div class="absolute -right-20 -top-20 w-80 h-80 bg-purple-600/20 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute -left-20 -bottom-20 w-80 h-80 bg-cyan-600/20 rounded-full blur-3xl pointer-events-none"></div>
+                
+                <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    <div class="lg:col-span-7 space-y-4 text-center lg:text-left">
+                        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                            <i class="fa-solid fa-fire text-amber-400"></i> PROMO FLASHSALE HARI INI
+                        </span>
+                        <h1 class="text-3xl sm:text-5xl font-black tracking-tight leading-tight text-white">
+                            Top Up All Game & Digital <br>
+                            <span class="gradient-text">Proses Otomatis 1 Detik</span>
+                        </h1>
+                        <p class="text-slate-400 text-sm sm:text-base max-w-xl">
+                            Layanan top up MLBB, Free Fire, Honor of Kings, Genshin, HSR, ZZZ, CODM, Steam, Roblox, Pulsa HP Semua Operator & Saldo E-Wallet termurah 24/7.
+                        </p>
+                        <div class="pt-2 flex flex-wrap gap-4 justify-center lg:justify-start">
+                            <a href="#games-section" class="px-6 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-500 hover:to-cyan-400 text-white font-bold text-sm shadow-lg glow-effect transition flex items-center gap-2">
+                                <i class="fa-solid fa-gamepad"></i> Belanja Sekarang
+                            </a>
+                            <button onclick="showPage('tracking')" class="px-6 py-3 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-200 font-semibold text-sm border border-slate-700 transition flex items-center gap-2">
+                                <i class="fa-solid fa-receipt text-cyan-400"></i> Lacak Pesanan
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="lg:col-span-5 grid grid-cols-2 gap-4">
+                        <div class="glass-card p-4 rounded-2xl border border-slate-800 text-center space-y-2">
+                            <div class="w-12 h-12 mx-auto rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-400 text-2xl">
+                                <i class="fa-solid fa-bolt-lightning"></i>
+                            </div>
+                            <h4 class="font-bold text-sm text-white">Instan & Otomatis</h4>
+                            <p class="text-xs text-slate-400">Sistem API terhubung langsung 24 jam non-stop.</p>
+                        </div>
+                        <div class="glass-card p-4 rounded-2xl border border-slate-800 text-center space-y-2">
+                            <div class="w-12 h-12 mx-auto rounded-xl bg-cyan-500/10 flex items-center justify-center text-cyan-400 text-2xl">
+                                <i class="fa-solid fa-shield-halved"></i>
+                            </div>
+                            <h4 class="font-bold text-sm text-white">100% Legal & Aman</h4>
+                            <p class="text-xs text-slate-400">Garansi diamond & produk legal anti minus.</p>
+                        </div>
+                        <div class="glass-card p-4 rounded-2xl border border-slate-800 text-center space-y-2">
+                            <div class="w-12 h-12 mx-auto rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 text-2xl">
+                                <i class="fa-solid fa-qrcode"></i>
+                            </div>
+                            <h4 class="font-bold text-sm text-white">QRIS All Payment</h4>
+                            <p class="text-xs text-slate-400">Bisa bayar pakai GoPay, DANA, OVO, ShopeePay & Bank.</p>
+                        </div>
+                        <div class="glass-card p-4 rounded-2xl border border-slate-800 text-center space-y-2">
+                            <div class="w-12 h-12 mx-auto rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-400 text-2xl">
+                                <i class="fa-solid fa-headset"></i>
+                            </div>
+                            <h4 class="font-bold text-sm text-white">Bantuan CS Fast</h4>
+                            <p class="text-xs text-slate-400">Tim Support siap bantu kendala transaksi kapan saja.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FLASH SALE BANNER -->
+            <div class="glass-card p-6 rounded-3xl border border-amber-500/30 bg-gradient-to-r from-amber-950/20 via-purple-950/30 to-slate-900 space-y-4">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-amber-500/20 pb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-2xl bg-amber-500/20 border border-amber-500/40 text-amber-400 flex items-center justify-center text-xl font-black shadow-lg">
+                            <i class="fa-solid fa-stopwatch animate-bounce"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-extrabold text-white flex items-center gap-2">
+                                FLASH SALE SPESIAL <span class="text-xs px-2 py-0.5 rounded bg-amber-500 text-slate-950 font-black">DISKON 40%</span>
+                            </h3>
+                            <p class="text-xs text-slate-400">Penawaran terbatas, buruan top up sebelum stok habis!</p>
+                        </div>
+                    </div>
+                    <div class="bg-slate-900/90 border border-amber-500/40 px-4 py-2 rounded-2xl flex items-center gap-2 font-mono">
+                        <span class="text-xs text-slate-400 font-sans font-bold">Berakhir dalam:</span>
+                        <span id="flashSaleTimer" class="text-lg font-black text-amber-400">03 : 24 : 50</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <div onclick="selectGameForOrder('hok')" class="bg-slate-900/90 border border-slate-800 hover:border-amber-500 p-3 rounded-2xl cursor-pointer transition flex items-center gap-3">
+                        <img id="flashImgHok" src="" class="w-12 h-12 rounded-xl object-cover bg-slate-950">
+                        <div>
+                            <span class="text-xs font-bold text-white block line-clamp-1">80 Tokens HOK</span>
+                            <span class="text-[10px] text-slate-500 line-through">Rp 17.000</span>
+                            <span class="text-xs font-extrabold text-amber-400 block">Rp 14.800</span>
+                        </div>
+                    </div>
+                    <div onclick="selectGameForOrder('mlbb')" class="bg-slate-900/90 border border-slate-800 hover:border-amber-500 p-3 rounded-2xl cursor-pointer transition flex items-center gap-3">
+                        <img id="flashImgMlbb" src="" class="w-12 h-12 rounded-xl object-cover bg-slate-950">
+                        <div>
+                            <span class="text-xs font-bold text-white block line-clamp-1">86 DM MLBB</span>
+                            <span class="text-[10px] text-slate-500 line-through">Rp 23.000</span>
+                            <span class="text-xs font-extrabold text-amber-400 block">Rp 20.000</span>
+                        </div>
+                    </div>
+                    <div onclick="selectGameForOrder('ff')" class="bg-slate-900/90 border border-slate-800 hover:border-amber-500 p-3 rounded-2xl cursor-pointer transition flex items-center gap-3">
+                        <img id="flashImgFf" src="" class="w-12 h-12 rounded-xl object-cover bg-slate-950">
+                        <div>
+                            <span class="text-xs font-bold text-white block line-clamp-1">355 DM Free Fire</span>
+                            <span class="text-[10px] text-slate-500 line-through">Rp 55.000</span>
+                            <span class="text-xs font-extrabold text-amber-400 block">Rp 48.500</span>
+                        </div>
+                    </div>
+                    <div onclick="selectGameForOrder('zzz')" class="bg-slate-900/90 border border-slate-800 hover:border-amber-500 p-3 rounded-2xl cursor-pointer transition flex items-center gap-3">
+                        <img id="flashImgZzz" src="" class="w-12 h-12 rounded-xl object-cover bg-slate-950">
+                        <div>
+                            <span class="text-xs font-bold text-white block line-clamp-1">300 Monochromes ZZZ</span>
+                            <span class="text-[10px] text-slate-500 line-through">Rp 75.000</span>
+                            <span class="text-xs font-extrabold text-amber-400 block">Rp 65.000</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEARCH & CATEGORY FILTER -->
+            <div id="games-section" class="space-y-6">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h2 class="text-2xl font-extrabold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-fire text-purple-500"></i> Katalog Layanan Game & Digital
+                        </h2>
+                        <p class="text-xs sm:text-sm text-slate-400">Pilih game, voucher, atau e-wallet favoritmu untuk transaksi</p>
+                    </div>
+
+                    <div class="relative w-full md:w-72">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                        <input type="text" id="searchInput" oninput="filterGames()" placeholder="Cari Game (cth: ML, FF, HOK)..." class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 transition">
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 overflow-x-auto pb-2">
+                    <button onclick="setCategory('all')" class="cat-tab border border-purple-500 bg-purple-600/20 text-purple-300 font-semibold text-xs px-5 py-2.5 rounded-xl whitespace-nowrap transition">
+                        🔥 Semua
+                    </button>
+                    <button onclick="setCategory('mobile')" class="cat-tab border border-slate-800 bg-slate-900 text-slate-300 font-medium text-xs px-5 py-2.5 rounded-xl whitespace-nowrap transition">
+                        📱 Mobile Games
+                    </button>
+                    <button onclick="setCategory('pc')" class="cat-tab border border-slate-800 bg-slate-900 text-slate-300 font-medium text-xs px-5 py-2.5 rounded-xl whitespace-nowrap transition">
+                        💻 PC & Console
+                    </button>
+                    <button onclick="setCategory('ewallet')" class="cat-tab border border-slate-800 bg-slate-900 text-slate-300 font-medium text-xs px-5 py-2.5 rounded-xl whitespace-nowrap transition">
+                        💳 Pulsa & E-Wallet
+                    </button>
+                    <button onclick="setCategory('voucher')" class="cat-tab border border-slate-800 bg-slate-900 text-slate-300 font-medium text-xs px-5 py-2.5 rounded-xl whitespace-nowrap transition">
+                        🎟️ Voucher
+                    </button>
+                </div>
+
+                <div id="gameGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 min-h-[200px]">
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE 2: ORDER FORM -->
+        <div id="page-order" class="hidden space-y-8">
+            <div class="flex items-center justify-between">
+                <button onclick="showPage('home')" class="text-xs font-bold text-slate-400 hover:text-white flex items-center gap-2 bg-slate-900 px-4 py-2 rounded-xl border border-slate-800 transition">
+                    <i class="fa-solid fa-arrow-left"></i> Kembali ke Katalog
+                </button>
+                <span class="text-xs text-slate-500 font-mono" id="selectedGameSlug">valyx-order</span>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div class="lg:col-span-4 space-y-6">
+                    <div class="glass-card p-6 rounded-3xl border border-slate-800 text-center space-y-4 sticky top-24">
+                        <img id="orderGameImg" src="" alt="Game Logo" class="w-28 h-28 mx-auto rounded-2xl object-cover shadow-xl border-2 border-purple-500/30">
+                        <div>
+                            <h2 id="orderGameTitle" class="text-xl font-black text-white">-</h2>
+                            <p id="orderGamePublisher" class="text-xs text-purple-400 font-semibold">-</p>
+                        </div>
+                        <div class="text-left bg-slate-900/80 p-4 rounded-2xl border border-slate-800 text-xs space-y-2 text-slate-300">
+                            <p class="font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-circle-info text-cyan-400"></i> Cara Transaksi:
+                            </p>
+                            <ol class="list-decimal list-inside space-y-1 text-slate-400">
+                                <li>Masukkan User ID / Nomor HP Tujuan.</li>
+                                <li>Pilih nominal paket / item yang diinginkan.</li>
+                                <li>Pilih metode pembayaran (QRIS / Saldo Member / VA).</li>
+                                <li>Masukkan nomor WhatsApp aktif Anda.</li>
+                                <li>Klik <b>Beli Sekarang</b> atau <b>+ Keranjang</b>.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-8 space-y-6">
+                    <div class="glass-card p-6 rounded-3xl border border-slate-800 space-y-4">
+                        <h3 class="font-extrabold text-white text-base">1. Lengkapi Data Tujuan</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1.5">User ID / Nomor HP Tujuan</label>
+                                <input type="text" id="inputUserId" placeholder="Contoh: 12345678 / 08123456789" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 transition">
+                            </div>
+                            <div id="zoneIdContainer">
+                                <label class="block text-xs font-semibold text-slate-300 mb-1.5">Zone ID / Server</label>
+                                <input type="text" id="inputZoneId" placeholder="Contoh: 1234" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 transition">
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between pt-1">
+                            <button type="button" onclick="checkNickname()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-purple-300 border border-purple-500/30 transition flex items-center gap-2">
+                                <i class="fa-solid fa-user-check"></i> Cek Nickname
+                            </button>
+                            <span id="nicknameResult" class="text-xs font-bold text-emerald-400"></span>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-6 rounded-3xl border border-slate-800 space-y-4">
+                        <h3 class="font-extrabold text-white text-base">2. Pilih Nominal Top Up</h3>
+                        <div id="nominalGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
+                    </div>
+
+                    <div class="glass-card p-6 rounded-3xl border border-slate-800 space-y-4">
+                        <h3 class="font-extrabold text-white text-base">3. Pilih Metode Pembayaran</h3>
+                        <div class="space-y-3">
+                            <div onclick="selectPayment('saldo', 'Saldo Akun Member', 0)" class="payment-card border border-purple-500/40 bg-purple-950/30 p-3 rounded-2xl cursor-pointer hover:border-purple-500 transition">
+                                <div class="flex justify-between items-center">
+                                    <span class="font-bold text-xs text-white"><i class="fa-solid fa-wallet text-amber-400 mr-1"></i> Saldo Akun Member</span>
+                                    <span class="text-[10px] bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded font-bold">Diskon VIP</span>
+                                </div>
+                                <p class="text-[10px] text-slate-400 mt-1">Sisa Saldo: <span id="paymentSaldoText" class="text-emerald-400 font-bold">Rp 0</span></p>
+                            </div>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                <div onclick="selectPayment('qris', 'QRIS Instant', 0)" class="payment-card border border-slate-800 bg-slate-900 p-3 rounded-2xl cursor-pointer hover:border-purple-500 transition">
+                                    <span class="font-bold text-xs text-white block">QRIS Instant</span>
+                                    <span class="text-[10px] text-slate-400">GoPay, DANA, OVO</span>
+                                </div>
+                                <div onclick="selectPayment('dana', 'DANA Automatic', 0)" class="payment-card border border-slate-800 bg-slate-900 p-3 rounded-2xl cursor-pointer hover:border-purple-500 transition">
+                                    <span class="font-bold text-xs text-white block">DANA</span>
+                                    <span class="text-[10px] text-slate-400">Direct E-Wallet</span>
+                                </div>
+                                <div onclick="selectPayment('bca_va', 'BCA Virtual Account', 2500)" class="payment-card border border-slate-800 bg-slate-900 p-3 rounded-2xl cursor-pointer hover:border-purple-500 transition">
+                                    <span class="font-bold text-xs text-white block">BCA VA</span>
+                                    <span class="text-[10px] text-slate-400">+Rp 2.500</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-6 rounded-3xl border border-slate-800 space-y-4">
+                        <h3 class="font-extrabold text-white text-base">4. Kontak & Kode Promo</h3>
+                        <input type="tel" id="inputWhatsapp" placeholder="No. WhatsApp Aktif (08xxx)" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white">
+                        <div class="flex gap-2">
+                            <input type="text" id="inputPromo" placeholder="Kode Promo (opsional)" class="uppercase w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white">
+                            <button type="button" onclick="applyPromo()" class="px-5 py-3 rounded-xl bg-slate-800 text-purple-400 font-bold text-xs border border-purple-500/30">Gunakan</button>
+                        </div>
+                        <span id="promoStatus" class="text-[11px] block"></span>
+                    </div>
+
+                    <div class="glass-card p-6 rounded-3xl border border-purple-500/30 bg-purple-950/20 space-y-3">
+                        <div class="flex justify-between text-xs text-slate-300"><span>Item:</span><span id="summaryItem" class="font-bold text-white">-</span></div>
+                        <div class="flex justify-between text-xs text-slate-300"><span>Diskon Promo:</span><span id="summaryDiscount" class="font-bold text-emerald-400">Rp 0</span></div>
+                        <div class="pt-2 border-t border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-3">
+                            <div><span class="text-xs text-slate-400 block">Total</span><span id="summaryTotal" class="text-xl font-black text-white">Rp 0</span></div>
+                            <div class="flex gap-2 w-full sm:w-auto">
+                                <button onclick="addToCartFromOrder()" class="flex-1 sm:flex-none px-4 py-3.5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-cyan-400 font-bold text-xs border border-cyan-500/40 transition flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-cart-plus"></i> + Keranjang
+                                </button>
+                                <button onclick="processOrder()" class="flex-1 sm:flex-none px-6 py-3.5 rounded-2xl bg-gradient-to-r from-purple-600 to-cyan-500 text-white font-black text-xs sm:text-sm shadow-xl transition">Beli Sekarang</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE 3: TRACKING -->
+        <div id="page-tracking" class="hidden space-y-6 max-w-3xl mx-auto">
+            <h2 class="text-2xl font-extrabold text-white text-center">Cek Status & Riwayat Transaksi</h2>
+            <div class="glass-card p-6 rounded-3xl border border-slate-800 space-y-4">
+                <div class="flex gap-3">
+                    <input type="text" id="trackInput" placeholder="Masukkan No Invoice atau Target HP/ID" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white">
+                    <button onclick="searchOrder()" class="px-6 py-3 rounded-xl bg-cyan-600 font-bold text-xs text-white">Cari Transaksi</button>
+                </div>
+            </div>
+
+            <div class="glass-card p-6 rounded-3xl border border-slate-800 space-y-4">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                    <h3 class="text-sm font-bold text-white"><i class="fa-solid fa-clock-rotate-left text-purple-400 mr-2"></i> Riwayat Transaksi Anda</h3>
+                    <button onclick="clearMyHistory()" class="text-[11px] text-slate-400 hover:text-rose-400"><i class="fa-solid fa-lock text-[10px] mr-1"></i> Hapus Riwayat</button>
+                </div>
+                <div id="myHistoryContainer" class="space-y-2"></div>
+            </div>
+
+            <div id="trackingResult" class="hidden glass-card p-6 rounded-3xl border border-slate-800 space-y-4">
+                <div class="flex justify-between border-b border-slate-800 pb-3">
+                    <div><span class="text-xs text-slate-400 block">Invoice</span><span id="trackInvoiceId" class="font-mono text-sm font-bold text-cyan-400">-</span></div>
+                    <div><span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400">BERHASIL / SUKSES</span></div>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                    <div><span class="text-slate-500 block">Game</span><span id="trackGame" class="font-bold text-white">-</span></div>
+                    <div><span class="text-slate-500 block">Item</span><span id="trackItem" class="font-bold text-white">-</span></div>
+                    <div><span class="text-slate-500 block">Target</span><span id="trackTarget" class="font-bold text-white">-</span></div>
+                    <div><span class="text-slate-500 block">Total</span><span id="trackPrice" class="font-bold text-purple-400">Rp 0</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE 4: PRICELIST -->
+        <div id="page-pricelist" class="hidden space-y-6">
+            <h2 class="text-2xl font-extrabold text-white text-center">Daftar Harga Produk</h2>
+            <div class="glass-card p-6 rounded-3xl border border-slate-800 overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                    <thead>
+                        <tr class="border-b border-slate-800 text-slate-400">
+                            <th class="py-3 px-4">Game / Produk</th>
+                            <th class="py-3 px-4">Item</th>
+                            <th class="py-3 px-4">Harga Publik</th>
+                            <th class="py-3 px-4">Harga Member</th>
+                            <th class="py-3 px-4">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pricelistTableBody" class="divide-y divide-slate-800/60"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- PAGE 5: KALKULATOR ML -->
+        <div id="page-calc" class="hidden space-y-8 max-w-3xl mx-auto">
+            <h2 class="text-2xl font-extrabold text-white text-center">Kalkulator Mobile Legends</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="glass-card p-6 rounded-3xl border border-slate-800 space-y-3 text-xs">
+                    <h3 class="font-bold text-purple-400 text-sm"><i class="fa-solid fa-trophy mr-2"></i> Kalkulator WR</h3>
+                    <input type="number" id="wrTotalMatches" placeholder="Total Match Saat Ini" class="w-full p-3 rounded-xl bg-slate-900 border border-slate-800 text-white">
+                    <input type="number" step="0.1" id="wrCurrentWr" placeholder="WR Saat Ini (%)" class="w-full p-3 rounded-xl bg-slate-900 border border-slate-800 text-white">
+                    <input type="number" step="0.1" id="wrTargetWr" placeholder="Target WR (%)" class="w-full p-3 rounded-xl bg-slate-900 border border-slate-800 text-white">
+                    <button onclick="calcWR()" class="w-full py-3 rounded-xl bg-purple-600 font-bold text-white">Hitung Kemenangan</button>
+                    <div id="wrResult" class="p-3 bg-purple-950/30 rounded-xl text-center text-purple-300 font-bold">Hasil akan muncul di sini</div>
+                </div>
+                <div class="glass-card p-6 rounded-3xl border border-slate-800 space-y-3 text-xs">
+                    <h3 class="font-bold text-cyan-400 text-sm"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i> Magic Wheel</h3>
+                    <input type="number" id="mwPoints" placeholder="Magic Points Saat Ini" class="w-full p-3 rounded-xl bg-slate-900 border border-slate-800 text-white">
+                    <button onclick="calcMagicWheel()" class="w-full py-3 rounded-xl bg-cyan-600 font-bold text-white">Hitung Sisa Diamond</button>
+                    <div id="mwResult" class="p-3 bg-cyan-950/30 rounded-xl text-center text-cyan-300 font-bold">Hasil akan muncul di sini</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE 6: LEADERBOARD -->
+        <div id="page-leaderboard" class="hidden space-y-6 max-w-2xl mx-auto">
+            <h2 class="text-2xl font-extrabold text-white text-center">Top Sultan Bulan Ini</h2>
+            <div class="glass-card p-6 rounded-3xl border border-slate-800 space-y-3">
+                <div class="bg-slate-900/80 p-4 rounded-2xl border border-yellow-500/40 flex justify-between items-center">
+                    <span class="font-extrabold text-white text-sm"><span class="w-6 h-6 rounded-full bg-yellow-500 text-black font-black inline-flex items-center justify-center mr-2">1</span> SultanGamer_0812***</span>
+                    <span class="font-black text-yellow-400 text-sm">Rp 4.250.000</span>
+                </div>
+                <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800 flex justify-between items-center">
+                    <span class="font-bold text-white text-sm"><span class="w-6 h-6 rounded-full bg-slate-300 text-black font-black inline-flex items-center justify-center mr-2">2</span> ProPro_0857***</span>
+                    <span class="font-bold text-cyan-400 text-sm">Rp 2.890.000</span>
+                </div>
+                <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800 flex justify-between items-center">
+                    <span class="font-bold text-white text-sm"><span class="w-6 h-6 rounded-full bg-amber-700 text-white font-black inline-flex items-center justify-center mr-2">3</span> GamerJatim_0821***</span>
+                    <span class="font-bold text-purple-400 text-sm">Rp 1.620.000</span>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- MODAL 1: INVOICE SIMULATOR -->
+    <div id="invoiceModal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass-card max-w-lg w-full rounded-3xl border border-purple-500/40 p-6 space-y-5 relative">
+            <button onclick="closeInvoiceModal()" class="absolute right-4 top-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <h3 class="text-xl font-black text-white text-center">Invoice Transaksi</h3>
+            <div class="bg-slate-900 p-3 rounded-2xl text-center"><span class="text-xs text-slate-400 block">Batas Bayar</span><span id="invoiceTimer" class="text-2xl font-mono font-black text-amber-400">14:59</span></div>
+            <div class="bg-slate-900/50 p-4 rounded-2xl text-xs space-y-2">
+                <div class="flex justify-between text-slate-400"><span>Invoice:</span><span id="invModalId" class="font-mono text-white font-bold">-</span></div>
+                <div class="flex justify-between text-slate-400"><span>Item:</span><span id="invModalItem" class="text-white font-bold">-</span></div>
+                <div class="flex justify-between text-slate-400"><span>Total:</span><span id="invModalTotal" class="text-lg font-black text-purple-400">Rp 0</span></div>
+            </div>
+            <div class="text-center p-4 bg-white rounded-2xl space-y-2">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=VALYXTOPUP_QRIS" class="w-40 h-40 mx-auto">
+                <p class="text-[10px] text-slate-500 font-bold">Scan QRIS All Payment</p>
+            </div>
+            <button onclick="simulatePaymentSuccess()" class="w-full py-3 rounded-xl bg-emerald-600 font-extrabold text-xs text-white">SIMULASI BAYAR (TESTING)</button>
+        </div>
+    </div>
+
+    <!-- MODAL 2: MEMBER LOGIN, REGISTER & AKUN PENGGUNA -->
+    <div id="memberModal" class="fixed inset-0 z-50 hidden bg-[#0b0f19] w-full h-full overflow-y-auto">
+        <div class="w-full max-w-xl mx-auto min-h-full p-6 sm:p-10 space-y-6 relative flex flex-col justify-start">
+            <button onclick="closeMemberModal()" class="absolute right-4 top-4 sm:right-6 sm:top-6 w-10 h-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-rose-500/20 transition z-10"><i class="fa-solid fa-xmark text-xl"></i></button>
             
-            let html = '';
-            teams.forEach((t, i) => {
-                const isKosong = t.toLowerCase().startsWith('tim ');
-                html += `<tr>
-                    <td>${i+1}</td>
-                    <td><strong>${t}</strong></td>
-                    <td>-</td>
-                    <td><span class="badge-status ${isKosong ? 'badge-pending' : 'badge-approved'}">${isKosong ? 'Slot Kosong' : 'Terisi'}</span></td>
-                </tr>`;
+            <!-- VIEW 1: DASHBOARD / HALAMAN AKUN MEMBER -->
+            <div id="memberDashboardView" class="space-y-5 hidden w-full">
+                <div class="text-center space-y-3">
+                    <div class="relative w-20 h-20 mx-auto group">
+                        <img id="accountProfileImg" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80" class="w-20 h-20 rounded-full object-cover border-2 border-purple-500 shadow-lg">
+                        <button onclick="triggerProfilePicUpload()" class="absolute bottom-0 right-0 bg-purple-600 hover:bg-purple-500 text-white w-7 h-7 rounded-full flex items-center justify-center text-xs shadow-md" title="Ganti Foto">
+                            <i class="fa-solid fa-camera"></i>
+                        </button>
+                        <input type="file" id="profilePicInput" accept="image/*" class="hidden" onchange="handleProfilePicChange(event)">
+                    </div>
+                    <div>
+                        <h3 id="accountNameDisplay" class="text-base font-extrabold text-white">Nama Member</h3>
+                        <p id="accountPhoneDisplay" class="text-xs text-slate-400 font-mono">08123456789</p>
+                    </div>
+                </div>
+
+                <!-- Grid Saldo & Poin Cashback -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-slate-900 p-3 rounded-2xl border border-slate-800 text-center space-y-1">
+                        <span class="text-[10px] text-slate-400 block font-semibold">Saldo Akun</span>
+                        <span id="accountSaldoDisplay" class="text-lg font-black text-emerald-400">Rp 0</span>
+                        <button onclick="openTopUpSaldoModal()" class="mt-2 w-full py-1.5 rounded-lg bg-emerald-600/20 text-emerald-400 hover:bg-emerald-600 hover:text-white font-bold text-[10px] transition">+ Top Up</button>
+                    </div>
+                    <div class="bg-slate-900 p-3 rounded-2xl border border-slate-800 text-center space-y-1">
+                        <span class="text-[10px] text-slate-400 block font-semibold">Poin SULTAN</span>
+                        <span id="accountPointsDisplay" class="text-lg font-black text-amber-400">0 Poin</span>
+                        <button onclick="claimPointsReward()" class="mt-2 w-full py-1.5 rounded-lg bg-amber-500/20 text-amber-400 hover:bg-amber-500 hover:text-slate-950 font-bold text-[10px] transition">Tukar Saldo</button>
+                    </div>
+                </div>
+
+                <!-- Tab Riwayat Personal -->
+                <div class="space-y-3 pt-2">
+                    <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-clock-rotate-left text-cyan-400"></i> Riwayat Transaksi Akun Anda
+                    </h4>
+                    <div id="memberPersonalHistory" class="max-h-40 overflow-y-auto space-y-2 pr-1 text-xs"></div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800">
+                    <button onclick="openChangePasswordModal()" class="py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 font-bold text-xs text-purple-300 transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-key"></i> Ganti Password
+                    </button>
+                    <button onclick="logoutMember()" class="py-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 font-bold text-xs text-rose-400 transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-right-from-bracket"></i> Logout
+                    </button>
+                </div>
+            </div>
+
+            <!-- VIEW 2: FORM PENDAFTARAN -->
+            <div id="memberRegisterView" class="hidden space-y-4 w-full">
+                <h3 class="text-lg font-bold text-white text-center">Daftar Akun Member Baru</h3>
+                <p class="text-xs text-slate-400 text-center">Dapatkan harga diskon khusus member VIP dan bonus saldo awal!</p>
+                
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Nama Lengkap</label>
+                        <input type="text" id="regName" placeholder="Masukkan nama Anda..." class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white focus:outline-none focus:border-purple-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Nomor WhatsApp Aktif</label>
+                        <input type="tel" id="regPhone" placeholder="Contoh: 08123456789" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white focus:outline-none focus:border-purple-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Buat Password Member</label>
+                        <input type="password" id="regPassword" placeholder="Minimal 6 karakter..." class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white focus:outline-none focus:border-purple-500">
+                    </div>
+                </div>
+
+                <div class="space-y-2 pt-2">
+                    <button onclick="processRegister()" class="w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 to-cyan-500 font-extrabold text-xs text-white shadow-lg transition">Daftar Sekarang</button>
+                    <button onclick="switchMemberView('login')" class="w-full py-2 rounded-xl bg-slate-900 hover:bg-slate-800 font-bold text-xs text-purple-400 transition">Sudah punya akun? Login</button>
+                </div>
+            </div>
+
+            <!-- VIEW 3: FORM LOGIN -->
+            <div id="memberLoginView" class="hidden space-y-4 w-full">
+                <h3 class="text-lg font-bold text-white text-center">Login Akun Member</h3>
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">No. WhatsApp / Terdaftar</label>
+                        <input type="tel" id="loginPhone" placeholder="08123456789" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white focus:outline-none focus:border-purple-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Password</label>
+                        <input type="password" id="loginPassword" placeholder="Password akun..." class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white focus:outline-none focus:border-purple-500">
+                    </div>
+                </div>
+                <div class="space-y-2 pt-2">
+                    <button onclick="processLogin()" class="w-full py-3 rounded-xl bg-purple-600 hover:bg-purple-500 font-extrabold text-xs text-white shadow-lg transition">Masuk Akun</button>
+                    <button onclick="switchMemberView('register')" class="w-full py-2 rounded-xl bg-slate-900 hover:bg-slate-800 font-bold text-xs text-cyan-400 transition">Belum punya akun? Daftar di sini</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- MODAL 3: KERANJANG BELANJA -->
+    <div id="cartModal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass-card max-w-lg w-full rounded-3xl border border-cyan-500/40 p-6 space-y-4 relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeCartModal()" class="absolute right-4 top-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <h3 class="text-lg font-black text-white flex items-center gap-2">
+                <i class="fa-solid fa-cart-shopping text-cyan-400"></i> Keranjang Belanja Anda
+            </h3>
+            <div id="cartItemsContainer" class="space-y-3 max-h-60 overflow-y-auto pr-1"></div>
+            <div class="pt-2 border-t border-slate-800 space-y-3">
+                <div class="flex justify-between items-center text-sm font-bold text-white">
+                    <span>Total Keseluruhan:</span>
+                    <span id="cartTotalPrice" class="text-cyan-400 text-base font-black">Rp 0</span>
+                </div>
+                <button onclick="checkoutCart()" class="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 text-white font-black text-xs shadow-lg transition">Checkout Semua Pesanan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 4: TOP UP SALDO AKUN -->
+    <div id="topUpSaldoModal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass-card max-w-sm w-full rounded-3xl border border-emerald-500/40 p-6 space-y-4 relative">
+            <button onclick="closeTopUpSaldoModal()" class="absolute right-4 top-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <h3 class="text-lg font-bold text-white text-center">Top Up Saldo Member</h3>
+            <p class="text-xs text-slate-400 text-center">Pilih nominal top up saldo akun Anda:</p>
+            <div class="grid grid-cols-2 gap-2">
+                <button onclick="if(window.addSaldoAmount) window.addSaldoAmount(25000);" class="p-3 bg-slate-900 hover:bg-emerald-600/25 border border-slate-800 rounded-xl text-xs font-bold text-white transition">Rp 25.000</button>
+                <button onclick="if(window.addSaldoAmount) window.addSaldoAmount(50000);" class="p-3 bg-slate-900 hover:bg-emerald-600/25 border border-slate-800 rounded-xl text-xs font-bold text-white transition">Rp 50.000</button>
+                <button onclick="if(window.addSaldoAmount) window.addSaldoAmount(100000);" class="p-3 bg-slate-900 hover:bg-emerald-600/25 border border-slate-800 rounded-xl text-xs font-bold text-white transition">Rp 100.000</button>
+                <button onclick="if(window.addSaldoAmount) window.addSaldoAmount(250000);" class="p-3 bg-slate-900 hover:bg-emerald-600/25 border border-slate-800 rounded-xl text-xs font-bold text-white transition">Rp 250.000</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 5: GANTI PASSWORD -->
+    <div id="changePasswordModal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass-card max-w-sm w-full rounded-3xl border border-purple-500/40 p-6 space-y-4 relative">
+            <button onclick="closeChangePasswordModal()" class="absolute right-4 top-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <h3 class="text-lg font-bold text-white text-center">Ganti Password Akun</h3>
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Password Baru</label>
+                    <input type="password" id="newPasswordInput" placeholder="Minimal 6 karakter..." class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white focus:outline-none focus:border-purple-500">
+                </div>
+                <button onclick="saveNewPassword()" class="w-full py-3 rounded-xl bg-purple-600 hover:bg-purple-500 font-extrabold text-xs text-white shadow-lg transition">Simpan Password Baru</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 6: LIVE CHAT -->
+    <div id="liveChatModal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass-card max-w-md w-full rounded-3xl border border-emerald-500/40 p-6 space-y-4 relative">
+            <button onclick="closeLiveChatModal()" class="absolute right-4 top-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                <i class="fa-solid fa-headset text-emerald-400"></i> Bantuan & Tiket CS 24/7
+            </h3>
+            <div id="chatMessagesContainer" class="bg-slate-900/90 p-3 rounded-2xl h-48 overflow-y-auto space-y-2 text-xs border border-slate-800">
+                <div class="p-2.5 bg-slate-800 rounded-xl text-slate-200">
+                    <b>Admin VALYX:</b> Halo! Ada kendala transaksi atau pertanyaan seputar top up? Silakan ketik pesan Anda di bawah.
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <input type="text" id="chatInputText" placeholder="Ketik pesan kendala..." class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white focus:outline-none focus:border-emerald-500">
+                <button onclick="sendChatMessage()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs transition">Kirim</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FLOATING BUTTONS (CS & PINTASAN ADMIN RAHASIA) -->
+    <button onclick="openLiveChatModal()" class="fixed bottom-6 right-6 z-40 bg-gradient-to-r from-emerald-500 to-teal-600 text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center text-2xl hover:scale-110 transition glow-effect">
+        <i class="fa-solid fa-headset"></i>
+    </button>
+    <button onclick="openAdminModal()" class="fixed bottom-6 left-6 z-40 bg-slate-900 border border-purple-500/50 text-purple-400 w-10 h-10 rounded-full shadow-xl flex items-center justify-center text-sm hover:scale-110 transition" title="Pintasan Admin">
+        <i class="fa-solid fa-gear"></i>
+    </button>
+
+    <!-- REAL-TIME TOAST NOTIFICATION CONTAINER -->
+    <div id="toastContainer" class="fixed bottom-20 left-6 z-40 space-y-2 pointer-events-none"></div>
+
+    <!-- MODAL 7: ADMIN DASHBOARD -->
+    <div id="adminModal" class="fixed inset-0 z-50 hidden bg-slate-950/95 backdrop-blur-xl w-full h-full overflow-y-auto p-2 sm:p-6">
+        <div class="glass-card w-full max-w-4xl mx-auto min-h-full rounded-2xl sm:rounded-3xl border border-slate-800 p-4 sm:p-8 space-y-6 relative flex flex-col justify-start">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-purple-600/20 border border-purple-500/40 text-purple-400 flex items-center justify-center text-lg font-bold">
+                        <i class="fa-solid fa-user-gear"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg sm:text-xl font-bold text-white">Admin Dashboard & AI Assistant</h3>
+                        <p class="text-xs text-slate-400">Kelola web, poster, promo, atau gunakan perintah AI otomatis & Bug Fixer</p>
+                    </div>
+                </div>
+                <button onclick="closeAdminModal()" class="w-10 h-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-rose-500/20 transition">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <!-- KELOLA GAMBAR POSTER GAME -->
+            <div class="space-y-4">
+                <h4 class="font-bold text-white text-xs sm:text-sm uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-image text-cyan-400"></i> Kelola Gambar Poster Game
+                </h4>
+                <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center bg-slate-900/80 p-4 rounded-2xl border border-slate-800">
+                    <div class="sm:col-span-6">
+                        <label class="block text-xs text-slate-400 mb-1">Pilih Game / Layanan:</label>
+                        <select id="adminSelectGamePoster" onchange="onAdminGamePosterSelect()" class="w-full px-3.5 py-3 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs font-semibold focus:outline-none focus:border-purple-500"></select>
+                    </div>
+                    <div class="sm:col-span-6 flex items-center gap-3">
+                        <img id="adminPosterPreview" src="" class="w-14 h-14 rounded-xl object-cover border border-slate-700 bg-slate-950 flex-shrink-0">
+                        <div class="w-full">
+                            <input type="file" id="posterFileInput" accept="image/*" class="hidden" onchange="handlePosterFileSelect(event)">
+                            <button type="button" onclick="triggerPosterUpload()" class="w-full px-4 py-3 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 text-white font-bold rounded-xl text-xs shadow-lg transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-folder-open"></i> Ganti dari Galeri HP
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KELOLA KODE PROMO -->
+            <div class="space-y-4 pt-2 border-t border-slate-800">
+                <h4 class="font-bold text-white text-xs sm:text-sm uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-tags text-purple-400"></i> Kelola Kode Promo
+                </h4>
+                <div class="grid grid-cols-1 sm:grid-cols-12 gap-3">
+                    <div class="sm:col-span-5">
+                        <input type="text" id="adminPromoCode" placeholder="KODE (CTH: DISPAD)" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-white font-mono uppercase text-xs focus:outline-none focus:border-purple-500">
+                    </div>
+                    <div class="sm:col-span-4">
+                        <input type="number" id="adminPromoDiscount" placeholder="Diskon (cth: 5000)" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-white text-xs focus:outline-none focus:border-purple-500">
+                    </div>
+                    <div class="sm:col-span-3">
+                        <button onclick="addPromoCode()" class="w-full h-full py-3 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl text-xs transition flex items-center justify-center gap-1">
+                            <i class="fa-solid fa-plus"></i> Tambah Promo
+                        </button>
+                    </div>
+                </div>
+                <div id="adminPromoListContainer" class="space-y-2 pt-2"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-950 border-t border-slate-900 mt-16 text-xs text-slate-500 py-8 text-center">
+        <p onclick="openAdminModal()" class="cursor-pointer hover:text-slate-400 select-none">© 2026 VALYX TOPUP. All Rights Reserved. Built for Speed & Automation.</p>
+    </footer>
+
+    <!-- SCRIPT UTAMA UI & FIREBASE -->
+    <script>
+        window.isMemberLoggedIn = false;
+        window.currentMemberData = null;
+
+        let gamesData = [
+            {
+                id: 'mlbb', title: 'Mobile Legends', publisher: 'Moonton', category: 'mobile', badge: 'POPULER', keywords: ['ml', 'mlbb', 'mobile legend', 'mobile legends', 'dm ml', 'layla', 'diamond ml'],
+                image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&auto=format&fit=crop&q=80', hasZone: true,
+                items: [
+                    { id: 'ml_3', name: '3 Diamonds', price: 1500, memberPrice: 1200 },
+                    { id: 'ml_86', name: '86 Diamonds', price: 20000, memberPrice: 19000, badge: 'FLASH SALE' },
+                    { id: 'ml_257', name: '257 Diamonds', price: 60000, memberPrice: 57000, badge: 'BEST SELLER' },
+                    { id: 'ml_706', name: '706 Diamonds', price: 160000, memberPrice: 152000 },
+                    { id: 'ml_2195', name: '2.195 Diamonds', price: 500000, memberPrice: 475000 }
+                ]
+            },
+            {
+                id: 'ff', title: 'Free Fire', publisher: 'Garena', category: 'mobile', badge: 'HOT', keywords: ['ff', 'epep', 'free fire', 'freefire', 'dm ff'],
+                image: 'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=400&auto=format&fit=crop&q=80', hasZone: false,
+                items: [
+                    { id: 'ff_5', name: '5 Diamonds', price: 1500, memberPrice: 1200 },
+                    { id: 'ff_355', name: '355 Diamonds', price: 48500, memberPrice: 46000, badge: 'BEST SELLER' },
+                    { id: 'ff_720', name: '720 Diamonds', price: 96000, memberPrice: 91000 }
+                ]
+            },
+            {
+                id: 'hok', title: 'Honor of Kings', publisher: 'Level Infinite', category: 'mobile', badge: 'NEW / HOT', keywords: ['hok', 'honor of king', 'honor of kings', 'kings', 'token hok'],
+                image: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=400&auto=format&fit=crop&q=80', hasZone: false,
+                items: [
+                    { id: 'hok_8', name: '8 Tokens', price: 2000, memberPrice: 1700 },
+                    { id: 'hok_80', name: '80 Tokens', price: 14800, memberPrice: 14000, badge: 'PROMO' }
+                ]
+            },
+            {
+                id: 'zzz', title: 'Zenless Zone Zero', publisher: 'HoYoverse', category: 'mobile', badge: 'HOT', keywords: ['zzz', 'zenless', 'zenless zone zero'],
+                image: 'https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?w=400&auto=format&fit=crop&q=80', hasZone: true,
+                items: [
+                    { id: 'zzz_60', name: '60 Monochromes', price: 15000, memberPrice: 14000 },
+                    { id: 'zzz_300', name: '300 Monochromes', price: 65000, memberPrice: 61500 }
+                ]
+            }
+        ];
+
+        let currentSelectedGame = null;
+        let currentSelectedNominal = null;
+        let currentSelectedPayment = null;
+        let currentDiscount = 0;
+        let shoppingCart = JSON.parse(localStorage.getItem('valyx_shopping_cart') || '[]');
+        let promoList = JSON.parse(localStorage.getItem('valyx_promo_list')) || { 'VALYX10': 5000, 'DISPAD': 5000 };
+        let lastOrderData = null;
+
+        function applyCustomPosters() {
+            let customPosters = JSON.parse(localStorage.getItem('valyx_custom_posters') || '{}');
+            gamesData.forEach(game => {
+                if (customPosters[game.id]) {
+                    game.image = customPosters[game.id];
+                }
             });
-            list.innerHTML = html;
         }
 
-        // --- RIWAYAT PERTANDINGAN ---
-        function catatRiwayat(kategori, stageLabel, t1, t2, s1, s2) {
-            const log = `[${kategori.toUpperCase()} - ${stageLabel}] ${t1} (${s1}) vs (${s2}) ${t2}`;
-            // Mencegah duplikasi history yang sama
-            if(!appState.history.includes(log)) {
-                appState.history.unshift(log); // masukkan di paling atas
+        document.addEventListener('DOMContentLoaded', () => {
+            applyCustomPosters();
+            renderGameGrid(gamesData);
+            renderFlashSale();
+            renderPricelistTable();
+            startFlashSaleTimer();
+            loadMyHistory();
+            updateCartBadge();
+            renderAdminPromoList();
+            populateAdminGamePosterDropdown();
+            startRealtimeToastSimulator();
+
+            const currentHash = window.location.hash.replace('#', '');
+            if (currentHash === 'admin') {
+                openAdminModal();
+            } else if (currentHash) {
+                showPage(currentHash);
+            } else {
+                showPage('home');
+            }
+        });
+
+        window.addEventListener('hashchange', () => {
+            const currentHash = window.location.hash.replace('#', '');
+            if (currentHash === 'admin') {
+                openAdminModal();
+            } else if (currentHash) {
+                showPage(currentHash);
+            }
+        });
+
+        function loadGameOrderUI(game) {
+            currentSelectedGame = game;
+            document.getElementById('orderGameImg').src = game.image;
+            document.getElementById('orderGameTitle').innerText = game.title;
+            document.getElementById('orderGamePublisher').innerText = game.publisher;
+            document.getElementById('selectedGameSlug').innerText = 'order-' + game.id;
+
+            if(game.hasZone) document.getElementById('zoneIdContainer').classList.remove('hidden');
+            else document.getElementById('zoneIdContainer').classList.add('hidden');
+
+            const grid = document.getElementById('nominalGrid');
+            grid.innerHTML = '';
+            game.items.forEach(item => {
+                const el = document.createElement('div');
+                el.className = "border border-slate-800 bg-slate-900 p-3 rounded-2xl cursor-pointer hover:border-purple-500 transition text-xs flex flex-col justify-between";
+                el.onclick = () => {
+                    document.querySelectorAll('#nominalGrid > div').forEach(d => d.classList.remove('border-purple-500', 'bg-purple-900/30'));
+                    el.classList.add('border-purple-500', 'bg-purple-900/30');
+                    currentSelectedNominal = item;
+                    updateSummary();
+                };
+                el.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between gap-1 mb-1">
+                            <span class="font-bold text-white block line-clamp-1">${item.name}</span>
+                            ${item.badge ? `<span class="px-1.5 py-0.5 rounded text-[8px] font-black bg-purple-600 text-white whitespace-nowrap">${item.badge}</span>` : ''}
+                        </div>
+                    </div>
+                    <span class="text-purple-400 font-extrabold mt-1 block">Rp ${(window.isMemberLoggedIn ? item.memberPrice : item.price).toLocaleString('id-ID')}</span>`;
+                grid.appendChild(el);
+            });
+        }
+
+        function showPage(pageId) {
+            let targetPageId = pageId;
+            if (pageId.startsWith('order-')) {
+                const gameId = pageId.replace('order-', '');
+                const game = gamesData.find(g => g.id === gameId);
+                if (game) {
+                    if (!currentSelectedGame || currentSelectedGame.id !== gameId) loadGameOrderUI(game);
+                    targetPageId = 'order';
+                }
+            } else if (pageId === 'order') {
+                if (!currentSelectedGame) { targetPageId = 'home'; pageId = 'home'; }
+            }
+            document.querySelectorAll('main > div').forEach(div => div.classList.add('hidden'));
+            const target = document.getElementById('page-' + targetPageId);
+            if(target) target.classList.remove('hidden');
+            if (pageId !== 'admin') window.location.hash = pageId;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderFlashSale() {
+            const setImg = (id, elId) => {
+                const g = gamesData.find(x => x.id === id);
+                if (g) {
+                    const el = document.getElementById(elId);
+                    if(el) el.src = g.image;
+                }
+            };
+            setImg('hok', 'flashImgHok');
+            setImg('mlbb', 'flashImgMlbb');
+            setImg('ff', 'flashImgFf');
+            setImg('zzz', 'flashImgZzz');
+        }
+
+        function renderGameGrid(data) {
+            const container = document.getElementById('gameGrid');
+            if(!container) return;
+            container.innerHTML = '';
+            data.forEach(game => {
+                const card = document.createElement('div');
+                card.className = "glass-card rounded-2xl p-3 border border-slate-800 hover:border-purple-500 transition cursor-pointer flex flex-col justify-between space-y-2 hover:scale-[1.02]";
+                card.onclick = () => selectGameForOrder(game.id);
+                card.innerHTML = `
+                    <div class="relative rounded-xl overflow-hidden aspect-square">
+                        <img src="${game.image}" alt="${game.title}" class="w-full h-full object-cover">
+                        <span class="absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded text-[8px] font-black bg-purple-600 text-white">${game.badge}</span>
+                    </div>
+                    <div>
+                        <h3 class="font-extrabold text-xs text-white line-clamp-1">${game.title}</h3>
+                        <p class="text-[10px] text-slate-400">${game.publisher}</p>
+                    </div>`;
+                container.appendChild(card);
+            });
+        }
+
+        function filterGames() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            if (!query) { renderGameGrid(gamesData); return; }
+            const filtered = gamesData.filter(g => g.title.toLowerCase().includes(query) || g.id.toLowerCase().includes(query));
+            renderGameGrid(filtered);
+        }
+
+        function setCategory(cat) {
+            document.querySelectorAll('.cat-tab').forEach(btn => {
+                btn.classList.remove('border-purple-500', 'bg-purple-600/20', 'text-purple-300');
+                btn.classList.add('border-slate-800', 'bg-slate-900', 'text-slate-300');
+            });
+            event.currentTarget.classList.add('border-purple-500', 'bg-purple-600/20', 'text-purple-300');
+            if(cat === 'all') renderGameGrid(gamesData);
+            else renderGameGrid(gamesData.filter(g => g.category === cat));
+        }
+
+        function selectGameForOrder(gameId) {
+            const game = gamesData.find(g => g.id === gameId);
+            if(!game) return;
+            loadGameOrderUI(game);
+            showPage('order-' + gameId);
+        }
+
+        function selectPayment(key, name, fee) {
+            currentSelectedPayment = { key, name, fee };
+            document.querySelectorAll('.payment-card').forEach(c => c.classList.remove('border-purple-500', 'bg-purple-900/30'));
+            event.currentTarget.classList.add('border-purple-500', 'bg-purple-900/30');
+            updateSummary();
+        }
+
+        function updateSummary() {
+            let base = currentSelectedNominal ? (window.isMemberLoggedIn ? currentSelectedNominal.memberPrice : currentSelectedNominal.price) : 0;
+            let fee = currentSelectedPayment ? currentSelectedPayment.fee : 0;
+            let total = Math.max(0, base + fee - currentDiscount);
+
+            document.getElementById('summaryItem').innerText = currentSelectedNominal ? currentSelectedNominal.name : '-';
+            document.getElementById('summaryDiscount').innerText = `Rp ${currentDiscount.toLocaleString('id-ID')}`;
+            document.getElementById('summaryTotal').innerText = `Rp ${total.toLocaleString('id-ID')}`;
+        }
+
+        async function checkNickname() {
+            const userId = document.getElementById('inputUserId').value.trim();
+            const zoneId = currentSelectedGame && currentSelectedGame.hasZone ? document.getElementById('inputZoneId').value.trim() : '';
+            const res = document.getElementById('nicknameResult');
+            
+            if(!userId) { Swal.fire('Isi ID', 'Masukkan User ID terlebih dahulu!', 'warning'); return; }
+            if(currentSelectedGame && currentSelectedGame.hasZone && !zoneId) { Swal.fire('Isi Zone ID', 'Masukkan Zone ID / Server terlebih dahulu!', 'warning'); return; }
+
+            let exactNickname = userId === '48085214' ? 'BentarLul' : ('Sultan_' + userId);
+            res.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${exactNickname}`;
+        }
+
+        function applyPromo() {
+            const code = document.getElementById('inputPromo').value.trim().toUpperCase();
+            if(promoList[code]) {
+                currentDiscount = promoList[code];
+                document.getElementById('promoStatus').innerText = `✓ Diskon Rp ${currentDiscount.toLocaleString('id-ID')}`;
+                updateSummary();
+            } else {
+                Swal.fire('Tidak Valid', 'Kode promo tidak ditemukan!', 'error');
             }
         }
 
-        function renderRiwayat() {
-            const container = document.getElementById('history-container');
-            if (appState.history.length === 0) {
-                container.innerHTML = `<p style="text-align:center; color:var(--text-muted);">Belum ada riwayat pertandingan yang selesai.</p>`;
+        function addToCartFromOrder() {
+            const userId = document.getElementById('inputUserId').value.trim();
+            if (!userId || !currentSelectedNominal) { Swal.fire('Peringatan', 'Masukkan User ID dan pilih nominal item terlebih dahulu!', 'warning'); return; }
+            let price = window.isMemberLoggedIn ? currentSelectedNominal.memberPrice : currentSelectedNominal.price;
+            shoppingCart.push({ game: currentSelectedGame.title, item: currentSelectedNominal.name, target: userId, price: price });
+            localStorage.setItem('valyx_shopping_cart', JSON.stringify(shoppingCart));
+            updateCartBadge();
+            Swal.fire('Berhasil', 'Item berhasil ditambahkan ke keranjang belanja!', 'success');
+        }
+
+        function updateCartBadge() {
+            const badge = document.getElementById('cartBadgeCount');
+            if (!badge) return;
+            if (shoppingCart.length > 0) { badge.innerText = shoppingCart.length; badge.classList.remove('hidden'); }
+            else { badge.classList.add('hidden'); }
+        }
+
+        function openCartModal() {
+            const container = document.getElementById('cartItemsContainer');
+            const totalEl = document.getElementById('cartTotalPrice');
+            if (!container) return;
+            container.innerHTML = '';
+            if (shoppingCart.length === 0) {
+                container.innerHTML = '<p class="text-xs text-slate-500 italic text-center py-6">Keranjang belanja Anda masih kosong.</p>';
+                totalEl.innerText = 'Rp 0';
+                document.getElementById('cartModal').classList.remove('hidden');
                 return;
             }
-            container.innerHTML = appState.history.map(h => `<div class="riwayat-item"><span>⚔️ ${h}</span><span>Selesai</span></div>`).join('');
+            let grandTotal = 0;
+            shoppingCart.forEach((cartItem, idx) => {
+                grandTotal += cartItem.price;
+                const div = document.createElement('div');
+                div.className = "bg-slate-900 border border-slate-800 p-3 rounded-2xl flex justify-between items-center text-xs";
+                div.innerHTML = `<div><span class="font-bold text-white block">${cartItem.game} - ${cartItem.item}</span><span class="text-[10px] text-slate-400">Target: ${cartItem.target}</span></div><div class="flex items-center gap-3"><span class="font-bold text-cyan-400">Rp ${cartItem.price.toLocaleString('id-ID')}</span><button onclick="removeCartItem(${idx})" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button></div>`;
+                container.appendChild(div);
+            });
+            totalEl.innerText = `Rp ${grandTotal.toLocaleString('id-ID')}`;
+            document.getElementById('cartModal').classList.remove('hidden');
         }
 
-        // --- BRACKET ENGINE ---
-        function renderBracket() {
-            const container = document.getElementById('bracket-container');
-            const data = appState[currentCategory];
-            const teams = data.teams;
-            const matches = data.matches;
+        function closeCartModal() { document.getElementById('cartModal').classList.add('hidden'); }
+        function removeCartItem(index) { shoppingCart.splice(index, 1); localStorage.setItem('valyx_shopping_cart', JSON.stringify(shoppingCart)); updateCartBadge(); openCartModal(); }
+        
+        function checkoutCart() {
+            if (shoppingCart.length === 0) return;
+            const invId = 'INV-CART-' + Math.floor(100000 + Math.random() * 900000);
+            shoppingCart.forEach(cartItem => { saveToHistory({ invId: invId, game: cartItem.game, item: cartItem.item, target: cartItem.target, price: cartItem.price, date: new Date().toLocaleDateString('id-ID') }); });
+            shoppingCart = [];
+            localStorage.setItem('valyx_shopping_cart', JSON.stringify(shoppingCart));
+            updateCartBadge();
+            closeCartModal();
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+            Swal.fire('Checkout Berhasil!', `No Invoice: ${invId}`, 'success');
+            showPage('tracking');
+        }
 
-            const qfTeams = [
-                getWinner(teams[0], teams[1], matches.r16[0]), getWinner(teams[2], teams[3], matches.r16[1]),
-                getWinner(teams[4], teams[5], matches.r16[2]), getWinner(teams[6], teams[7], matches.r16[3]),
-                getWinner(teams[8], teams[9], matches.r16[4]), getWinner(teams[10], teams[11], matches.r16[5]),
-                getWinner(teams[12], teams[13], matches.r16[6]), getWinner(teams[14], teams[15], matches.r16[7])
-            ];
+        function processOrder() {
+            const userId = document.getElementById('inputUserId').value;
+            const wa = document.getElementById('inputWhatsapp').value;
 
-            const sfTeams = [
-                getWinner(qfTeams[0], qfTeams[1], matches.qf[0]), getWinner(qfTeams[2], qfTeams[3], matches.qf[1]),
-                getWinner(qfTeams[4], qfTeams[5], matches.qf[2]), getWinner(qfTeams[6], qfTeams[7], matches.qf[3])
-            ];
+            if(!userId || !currentSelectedNominal || !currentSelectedPayment || !wa) {
+                Swal.fire('Lengkapi Data', 'Harap lengkapi semua data transaksi!', 'warning');
+                return;
+            }
 
-            const finalTeams = [ getWinner(sfTeams[0], sfTeams[1], matches.sf[0]), getWinner(sfTeams[2], sfTeams[3], matches.sf[1]) ];
-            const thirdTeams = [ getLoser(sfTeams[0], sfTeams[1], matches.sf[0]), getLoser(sfTeams[2], sfTeams[3], matches.sf[1]) ];
+            const invId = 'INV-' + Math.floor(100000 + Math.random() * 900000);
+            let base = window.isMemberLoggedIn ? currentSelectedNominal.memberPrice : currentSelectedNominal.price;
+            let total = base + currentSelectedPayment.fee - currentDiscount;
 
-            let html = `<div class="bracket-flex">`;
+            lastOrderData = { invId, game: currentSelectedGame.title, item: currentSelectedNominal.name, target: userId, price: total, date: new Date().toLocaleDateString('id-ID') };
+            saveToHistory(lastOrderData);
+
+            if (window.isMemberLoggedIn && window.addLoyaltyPoints) {
+                window.addLoyaltyPoints(10);
+            }
+
+            document.getElementById('invModalId').innerText = invId;
+            document.getElementById('invModalItem').innerText = `${currentSelectedGame.title} - ${currentSelectedNominal.name}`;
+            document.getElementById('invModalTotal').innerText = `Rp ${total.toLocaleString('id-ID')}`;
+            document.getElementById('invoiceModal').classList.remove('hidden');
+        }
+
+        function closeInvoiceModal() { document.getElementById('invoiceModal').classList.add('hidden'); }
+        function simulatePaymentSuccess() {
+            closeInvoiceModal();
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+            Swal.fire('Sukses!', 'Pembayaran diterima.', 'success');
+            showPage('tracking');
+        }
+
+        function saveToHistory(item) {
+            let history = JSON.parse(localStorage.getItem('valyx_topup_history') || '[]');
+            history.unshift(item);
+            localStorage.setItem('valyx_topup_history', JSON.stringify(history));
+            loadMyHistory();
+        }
+
+        function loadMyHistory() {
+            let history = JSON.parse(localStorage.getItem('valyx_topup_history') || '[]');
+            const container = document.getElementById('myHistoryContainer');
+            const personalContainer = document.getElementById('memberPersonalHistory');
             
-            // Babak 16 Kiri
-            html += `<div class="round-col"><div class="round-title">ROUND OF 16</div>`;
-            for(let i=0; i<4; i++) html += renderMatchupHtml(`M${i+1}`, teams[i*2], teams[i*2+1], matches.r16[i], 'r16', i, 'Babak 16');
-            html += `</div>`;
-            // QF Kiri
-            html += `<div class="round-col"><div class="round-title">QUARTER-FINALS</div>`;
-            for(let i=0; i<2; i++) html += renderMatchupHtml(`QF${i+1}`, qfTeams[i*2], qfTeams[i*2+1], matches.qf[i], 'qf', i, 'Quarter-Final');
-            html += `</div>`;
-            // SF Kiri
-            html += `<div class="round-col"><div class="round-title">SEMI-FINALS</div>`;
-            html += renderMatchupHtml(`SF1`, sfTeams[0], sfTeams[1], matches.sf[0], 'sf', 0, 'Semi-Final');
-            html += `</div>`;
-            // FINAL
-            html += `<div class="round-col">
-                <div class="round-title" style="border-color:var(--accent-gold); color:var(--accent-gold);">CHAMPION</div>
-                ${renderMatchupHtml(`GRAND FINAL`, finalTeams[0], finalTeams[1], matches.f, 'f', 0, 'Grand Final', 'final')}
-                <div class="round-title" style="margin-top:14px; border-color:var(--accent-cyan);">3RD PLACE MATCH</div>
-                ${renderMatchupHtml(`JUARA 3`, thirdTeams[0], thirdTeams[1], matches.t3, 't3', 0, 'Juara 3', 'third')}
-            </div>`;
-            // SF Kanan
-            html += `<div class="round-col"><div class="round-title">SEMI-FINALS</div>`;
-            html += renderMatchupHtml(`SF2`, sfTeams[2], sfTeams[3], matches.sf[1], 'sf', 1, 'Semi-Final');
-            html += `</div>`;
-            // QF Kanan
-            html += `<div class="round-col"><div class="round-title">QUARTER-FINALS</div>`;
-            for(let i=2; i<4; i++) html += renderMatchupHtml(`QF${i+1}`, qfTeams[i*2], qfTeams[i*2+1], matches.qf[i], 'qf', i, 'Quarter-Final');
-            html += `</div>`;
-            // Babak 16 Kanan
-            html += `<div class="round-col"><div class="round-title">ROUND OF 16</div>`;
-            for(let i=4; i<8; i++) html += renderMatchupHtml(`M${i+1}`, teams[i*2], teams[i*2+1], matches.r16[i], 'r16', i, 'Babak 16');
-            html += `</div>`;
-
-            html += `</div>`;
-            container.innerHTML = html;
-        }
-
-        function renderMatchupHtml(label, t1, t2, match, stage, index, stageNameFull, extraClass='') {
-            t1 = t1 || "-"; t2 = t2 || "-";
-            const w = match.w;
-            const isAdmin = currentRole === 'admin';
-
-            return `
-            <div class="matchup ${extraClass}">
-                <div class="match-header">${label}</div>
-                <div class="team-row ${w === 1 ? 'winner' : ''}">
-                    <span class="team-name">${t1}</span>
-                    <div><span style="font-weight:bold; margin-right:4px;">${match.s1}</span>
-                        ${isAdmin && t1 !== '-' && t2 !== '-' && !w ? `<button class="score-btn" onclick="updateScore('${stage}', ${index}, 1, '${t1}', '${t2}', '${stageNameFull}')">+</button>` : ''}
-                    </div>
-                </div>
-                <div class="team-row ${w === 2 ? 'winner' : ''}">
-                    <span class="team-name">${t2}</span>
-                    <div><span style="font-weight:bold; margin-right:4px;">${match.s2}</span>
-                        ${isAdmin && t1 !== '-' && t2 !== '-' && !w ? `<button class="score-btn" onclick="updateScore('${stage}', ${index}, 2, '${t1}', '${t2}', '${stageNameFull}')">+</button>` : ''}
-                    </div>
-                </div>
-            </div>`;
-        }
-
-        function getWinner(t1, t2, match) { return (!match || match.w === null) ? "-" : (match.w === 1 ? t1 : t2); }
-        function getLoser(t1, t2, match) { return (!match || match.w === null) ? "-" : (match.w === 1 ? t2 : t1); }
-
-        function updateScore(stage, index, teamNum, t1, t2, stageNameFull) {
-            let m = stage === 'f' || stage === 't3' ? appState[currentCategory].matches[stage] : appState[currentCategory].matches[stage][index];
-            if (teamNum === 1) m.s1++; else m.s2++;
-
-            if (m.s1 >= 2 || m.s2 >= 2) {
-                m.w = m.s1 >= 2 ? 1 : 2;
-                // Simpan ke riwayat jika match selesai
-                catatRiwayat(currentCategory, stageNameFull, t1, t2, m.s1, m.s2);
-            }
-            saveState();
-        }
-
-        function renderPodium() {
-            const data = appState[currentCategory];
-            const f = data.matches.f, t3 = data.matches.t3;
-
-            // Simple traversal for podium names
-            let juara1 = "-", juara2 = "-", juara3 = "-";
-            if(f.w !== null) { // if final is done
-                // But we need the names. Let's just re-evaluate like renderBracket
-                const qf = (i1, i2, mr) => getWinner(data.teams[i1], data.teams[i2], data.matches.r16[mr]);
-                const qfT = [qf(0,1,0), qf(2,3,1), qf(4,5,2), qf(6,7,3), qf(8,9,4), qf(10,11,5), qf(12,13,6), qf(14,15,7)];
-                const sf = (i1, i2, mr) => getWinner(qfT[i1], qfT[i2], data.matches.qf[mr]);
-                const sfT = [sf(0,1,0), sf(2,3,1), sf(4,5,2), sf(6,7,3)];
-                const fT = [getWinner(sfT[0], sfT[1], data.matches.sf[0]), getWinner(sfT[2], sfT[3], data.matches.sf[1])];
-                const t3T = [getLoser(sfT[0], sfT[1], data.matches.sf[0]), getLoser(sfT[2], sfT[3], data.matches.sf[1])];
-
-                juara1 = f.w === 1 ? fT[0] : fT[1];
-                juara2 = f.w === 1 ? fT[1] : fT[0];
-                juara3 = t3.w !== null ? (t3.w === 1 ? t3T[0] : t3T[1]) : "-";
+            if(container) {
+                container.innerHTML = history.length ? '' : '<p class="text-xs text-slate-500 italic">Belum ada riwayat.</p>';
+                history.forEach(h => {
+                    const div = document.createElement('div');
+                    div.className = "bg-slate-900 border border-slate-800 p-3 rounded-2xl flex justify-between text-xs";
+                    div.innerHTML = `<div><span class="font-bold text-cyan-400 block">${h.invId}</span><span class="text-white">${h.game} - ${h.item}</span></div><span class="font-bold text-purple-400">Rp ${h.price.toLocaleString('id-ID')}</span>`;
+                    container.appendChild(div);
+                });
             }
 
-            document.getElementById('podium-1').innerText = juara1;
-            document.getElementById('podium-2').innerText = juara2;
-            document.getElementById('podium-3').innerText = juara3;
-        }
-
-        // --- PENGATURAN SLOT TIM (MANUAL) ---
-        function renderSeedingInputs(cat) {
-            seedEditCategory = cat;
-            const grid = document.getElementById('seed-inputs');
-            grid.innerHTML = appState[cat].teams.map((t, i) => `
-                <div class="team-item"><span>Slot ${i+1}</span><input type="text" id="seed-in-${i}" value="${t}" /></div>
-            `).join('');
-        }
-        function saveSeedSettings() {
-            for(let i=0; i<16; i++) {
-                const val = document.getElementById(`seed-in-${i}`).value.trim();
-                appState[seedEditCategory].teams[i] = val || `Tim ${i+1}`;
-            }
-            saveState(); alert("Susunan Tim Manual Berhasil Disimpan!");
-        }
-        function randomizeCurrentBracket() {
-            if (currentRole !== 'admin') { alert('Fitur acak bagan hanya untuk Panitia!'); return; }
-            if (confirm(`Yakin mengacak Kategori ${currentCategory.toUpperCase()}? Skor akan reset. Data Daftar Tim AMAN.`)) {
-                appState[currentCategory].teams.sort(() => Math.random() - 0.5);
-                appState[currentCategory].matches = createEmptyMatches();
-                saveState(); alert("Bagan berhasil diacak!");
-            }
-        }
-        function resetBracketData(cat) {
-            if(confirm(`⚠️ YAKIN MERESET SKOR KATEGORI ${cat.toUpperCase()}?`)) {
-                appState[cat].matches = createEmptyMatches(); saveState(); alert("Skor direset!");
+            if(personalContainer) {
+                personalContainer.innerHTML = history.length ? '' : '<p class="text-xs text-slate-500 italic">Belum ada riwayat transaksi akun ini.</p>';
+                history.forEach(h => {
+                    const div = document.createElement('div');
+                    div.className = "bg-slate-950 border border-slate-800 p-2.5 rounded-xl flex justify-between text-xs";
+                    div.innerHTML = `<div><span class="font-bold text-cyan-400 block">${h.invId} (${h.date})</span><span class="text-slate-300">${h.game} - ${h.item}</span></div><span class="font-bold text-purple-400">Rp ${h.price.toLocaleString('id-ID')}</span>`;
+                    personalContainer.appendChild(div);
+                });
             }
         }
 
-        function toggleFullscreen() {
-            if (!document.fullscreenElement) { document.documentElement.requestFullscreen(); } 
-            else { if (document.exitFullscreen) document.exitFullscreen(); }
+        function searchOrder() {
+            const trackInput = document.getElementById('trackInput').value.trim();
+            if(!trackInput) { Swal.fire('Peringatan', 'Masukkan No Invoice atau Target ID/HP', 'warning'); return; }
+            let history = JSON.parse(localStorage.getItem('valyx_topup_history') || '[]');
+            let found = history.find(h => h.invId.toLowerCase() === trackInput.toLowerCase() || h.target.includes(trackInput));
+
+            if (found) {
+                document.getElementById('trackInvoiceId').innerText = found.invId; document.getElementById('trackGame').innerText = found.game;
+                document.getElementById('trackItem').innerText = found.item; document.getElementById('trackTarget').innerText = found.target;
+                document.getElementById('trackPrice').innerText = `Rp ${found.price.toLocaleString('id-ID')}`;
+            } else if (lastOrderData) {
+                document.getElementById('trackInvoiceId').innerText = lastOrderData.invId; document.getElementById('trackGame').innerText = lastOrderData.game;
+                document.getElementById('trackItem').innerText = lastOrderData.item; document.getElementById('trackTarget').innerText = lastOrderData.target;
+                document.getElementById('trackPrice').innerText = `Rp ${lastOrderData.price.toLocaleString('id-ID')}`;
+            }
+            document.getElementById('trackingResult').classList.remove('hidden');
         }
 
-        // --- ON LOAD ---
-        window.onload = function() {
-            loadSavedState();
+        function clearMyHistory() {
+            Swal.fire({ title: 'Password Admin', input: 'password', showCancelButton: true }).then((res) => {
+                if(res.isConfirmed && res.value === 'bentar19') {
+                    localStorage.removeItem('valyx_topup_history'); loadMyHistory();
+                    Swal.fire('Sukses', 'Riwayat berhasil dibersihkan!', 'success');
+                }
+            });
+        }
+
+        function openMemberModal() { 
+            document.getElementById('memberModal').classList.remove('hidden');
+            if (window.isMemberLoggedIn) {
+                switchMemberView('dashboard');
+                loadMyHistory();
+            } else { switchMemberView('login'); }
+        }
+        function closeMemberModal() { document.getElementById('memberModal').classList.add('hidden'); }
+
+        function switchMemberView(view) {
+            document.getElementById('memberDashboardView').classList.add('hidden');
+            document.getElementById('memberRegisterView').classList.add('hidden');
+            document.getElementById('memberLoginView').classList.add('hidden');
+            if (view === 'dashboard') { document.getElementById('memberDashboardView').classList.remove('hidden'); loadMyHistory(); }
+            else if (view === 'register') { document.getElementById('memberRegisterView').classList.remove('hidden'); }
+            else if (view === 'login') { document.getElementById('memberLoginView').classList.remove('hidden'); }
+        }
+        
+        window.updateMemberUI = () => {};
+
+        function openTopUpSaldoModal() { document.getElementById('topUpSaldoModal').classList.remove('hidden'); }
+        function closeTopUpSaldoModal() { document.getElementById('topUpSaldoModal').classList.add('hidden'); }
+        function openChangePasswordModal() { document.getElementById('changePasswordModal').classList.remove('hidden'); }
+        function closeChangePasswordModal() { document.getElementById('changePasswordModal').classList.add('hidden'); }
+
+        function triggerProfilePicUpload() { document.getElementById('profilePicInput').click(); }
+        function handleProfilePicChange(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const MAX_SIZE = 250; canvas.width = MAX_SIZE; canvas.height = MAX_SIZE;
+                    const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, MAX_SIZE, MAX_SIZE);
+                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.85);
+                    if (window.saveProfilePicToFirebase) {
+                        window.saveProfilePicToFirebase(compressedBase64);
+                        document.getElementById('accountProfileImg').src = compressedBase64;
+                        Swal.fire('Berhasil', 'Foto profil diperbarui!', 'success');
+                    }
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // --- SISTEM ADMIN & PENGELOLA POSTER ---
+        function openAdminModal() {
+            if (localStorage.getItem('valyx_admin_session') === 'true') {
+                renderAdminPromoList(); 
+                populateAdminGamePosterDropdown();
+                document.getElementById('adminModal').classList.remove('hidden'); 
+                return;
+            }
+            Swal.fire({ 
+                title: 'Password Admin', 
+                input: 'password', 
+                inputPlaceholder: 'Masukkan sandi admin...',
+                showCancelButton: true,
+                confirmButtonText: 'Masuk'
+            }).then((res) => {
+                if(res.isConfirmed) {
+                    if (res.value === 'bentar19') {
+                        localStorage.setItem('valyx_admin_session', 'true');
+                        renderAdminPromoList(); 
+                        populateAdminGamePosterDropdown();
+                        document.getElementById('adminModal').classList.remove('hidden');
+                    } else {
+                        Swal.fire('Gagal', 'Password admin salah!', 'error');
+                    }
+                }
+            });
+        }
+
+        function closeAdminModal() { 
+            localStorage.removeItem('valyx_admin_session'); 
+            document.getElementById('adminModal').classList.add('hidden'); 
+            if(window.location.hash === '#admin') window.location.hash = 'home';
+        }
+
+        function populateAdminGamePosterDropdown() {
+            const select = document.getElementById('adminSelectGamePoster');
+            if(!select) return;
+            select.innerHTML = '';
+            gamesData.forEach(game => {
+                const opt = document.createElement('option');
+                opt.value = game.id;
+                opt.innerText = game.title;
+                select.appendChild(opt);
+            });
+            onAdminGamePosterSelect();
+        }
+
+        function onAdminGamePosterSelect() {
+            const gameId = document.getElementById('adminSelectGamePoster').value;
+            const game = gamesData.find(g => g.id === gameId);
+            if(game) {
+                document.getElementById('adminPosterPreview').src = game.image;
+            }
+        }
+
+        function triggerPosterUpload() {
+            document.getElementById('posterFileInput').click();
+        }
+
+        function handlePosterFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const MAX_SIZE = 300; canvas.width = MAX_SIZE; canvas.height = MAX_SIZE;
+                    const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, MAX_SIZE, MAX_SIZE);
+                    const base64Img = canvas.toDataURL('image/jpeg', 0.85);
+
+                    const gameId = document.getElementById('adminSelectGamePoster').value;
+                    let customPosters = JSON.parse(localStorage.getItem('valyx_custom_posters') || '{}');
+                    customPosters[gameId] = base64Img;
+                    localStorage.setItem('valyx_custom_posters', JSON.stringify(customPosters));
+
+                    applyCustomPosters();
+                    renderGameGrid(gamesData);
+                    renderFlashSale();
+                    onAdminGamePosterSelect();
+
+                    Swal.fire('Berhasil', 'Poster game berhasil diubah!', 'success');
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function addPromoCode() {
+            const code = document.getElementById('adminPromoCode').value.trim().toUpperCase();
+            const discount = parseInt(document.getElementById('adminPromoDiscount').value, 10);
+            if(!code || !discount) { Swal.fire('Gagal', 'Lengkapi kode dan nominal diskon!', 'warning'); return; }
+            promoList[code] = discount; localStorage.setItem('valyx_promo_list', JSON.stringify(promoList));
+            renderAdminPromoList(); document.getElementById('adminPromoCode').value = ''; document.getElementById('adminPromoDiscount').value = '';
+            Swal.fire('Sukses', `Kode promo ${code} ditambahkan!`, 'success');
+        }
+        function renderAdminPromoList() {
+            const container = document.getElementById('adminPromoListContainer'); if(!container) return; container.innerHTML = '';
+            Object.keys(promoList).forEach(code => {
+                const item = document.createElement('div');
+                item.className = "flex justify-between items-center bg-slate-900 p-2.5 rounded-xl text-xs border border-slate-800";
+                item.innerHTML = `<span class="font-bold text-purple-400 font-mono">${code} (Diskon Rp ${promoList[code].toLocaleString('id-ID')})</span><button onclick="deletePromoCode('${code}')" class="text-rose-400 font-bold hover:text-rose-300 px-2 py-1 bg-rose-500/10 rounded-lg">Hapus</button>`;
+                container.appendChild(item);
+            });
+        }
+        function deletePromoCode(code) { delete promoList[code]; localStorage.setItem('valyx_promo_list', JSON.stringify(promoList)); renderAdminPromoList(); }
+
+        function toggleMobileMenu() { document.getElementById('mobileMenu').classList.toggle('hidden'); }
+        function openLiveChatModal() { document.getElementById('liveChatModal').classList.remove('hidden'); }
+        function closeLiveChatModal() { document.getElementById('liveChatModal').classList.add('hidden'); }
+        
+        function startFlashSaleTimer() {
+            let totalSeconds = 12290;
+            setInterval(() => {
+                totalSeconds--; if(totalSeconds <= 0) totalSeconds = 12290;
+                let hrs = Math.floor(totalSeconds / 3600); let mins = Math.floor((totalSeconds % 3600) / 60); let secs = totalSeconds % 60;
+                const timerEl = document.getElementById('flashSaleTimer');
+                if (timerEl) timerEl.innerText = `${hrs < 10 ? '0'+hrs : hrs} : ${mins < 10 ? '0'+mins : mins} : ${secs < 10 ? '0'+secs : secs}`;
+            }, 1000);
+        }
+
+        function renderPricelistTable() {
+            const tbody = document.getElementById('pricelistTableBody'); if (!tbody) return; tbody.innerHTML = '';
+            gamesData.forEach(game => {
+                game.items.forEach(item => {
+                    const tr = document.createElement('tr'); tr.className = "hover:bg-slate-900/50 transition";
+                    tr.innerHTML = `<td class="py-3 px-4 font-bold text-purple-400">${game.title}</td><td class="py-3 px-4">${item.name}</td><td class="py-3 px-4 text-slate-400">Rp ${item.price.toLocaleString('id-ID')}</td><td class="py-3 px-4 font-bold text-emerald-400">Rp ${item.memberPrice.toLocaleString('id-ID')}</td><td class="py-3 px-4"><span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400">AVAILABLE</span></td>`;
+                    tbody.appendChild(tr);
+                });
+            });
+        }
+
+        function startRealtimeToastSimulator() {
+            const gamesList = ['Mobile Legends', 'Free Fire', 'Honor of Kings'];
+            const itemsList = ['86 Diamonds', '355 Diamonds', '80 Tokens'];
+            const phoneList = ['0812***3452', '0857***9811', '0821***4432'];
+            setInterval(() => {
+                const rGame = gamesList[Math.floor(Math.random() * gamesList.length)];
+                const rItem = itemsList[Math.floor(Math.random() * itemsList.length)];
+                const rPhone = phoneList[Math.floor(Math.random() * phoneList.length)];
+                showToastNotification(`User <b>${rPhone}</b> sukses top up <b>${rItem} ${rGame}</b>`);
+            }, 12000);
+        }
+
+        function showToastNotification(htmlText) {
+            const container = document.getElementById('toastContainer'); if (!container) return;
+            const toast = document.createElement('div');
+            toast.className = "pointer-events-auto glass-card border border-purple-500/40 px-4 py-3 rounded-2xl text-xs text-slate-200 shadow-2xl flex items-center gap-3";
+            toast.innerHTML = `<div class="w-8 h-8 rounded-xl bg-purple-600/20 text-purple-400 flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-bolt"></i></div><div><span class="text-[10px] text-purple-400 font-bold block">TRANSAKSI REAL-TIME</span><span>${htmlText}</span></div>`;
+            container.appendChild(toast);
+            setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.5s ease'; setTimeout(() => toast.remove(), 500); }, 4000);
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chatInputText'); const container = document.getElementById('chatMessagesContainer');
+            const msg = input.value.trim(); if (!msg) return;
+            const userDiv = document.createElement('div'); userDiv.className = "p-2.5 bg-purple-950/40 rounded-xl text-purple-200 text-right";
+            userDiv.innerHTML = `<b>Anda:</b> ${msg}`; container.appendChild(userDiv); input.value = ''; container.scrollTop = container.scrollHeight;
+            setTimeout(() => {
+                const adminDiv = document.createElement('div'); adminDiv.className = "p-2.5 bg-slate-800 rounded-xl text-slate-200";
+                adminDiv.innerHTML = `<b>Admin VALYX:</b> Pesan Anda diterima. Tim CS segera merespons.`;
+                container.appendChild(adminDiv); container.scrollTop = container.scrollHeight;
+            }, 1000);
+        }
+
+        function calcWR() {
+            const total = parseFloat(document.getElementById('wrTotalMatches').value); const currentWr = parseFloat(document.getElementById('wrCurrentWr').value);
+            const targetWr = parseFloat(document.getElementById('wrTargetWr').value);
+            if(!total || !currentWr || !targetWr || targetWr >= 100 || targetWr <= currentWr) { document.getElementById('wrResult').innerText = "Masukkan angka valid!"; return; }
+            const currentWins = total * (currentWr / 100); const requiredWins = Math.ceil((targetWr * total - 100 * currentWins) / (100 - targetWr));
+            document.getElementById('wrResult').innerHTML = `Butuh <span class="text-emerald-400 font-extrabold">${requiredWins} Win beruntun</span>`;
+        }
+
+        function calcMagicWheel() {
+            const points = parseInt(document.getElementById('mwPoints').value) || 0;
+            if(points >= 200) { document.getElementById('mwResult').innerText = "Siap Klaim Legend Skin!"; return; }
+            document.getElementById('mwResult').innerHTML = `Sisa ±<span class="text-amber-400 font-extrabold">${200 - points} points</span>`;
+        }
+    </script>
+
+    <!-- SCRIPT FIREBASE -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getDatabase, ref, set, get, onValue, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAJ3zikRcdU-GKgANhk8O1V5qX_hfHANBk",
+            authDomain: "valyx-topup.firebaseapp.com",
+            projectId: "valyx-topup",
+            storageBucket: "valyx-topup.firebasestorage.app",
+            messagingSenderId: "380149536693",
+            appId: "1:380149536693:web:f1f7674f2edb54b3756bfc",
+            measurementId: "G-W6SYR3LNKF"
         };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+
+        window.processRegister = async () => {
+            const name = document.getElementById('regName').value.trim();
+            const phone = document.getElementById('regPhone').value.trim();
+            const password = document.getElementById('regPassword').value.trim();
+
+            if (!name || !phone || !password) { Swal.fire('Gagal', 'Harap isi semua kolom pendaftaran!', 'warning'); return; }
+
+            const emailFormat = `${phone}@member.valyx.com`;
+            Swal.fire({ title: 'Memproses ke Server...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, emailFormat, password);
+                const user = userCredential.user;
+
+                await set(ref(db, 'users/' + user.uid), {
+                    name: name,
+                    phone: phone,
+                    saldo: 50000,
+                    points: 100,
+                    profilePic: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80',
+                    createdAt: new Date().toISOString()
+                });
+
+                Swal.close();
+                confetti({ particleCount: 80, spread: 60, origin: { y: 0.6 } });
+                Swal.fire('Registrasi Berhasil!', 'Bonus saldo awal Rp 50.000 ditambahkan.', 'success');
+                switchMemberView('dashboard');
+            } catch (error) {
+                Swal.close();
+                if (error.code === 'auth/email-already-in-use') Swal.fire('Gagal', 'Nomor WhatsApp sudah terdaftar!', 'error');
+                else Swal.fire('Error', error.message, 'error');
+            }
+        };
+
+        window.processLogin = async () => {
+            const phone = document.getElementById('loginPhone').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+
+            if (!phone || !password) { Swal.fire('Gagal', 'Masukkan nomor WhatsApp dan password!', 'warning'); return; }
+
+            const emailFormat = `${phone}@member.valyx.com`;
+            Swal.fire({ title: 'Menghubungkan...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+            try {
+                await signInWithEmailAndPassword(auth, emailFormat, password);
+                Swal.close();
+                Swal.fire('Berhasil Login', 'Selamat datang kembali!', 'success');
+                switchMemberView('dashboard');
+            } catch (error) {
+                Swal.close();
+                Swal.fire('Login Gagal', 'Nomor WhatsApp atau password salah!', 'error');
+            }
+        };
+
+        window.saveNewPassword = async () => {
+            const newPass = document.getElementById('newPasswordInput').value.trim();
+            if (!newPass || newPass.length < 6) { Swal.fire('Peringatan', 'Minimal 6 karakter!', 'warning'); return; }
+            if (auth.currentUser) {
+                try {
+                    closeChangePasswordModal();
+                    document.getElementById('newPasswordInput').value = '';
+                    Swal.fire('Berhasil', 'Password berhasil diubah!', 'success');
+                } catch(error) {
+                    Swal.fire('Gagal', error.message, 'error');
+                }
+            }
+        };
+
+        window.logoutMember = async () => {
+            try {
+                await signOut(auth);
+                window.currentMemberData = null;
+                switchMemberView('login');
+                Swal.fire('Logout', 'Anda telah keluar dari akun.', 'info');
+            } catch (error) {
+                console.error("Logout error", error);
+            }
+        };
+
+        window.addSaldoAmount = async (amount) => {
+            if (auth.currentUser && window.currentMemberData) {
+                const userRef = ref(db, 'users/' + auth.currentUser.uid);
+                await update(userRef, { saldo: window.currentMemberData.saldo + amount });
+                closeTopUpSaldoModal();
+                confetti({ particleCount: 50, spread: 50, origin: { y: 0.6 } });
+                Swal.fire('Top Up Berhasil!', `Saldo bertambah Rp ${amount.toLocaleString('id-ID')}`, 'success');
+            } else {
+                Swal.fire('Gagal', 'Anda harus login terlebih dahulu.', 'error');
+            }
+        };
+
+        window.claimPointsReward = async () => {
+            if (auth.currentUser && window.currentMemberData) {
+                if (window.currentMemberData.points < 50) {
+                    Swal.fire('Poin Belum Cukup', 'Minimal 50 Poin SULTAN!', 'warning');
+                    return;
+                }
+                let rewardSaldo = window.currentMemberData.points * 100;
+                const userRef = ref(db, 'users/' + auth.currentUser.uid);
+                await update(userRef, {
+                    saldo: window.currentMemberData.saldo + rewardSaldo,
+                    points: 0
+                });
+                confetti({ particleCount: 60, spread: 60, origin: { y: 0.6 } });
+                Swal.fire('Berhasil Menukar Poin!', `Ditukar menjadi saldo Rp ${rewardSaldo.toLocaleString('id-ID')}`, 'success');
+            }
+        };
+
+        window.addLoyaltyPoints = async (pointsToAdd) => {
+            if (auth.currentUser && window.currentMemberData) {
+                const userRef = ref(db, 'users/' + auth.currentUser.uid);
+                await update(userRef, { points: window.currentMemberData.points + pointsToAdd });
+            }
+        };
+
+        window.saveProfilePicToFirebase = async (base64Img) => {
+            if (auth.currentUser) {
+                const userRef = ref(db, 'users/' + auth.currentUser.uid);
+                await update(userRef, { profilePic: base64Img });
+            }
+        };
+
+        onAuthStateChanged(auth, (user) => {
+            const memberNavText = document.getElementById('memberNavText');
+            if (user) {
+                window.isMemberLoggedIn = true;
+                const userRef = ref(db, 'users/' + user.uid);
+                onValue(userRef, (snapshot) => {
+                    const data = snapshot.val();
+                    if (data) {
+                        window.currentMemberData = data; 
+                        const saldoEl = document.getElementById('accountSaldoDisplay');
+                        const pointsEl = document.getElementById('accountPointsDisplay');
+                        const paySaldoEl = document.getElementById('paymentSaldoText');
+                        const nameEl = document.getElementById('accountNameDisplay');
+                        const phoneEl = document.getElementById('accountPhoneDisplay');
+                        const profileImgEl = document.getElementById('accountProfileImg');
+                        
+                        if(saldoEl) saldoEl.innerText = `Rp ${data.saldo.toLocaleString('id-ID')}`;
+                        if(pointsEl) pointsEl.innerText = `${data.points} Poin`;
+                        if(paySaldoEl) paySaldoEl.innerText = `Rp ${data.saldo.toLocaleString('id-ID')}`;
+                        if(nameEl) nameEl.innerText = data.name;
+                        if(phoneEl) phoneEl.innerText = data.phone;
+                        if(profileImgEl) profileImgEl.src = data.profilePic || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80';
+                        if(memberNavText) memberNavText.innerText = `${data.name} (Rp ${data.saldo.toLocaleString('id-ID')})`;
+                    }
+                });
+            } else {
+                window.isMemberLoggedIn = false;
+                window.currentMemberData = null;
+                if(memberNavText) memberNavText.innerText = "Login / Daftar";
+            }
+        });
     </script>
 </body>
 </html>
