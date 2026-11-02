@@ -14,7 +14,7 @@
             --bg-input: #080d1a;
             --accent-gold: #fbbf24;
             --accent-pink: #ec4899;
-            --accent-cyan: #38bdf8; /* Cyan sesuai foto */
+            --accent-cyan: #38bdf8;
             --accent-green: #22c55e;
             --accent-red: #ef4444;
             --border-subtle: rgba(255, 255, 255, 0.08);
@@ -46,12 +46,12 @@
             transition: background-image 0.5s ease;
         }
 
-        /* MODAL LOGIN (KHUSUS ADMIN SEKARANG) */
+        /* MODAL LOGIN */
         #login-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(4, 7, 13, 0.9);
             backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-            display: none; /* Dihilangkan di awal */
+            display: none;
             justify-content: center; align-items: center;
             z-index: 99999; padding: 15px;
         }
@@ -65,16 +65,15 @@
         }
         @keyframes popIn { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
         
-        /* SEMBUNYIKAN TOP BAR LAMA */
         .top-bar { display: none !important; }
 
         header { text-align: center; margin-bottom: 24px; padding: 10px; }
         header h1 { color: var(--accent-gold); font-size: 1.5rem; text-transform: uppercase; margin-bottom: 4px; font-weight: 900; letter-spacing: 1.5px; }
         header p { color: var(--accent-cyan); font-size: 0.85rem; font-weight: 600; letter-spacing: 1px; }
 
-        /* MENU NAVIGASI (PILL STYLE SEPERTI FOTO) */
+        /* MENU NAVIGASI */
         .menu-container { margin-bottom: 24px; }
-        .hamburger-btn { display: none; } /* Sembunyikan hamburger */
+        .hamburger-btn { display: none; } 
         .main-nav { 
             display: flex !important; position: static; background: transparent; 
             flex-direction: row; flex-wrap: wrap; gap: 10px; padding: 0; 
@@ -101,7 +100,7 @@
             border-radius: 16px; box-shadow: var(--shadow-card); margin-bottom: 20px; 
         }
 
-        /* FORM REGISTRASI (GAYA FOTO) */
+        /* FORM REGISTRASI */
         .form-group { margin-bottom: 16px; text-align: left; }
         .form-group label { display: block; color: #cbd5e1; font-size: 0.8rem; font-weight: 500; margin-bottom: 6px; }
         .form-group input[type="text"], .form-group input[type="tel"], .form-group select { 
@@ -189,14 +188,15 @@
             background-color: var(--bg-dark);
             background-image: linear-gradient(180deg, #09101f 0%, #04070d 100%), var(--bg-utama-url);
             background-repeat: no-repeat; background-position: center top; background-size: cover;
-            position: relative; overflow: hidden; 
+            position: relative; 
+            overflow: auto; /* INI KUNCI AGAR DI HP BISA DI-SCROLL NORMAL */
             border-radius: 12px;
-            /* Cursor grab dihilangkan dari mode normal */
+            padding-bottom: 10px;
         }
         
-        /* HANYA KURSOR GRAB & GRABBING KETIKA FULLSCREEN */
-        :fullscreen #bracket-fullscreen-wrapper { padding: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 0; cursor: grab;}
-        :-webkit-full-screen #bracket-fullscreen-wrapper { padding: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 0; cursor: grab;}
+        /* SAAT FULLSCREEN, SCROLL DIHILANGKAN AGAR BISA DIGESER BEBAS */
+        :fullscreen #bracket-fullscreen-wrapper { padding: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 0; cursor: grab; overflow: hidden;}
+        :-webkit-full-screen #bracket-fullscreen-wrapper { padding: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 0; cursor: grab; overflow: hidden;}
         :fullscreen #bracket-fullscreen-wrapper:active { cursor: grabbing; }
         :-webkit-full-screen #bracket-fullscreen-wrapper:active { cursor: grabbing; }
         
@@ -208,7 +208,7 @@
         /* TOMBOL ARAH (DPAD) - HANYA MUNCUL SAAT FULLSCREEN */
         .dpad-container {
             position: absolute; bottom: 20px; right: 20px;
-            display: none; /* Disembunyikan saat mode normal */
+            display: none; 
             grid-template-columns: repeat(3, 46px); grid-template-rows: repeat(3, 46px);
             gap: 6px; z-index: 1000; transition: opacity 0.5s ease;
         }
@@ -256,7 +256,7 @@
             <p>Papan Bagan Pertandingan & Pendaftaran Resmi</p>
         </header>
 
-        <!-- MENU NAVIGASI (PILL STYLE) -->
+        <!-- MENU NAVIGASI -->
         <div class="menu-container">
             <div id="main-nav" class="main-nav">
                 <button class="nav-btn" onclick="switchTab('sec-daftar')">Daftar Tim</button>
@@ -266,7 +266,7 @@
                 
                 <button class="nav-btn" id="btn-login-admin" onclick="openLoginModal()">Admin</button>
                 
-                <!-- Menu Khusus Panitia (Disembunyikan di awal) -->
+                <!-- Menu Khusus Panitia -->
                 <button id="nav-admin-reg" class="nav-btn admin-nav" onclick="switchTab('sec-tim-terdaftar')">Masuk Pendaftaran</button>
                 <button id="nav-pengaturan" class="nav-btn admin-nav" onclick="switchTab('sec-pengaturan')">Pengaturan</button>
                 <button id="btn-logout" class="nav-btn admin-nav" style="color:var(--accent-red);" onclick="logoutAdmin()">Keluar</button>
@@ -294,11 +294,12 @@
                             </div>
                         </div>
                     </div>
+                    
                     <div id="bracket-container" class="bracket-wrapper">
                         <!-- Dynamic Bracket -->
                     </div>
                     
-                    <!-- TOMBOL ARAH (GESER BAGAN) HANYA DI FULLSCREEN -->
+                    <!-- TOMBOL ARAH HANYA DI FULLSCREEN -->
                     <div id="dpad-controls" class="dpad-container">
                         <button class="dpad-btn dpad-up" onmousedown="startPan(0, -15)" onmouseup="stopPan()" onmouseleave="stopPan()" ontouchstart="event.preventDefault(); startPan(0, -15);" ontouchend="stopPan()">⬆️</button>
                         <button class="dpad-btn dpad-left" onmousedown="startPan(-15, 0)" onmouseup="stopPan()" onmouseleave="stopPan()" ontouchstart="event.preventDefault(); startPan(-15, 0);" ontouchend="stopPan()">⬅️</button>
@@ -791,9 +792,8 @@
         let panX = 0, panY = 0, currentScale = 1, isDraggingBracket = false, startDragX = 0, startDragY = 0;
         let panInterval;
         
-        // Fungsi geser untuk tombol D-Pad
         function startPan(dx, dy) {
-            if (!isBracketFullscreen()) return; // HANYA BISA GESER JIKA FULLSCREEN
+            if (!isBracketFullscreen()) return; 
             if(panInterval) clearInterval(panInterval);
             panInterval = setInterval(() => { panX += dx; panY += dy; applyBracketTransform(); }, 30);
             resetDpadIdle();
@@ -807,7 +807,6 @@
         function zoomBracket(delta) { currentScale += delta; if (currentScale < 0.3) currentScale = 0.3; if (currentScale > 3.0) currentScale = 3.0; applyBracketTransform(); }
         function resetBracketPan() { panX = 0; panY = 0; currentScale = 1; applyBracketTransform(); }
 
-        // Fungsi Auto-Hide D-Pad
         let dpadIdleTimer;
         function resetDpadIdle() {
             const dpad = document.getElementById('dpad-controls');
@@ -825,7 +824,7 @@
             const wrapper = document.getElementById('bracket-fullscreen-wrapper');
             
             const startDrag = (clientX, clientY, target) => {
-                if (!isBracketFullscreen()) return; // HANYA BISA GESER JIKA FULLSCREEN
+                if (!isBracketFullscreen()) return; 
                 if (target.tagName.toLowerCase() === 'button' || target.classList.contains('score-number') || target.classList.contains('vt-btn')) return;
                 
                 isDraggingBracket = true; startDragX = clientX - panX; startDragY = clientY - panY; wrapper.style.cursor = 'grabbing';
@@ -845,7 +844,6 @@
                 e.preventDefault(); panX = clientX - startDragX; panY = clientY - startDragY; applyBracketTransform();
             };
 
-            // Event Dragging kursor
             wrapper.addEventListener('mousedown', (e) => startDrag(e.clientX, e.clientY, e.target));
             window.addEventListener('mouseup', endDrag);
             window.addEventListener('mousemove', (e) => {
@@ -860,13 +858,12 @@
             window.addEventListener('touchmove', (e) => { if (isDraggingBracket && e.touches.length === 1) moveDrag(e.touches[0].clientX, e.touches[0].clientY, e); }, { passive: false });
             wrapper.addEventListener('wheel', (e) => { e.preventDefault(); if (e.deltaY < 0) zoomBracket(0.05); else zoomBracket(-0.05); }, { passive: false });
             
-            // Logika saat berganti mode fullscreen (reset posisi & kursor)
             function handleFullscreenChange() {
                 if (isBracketFullscreen()) {
                     resetDpadIdle();
                     wrapper.style.cursor = 'grab';
                 } else {
-                    resetBracketPan(); // Kembalikan ke tengah otomatis saat keluar fullscreen
+                    resetBracketPan(); 
                     wrapper.style.cursor = 'default';
                 }
             }
