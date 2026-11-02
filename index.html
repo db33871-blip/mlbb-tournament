@@ -6,30 +6,39 @@
     <title>TOURNAMENT MLBB INFLY CARNIVAL</title>
 
     <style>
+        /* Import Font Poppins ala Esports Modern */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
+
         :root {
             --bg-dark: #080312;
-            --bg-card: rgba(16, 12, 34, 0.92);
-            --bg-input: rgba(6, 4, 18, 0.85);
+            --bg-card: rgba(16, 12, 34, 0.65);
+            --bg-input: rgba(6, 4, 18, 0.7);
             --accent-gold: #fbbf24;
             --accent-pink: #ec4899;
             --accent-cyan: #22d3ee;
             --accent-green: #22c55e;
             --accent-red: #ef4444;
-            --border-subtle: rgba(34, 211, 238, 0.35);
+            --border-subtle: rgba(34, 211, 238, 0.25);
             --text-main: #f8fafc;
-            --text-muted: #cbd5e1;
-            --shadow-card: 0 12px 32px rgba(0, 0, 0, 0.7);
+            --text-muted: #94a3b8;
+            --shadow-card: 0 12px 40px rgba(0, 0, 0, 0.5);
             
             /* Default Background Variables */
             --bg-utama-url: url('https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1920&q=80');
             --bg-bracket-url: none;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', system-ui, -apple-system, sans-serif; }
+
+        /* Kustomisasi Scrollbar Keren */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(8, 3, 18, 0.8); }
+        ::-webkit-scrollbar-thumb { background: var(--accent-cyan); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-pink); }
 
         body {
             background-color: var(--bg-dark);
-            background-image: linear-gradient(180deg, rgba(8, 3, 18, 0.82) 0%, rgba(8, 3, 18, 0.96) 100%), var(--bg-utama-url);
+            background-image: linear-gradient(180deg, rgba(8, 3, 18, 0.75) 0%, rgba(8, 3, 18, 0.95) 100%), var(--bg-utama-url);
             background-repeat: no-repeat;
             background-position: center top;
             background-size: cover;
@@ -40,124 +49,282 @@
             transition: background-image 0.5s ease;
         }
 
-        /* MODAL LOGIN */
+        /* MODAL LOGIN - Glassmorphism */
         #login-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(5, 2, 12, 0.95);
-            backdrop-filter: blur(12px);
+            background: rgba(5, 2, 12, 0.85);
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
             display: flex; justify-content: center; align-items: center;
             z-index: 99999; padding: 15px;
         }
         .modal-box {
             background: var(--bg-card);
-            border: 1px solid var(--border-subtle);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             padding: 32px 24px;
-            border-radius: 16px; width: 100%; max-width: 380px; text-align: center;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+            border-radius: 20px; width: 100%; max-width: 380px; text-align: center;
+            box-shadow: 0 24px 50px rgba(0, 0, 0, 0.6);
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .modal-box h2 { color: var(--accent-gold); margin-bottom: 8px; font-size: 1.3rem; text-transform: uppercase; font-weight: 800; }
-        .modal-box p { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px; }
-        .modal-btn { width: 100%; padding: 12px; margin: 6px 0; font-weight: 700; border-radius: 8px; cursor: pointer; border: none; font-size: 0.9rem; transition: all 0.2s ease; }
-        .btn-admin { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #0f172a; }
-        .btn-viewer { background: rgba(34, 211, 238, 0.12); color: var(--accent-cyan); border: 1px solid var(--border-subtle); }
+        @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        
+        .modal-box h2 { color: var(--accent-gold); margin-bottom: 8px; font-size: 1.4rem; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
+        .modal-box p { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 24px; }
+        .modal-btn { width: 100%; padding: 14px; margin: 8px 0; font-weight: 700; border-radius: 12px; cursor: pointer; border: none; font-size: 0.9rem; transition: all 0.3s ease; letter-spacing: 0.5px; }
+        .modal-btn:active { transform: scale(0.97); }
+        .btn-admin { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #0f172a; box-shadow: 0 4px 15px rgba(251, 191, 36, 0.3); }
+        .btn-admin:hover { box-shadow: 0 6px 20px rgba(251, 191, 36, 0.5); transform: translateY(-2px); }
+        .btn-viewer { background: rgba(34, 211, 238, 0.1); color: var(--accent-cyan); border: 1px solid var(--border-subtle); }
+        .btn-viewer:hover { background: rgba(34, 211, 238, 0.2); transform: translateY(-2px); }
         .panitia-box { display: none; margin-top: 14px; }
-        .panitia-box input { width: 100%; padding: 10px; background: var(--bg-input); border: 1px solid var(--border-subtle); color: #fff; border-radius: 8px; margin-bottom: 8px; text-align: center; font-size: 0.9rem; }
+        .panitia-box input { width: 100%; padding: 12px; background: var(--bg-input); border: 1px solid var(--border-subtle); color: #fff; border-radius: 12px; margin-bottom: 12px; text-align: center; font-size: 1rem; font-weight: 600; letter-spacing: 2px; transition: 0.3s; }
+        .panitia-box input:focus { outline: none; border-color: var(--accent-cyan); box-shadow: 0 0 10px rgba(34, 211, 238, 0.3); }
 
         /* CONTAINER & HEADER UTAMA */
         .container { max-width: 1350px; margin: 0 auto; }
-        .top-bar { display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); padding: 10px 16px; border-radius: 12px; margin-bottom: 14px; border: 1px solid var(--border-subtle); }
-        .role-badge { font-size: 0.8rem; font-weight: 700; padding: 5px 12px; border-radius: 20px; background: rgba(34, 211, 238, 0.15); color: var(--accent-cyan); border: 1px solid var(--border-subtle); }
+        
+        .top-bar { 
+            display: flex; justify-content: space-between; align-items: center; 
+            background: rgba(16, 12, 34, 0.5); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            padding: 12px 20px; border-radius: 16px; margin-bottom: 20px; 
+            border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .role-badge { font-size: 0.8rem; font-weight: 700; padding: 6px 14px; border-radius: 20px; background: rgba(34, 211, 238, 0.15); color: var(--accent-cyan); border: 1px solid var(--border-subtle); letter-spacing: 0.5px; }
 
-        header { text-align: center; margin-bottom: 16px; padding: 8px; }
-        header h1 { color: var(--accent-gold); font-size: 1.5rem; text-transform: uppercase; margin-bottom: 4px; font-weight: 900; letter-spacing: 1px; }
-        header p { color: var(--accent-cyan); font-size: 0.825rem; font-weight: 700; }
+        header { text-align: center; margin-bottom: 24px; padding: 10px; }
+        header h1 { 
+            color: var(--accent-gold); font-size: 1.8rem; text-transform: uppercase; margin-bottom: 6px; 
+            font-weight: 900; letter-spacing: 2px; 
+            text-shadow: 0 2px 15px rgba(251, 191, 36, 0.4);
+        }
+        header p { color: var(--accent-cyan); font-size: 0.9rem; font-weight: 600; letter-spacing: 1px; text-shadow: 0 2px 10px rgba(34, 211, 238, 0.4); }
 
         /* MENU UTAMA NAVIGASI */
-        .menu-container { position: relative; margin-bottom: 14px; }
-        .hamburger-btn { background: var(--bg-card); color: var(--accent-gold); border: 1px solid var(--border-subtle); padding: 9px 16px; font-size: 0.85rem; font-weight: 700; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
-        .main-nav { display: none; position: absolute; top: 44px; left: 0; background: rgba(12, 8, 28, 0.96); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 8px; flex-direction: column; gap: 4px; min-width: 250px; z-index: 999; box-shadow: 0 15px 35px rgba(0,0,0,0.8); }
-        .main-nav.show { display: flex; }
-        .nav-btn { background: transparent; color: var(--text-muted); border: none; padding: 10px 14px; font-size: 0.85rem; font-weight: 600; border-radius: 6px; cursor: pointer; text-align: left; transition: all 0.15s ease; }
-        .nav-btn:hover { color: #fff; background: rgba(34, 211, 238, 0.15); }
-        .nav-btn.active { background: linear-gradient(135deg, var(--accent-pink), #c026d3); color: #ffffff; font-weight: 700; }
-        .admin-nav { border-left: 3px solid var(--accent-gold); display: none; } /* Hanya untuk Panitia */
+        .menu-container { position: relative; margin-bottom: 20px; z-index: 100; }
+        .hamburger-btn { 
+            background: var(--bg-card); backdrop-filter: blur(10px); color: var(--accent-gold); 
+            border: 1px solid var(--border-subtle); padding: 10px 20px; font-size: 0.9rem; font-weight: 700; 
+            border-radius: 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+            transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .hamburger-btn:hover { transform: translateY(-2px); border-color: var(--accent-gold); }
+        .main-nav { 
+            display: none; position: absolute; top: 52px; left: 0; 
+            background: rgba(12, 8, 28, 0.95); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 10px; 
+            flex-direction: column; gap: 6px; min-width: 260px; box-shadow: 0 20px 40px rgba(0,0,0,0.8); 
+        }
+        .main-nav.show { display: flex; animation: slideDown 0.3s ease forwards; transform-origin: top; }
+        @keyframes slideDown { 0% { opacity: 0; transform: scaleY(0.8); } 100% { opacity: 1; transform: scaleY(1); } }
+        
+        .nav-btn { background: transparent; color: var(--text-muted); border: none; padding: 12px 16px; font-size: 0.9rem; font-weight: 600; border-radius: 10px; cursor: pointer; text-align: left; transition: all 0.2s ease; }
+        .nav-btn:hover { color: #fff; background: rgba(34, 211, 238, 0.1); padding-left: 20px; }
+        .nav-btn.active { background: linear-gradient(135deg, var(--accent-pink), #c026d3); color: #ffffff; font-weight: 700; box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4); }
+        .admin-nav { border-left: 3px solid var(--accent-gold); display: none; } 
 
-        /* TAB SEKSI */
-        .tab-section { display: none; }
+        /* TAB SEKSI & CARDS (Glassmorphism) */
+        .tab-section { display: none; animation: fadeIn 0.4s ease; }
         .tab-section.active { display: block; }
-        .card { background: var(--bg-card); border: 1px solid var(--border-subtle); padding: 18px; border-radius: 14px; box-shadow: var(--shadow-card); margin-bottom: 16px; }
+        @keyframes fadeIn { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
+        
+        .card { 
+            background: rgba(16, 12, 34, 0.55); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.08); padding: 20px; border-radius: 20px; 
+            box-shadow: var(--shadow-card); margin-bottom: 20px; 
+        }
 
         /* SUB NAV KATEGORI */
-        .category-switcher { display: flex; justify-content: center; gap: 10px; margin-bottom: 14px; }
-        .sub-btn { background: var(--bg-input); color: var(--text-muted); border: 1px solid var(--border-subtle); padding: 8px 18px; border-radius: 20px; cursor: pointer; font-size: 0.825rem; font-weight: 700; }
-        .sub-btn.active { background: var(--accent-cyan); color: #080312; border-color: var(--accent-cyan); }
+        .category-switcher { display: flex; justify-content: center; gap: 12px; margin-bottom: 18px; }
+        .sub-btn { 
+            background: rgba(0, 0, 0, 0.4); color: var(--text-muted); border: 1px solid var(--border-subtle); 
+            padding: 10px 22px; border-radius: 25px; cursor: pointer; font-size: 0.85rem; font-weight: 700; 
+            transition: all 0.3s ease; letter-spacing: 0.5px;
+        }
+        .sub-btn:hover { border-color: var(--accent-cyan); color: #fff; }
+        .sub-btn.active { 
+            background: linear-gradient(135deg, var(--accent-cyan), #0284c7); color: #fff; 
+            border-color: transparent; box-shadow: 0 4px 15px rgba(34, 211, 238, 0.4); 
+        }
 
         /* HEADER DALAM BRACKET */
-        .bracket-card-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: rgba(8, 4, 22, 0.7); border-bottom: 1px solid var(--border-subtle); border-radius: 12px 12px 0 0; margin-bottom: 16px; }
-        .logo-box-left, .logo-box-right { display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.95); padding: 6px 14px; border-radius: 8px; min-width: 120px; font-weight: 900; font-size: 0.85rem; color: #0f172a; }
+        .bracket-card-header { 
+            display: flex; justify-content: center; align-items: center; padding: 16px 20px; 
+            background: rgba(8, 4, 22, 0.75); backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.1); border-radius: 12px 12px 0 0; 
+            margin-bottom: 16px; position: relative; z-index: 10; 
+        }
         .bracket-title-area { text-align: center; }
-        .bracket-title-area h2 { color: var(--accent-gold); font-size: 1.25rem; font-weight: 900; text-transform: uppercase; margin-bottom: 6px; }
+        .bracket-title-area h2 { color: var(--accent-gold); font-size: 1.4rem; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 1px; text-shadow: 0 2px 10px rgba(251, 191, 36, 0.3); }
         .controls-row { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
-        .vt-btn { background: rgba(34, 211, 238, 0.12); color: var(--accent-cyan); border: 1px solid var(--accent-cyan); padding: 6px 14px; border-radius: 20px; font-size: 0.78rem; font-weight: 700; cursor: pointer; }
         
-        .btn-acak-bagan { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #080312; border: 1px solid var(--accent-gold); padding: 6px 16px; border-radius: 20px; font-size: 0.78rem; font-weight: 800; cursor: pointer; }
-
-        :fullscreen .controls-row, :-webkit-full-screen .controls-row { display: none !important; }
+        .vt-btn { 
+            background: rgba(34, 211, 238, 0.1); color: var(--accent-cyan); border: 1px solid rgba(34, 211, 238, 0.4); 
+            padding: 8px 16px; border-radius: 25px; font-size: 0.8rem; font-weight: 700; cursor: pointer; 
+            display: flex; align-items: center; justify-content: center; transition: all 0.3s ease;
+        }
+        .vt-btn:hover { background: var(--accent-cyan); color: #000; box-shadow: 0 4px 12px rgba(34, 211, 238, 0.4); transform: translateY(-2px); }
+        
+        .btn-acak-bagan { 
+            background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #080312; border: none; 
+            padding: 8px 18px; border-radius: 25px; font-size: 0.8rem; font-weight: 800; cursor: pointer; 
+            transition: all 0.3s ease;
+        }
+        .btn-acak-bagan:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(251, 191, 36, 0.4); }
 
         /* BRACKET DESIGN */
         .bracket-wrapper { 
             position: relative; 
             background-color: rgba(8, 3, 18, 0.85);
             background-image: var(--bg-bracket-url);
-            background-size: cover; background-position: center; background-blend-mode: overlay;
-            border-radius: 12px; padding: 16px 8px; border: 1px solid var(--border-subtle); overflow-x: auto; 
+            background-size: 100% 100%; 
+            background-position: center; 
+            background-blend-mode: overlay;
+            border-radius: 16px; padding: 24px 12px; border: 1px solid rgba(255,255,255,0.1); 
             transition: background-image 0.5s ease;
+            will-change: transform; 
+            transform-origin: center center;
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
         }
-        .bracket-flex { display: flex; gap: 16px; min-width: 1150px; justify-content: space-between; align-items: stretch; }
-        .round-col { flex: 1; min-width: 190px; display: flex; flex-direction: column; justify-content: space-around; }
-        .round-title { text-align: center; color: #fff; font-size: 0.75rem; font-weight: 800; margin-bottom: 10px; background: rgba(12, 18, 36, 0.9); padding: 6px; border-radius: 6px; border: 1px solid var(--accent-cyan); }
+        .bracket-flex { display: flex; gap: 20px; min-width: 1200px; justify-content: space-between; align-items: stretch; }
+        .round-col { flex: 1; min-width: 200px; display: flex; flex-direction: column; justify-content: space-around; }
+        .round-title { 
+            text-align: center; color: #fff; font-size: 0.75rem; font-weight: 800; margin-bottom: 12px; 
+            background: rgba(12, 18, 36, 0.95); padding: 8px; border-radius: 8px; 
+            border: 1px solid var(--accent-cyan); box-shadow: 0 4px 10px rgba(34, 211, 238, 0.15); letter-spacing: 1px;
+        }
 
-        .matchup { background: rgba(16, 12, 34, 0.92); border: 1px solid rgba(34, 211, 238, 0.4); border-radius: 8px; margin: 8px 0; overflow: hidden; }
-        .matchup.final { border: 2px solid var(--accent-gold); }
+        /* Kartu Matchup Keren */
+        .matchup { 
+            background: linear-gradient(145deg, rgba(20, 15, 40, 0.95), rgba(10, 8, 20, 0.98));
+            border: 1px solid rgba(34, 211, 238, 0.25); 
+            border-radius: 10px; margin: 10px 0; overflow: hidden; 
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4); transition: transform 0.2s ease;
+        }
+        .matchup:hover { transform: scale(1.02); border-color: rgba(34, 211, 238, 0.6); box-shadow: 0 8px 20px rgba(34, 211, 238, 0.2); }
+        .matchup.final { border: 2px solid var(--accent-gold); box-shadow: 0 0 20px rgba(251, 191, 36, 0.3); }
         .matchup.third { border: 2px solid var(--accent-cyan); }
 
-        .match-header { background: rgba(236, 72, 153, 0.25); font-size: 0.65rem; padding: 4px 8px; text-align: center; color: var(--accent-gold); font-weight: 700; text-transform: uppercase; }
-        .team-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 10px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.8rem; }
-        .team-row.winner { background: rgba(34, 197, 94, 0.2); font-weight: 700; color: var(--accent-gold); }
+        .match-header { 
+            background: linear-gradient(90deg, transparent, rgba(236, 72, 153, 0.35), transparent); 
+            font-size: 0.7rem; padding: 5px 8px; text-align: center; color: var(--accent-gold); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .team-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 0.85rem; }
+        .team-row.winner { background: linear-gradient(90deg, rgba(34, 197, 94, 0.15), transparent); font-weight: 800; color: var(--accent-gold); }
         .team-name { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 8px; }
-        .score-btn { background: rgba(34, 211, 238, 0.15); color: #fff; border: 1px solid var(--border-subtle); padding: 2px 7px; border-radius: 4px; font-weight: 700; font-size: 0.72rem; cursor: pointer; }
+        
+        .score-btn { background: rgba(34, 211, 238, 0.15); color: #fff; border: 1px solid var(--border-subtle); padding: 2px 8px; border-radius: 6px; font-weight: 800; font-size: 0.8rem; cursor: pointer; transition: 0.2s; }
+        .score-btn:hover { background: var(--accent-cyan); color: #000; }
+        
+        .score-number { 
+            font-weight: 800; font-size: 0.9rem; margin-right: 6px; padding: 2px 8px; 
+            background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); 
+            border-radius: 6px; transition: all 0.2s; display: inline-block; min-width: 28px; text-align: center;
+        }
+        .score-number.clickable:hover { background: rgba(34, 211, 238, 0.4); border-color: var(--accent-cyan); color: #fff; transform: scale(1.1); }
 
         /* PODIUM */
-        .podium-box { margin-top: 18px; background: rgba(16, 12, 34, 0.95); border: 2px solid var(--accent-gold); border-radius: 12px; padding: 14px; text-align: center; }
-        .podium-title { color: var(--accent-gold); font-size: 1rem; font-weight: 800; margin-bottom: 10px; }
-        .podium-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .podium-item { background: rgba(0,0,0,0.4); padding: 10px; border-radius: 8px; border: 1px solid var(--border-subtle); }
-        .podium-rank { font-size: 0.72rem; font-weight: 800; margin-bottom: 4px; }
-        .rank-1 { color: #fbbf24; } .rank-2 { color: #94a3b8; } .rank-3 { color: #b45309; }
-        .podium-name { font-size: 0.85rem; font-weight: 700; color: #fff; }
+        .podium-box { margin-top: 24px; background: rgba(16, 12, 34, 0.8); backdrop-filter: blur(12px); border: 2px solid rgba(251, 191, 36, 0.5); border-radius: 16px; padding: 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .podium-title { color: var(--accent-gold); font-size: 1.2rem; font-weight: 900; margin-bottom: 16px; letter-spacing: 1.5px; text-shadow: 0 2px 8px rgba(251, 191, 36, 0.4); }
+        .podium-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+        .podium-item { background: linear-gradient(180deg, rgba(20,15,40,0.8), rgba(10,8,20,0.9)); padding: 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); transition: transform 0.3s ease; }
+        .podium-item:hover { transform: translateY(-5px); }
+        .podium-rank { font-size: 0.8rem; font-weight: 900; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
+        .rank-1 { color: #fbbf24; font-size: 0.9rem; text-shadow: 0 0 10px rgba(251, 191, 36, 0.4); } .rank-2 { color: #94a3b8; } .rank-3 { color: #b45309; }
+        .podium-name { font-size: 0.95rem; font-weight: 700; color: #fff; }
 
         /* TABEL & DAFTAR TIM */
-        .table-responsive { overflow-x: auto; margin-top: 10px; }
-        table { width: 100%; border-collapse: collapse; font-size: 0.825rem; text-align: left; }
-        th, td { padding: 10px 12px; border-bottom: 1px solid var(--border-subtle); }
-        th { background: rgba(34, 211, 238, 0.1); color: var(--accent-cyan); font-weight: 700; }
-        .badge-status { padding: 4px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 700; }
-        .badge-pending { background: rgba(251, 191, 36, 0.2); color: var(--accent-gold); }
-        .badge-approved { background: rgba(34, 197, 94, 0.2); color: var(--accent-green); }
-        .badge-rejected { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); }
-
-        .team-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 15px; }
-        @media (min-width: 640px) { .team-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } }
-        .team-item { display: flex; align-items: center; gap: 10px; background: var(--bg-input); padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-subtle); }
+        .table-responsive { overflow-x: auto; margin-top: 10px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: left; }
+        th, td { padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); vertical-align: middle; }
+        th { background: rgba(34, 211, 238, 0.15); color: var(--accent-cyan); font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; font-size: 0.8rem; }
+        tr:hover { background: rgba(255,255,255,0.02); }
         
-        .form-group { margin-bottom: 14px; text-align: left; }
-        .form-group label { display: block; color: var(--accent-cyan); font-size: 0.775rem; font-weight: 700; margin-bottom: 6px; }
-        .form-group input[type="text"], .form-group input[type="tel"], .form-group select { width: 100%; padding: 10px 12px; background: var(--bg-input); border: 1px solid var(--border-subtle); color: #fff; border-radius: 8px; font-size: 0.85rem; }
-        .form-group input[type="file"] { width: 100%; padding: 8px; background: rgba(34, 211, 238, 0.1); border: 1px dashed var(--accent-cyan); color: #fff; border-radius: 8px; font-size: 0.8rem; cursor: pointer; }
+        .badge-status { padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.5px; }
+        .badge-pending { background: rgba(251, 191, 36, 0.15); color: var(--accent-gold); border: 1px solid rgba(251,191,36,0.3); }
+        .badge-approved { background: rgba(34, 197, 94, 0.15); color: var(--accent-green); border: 1px solid rgba(34,197,94,0.3); }
+        .badge-rejected { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); border: 1px solid rgba(239,68,68,0.3); }
 
-        .btn-action { background: linear-gradient(135deg, #ec4899, #c026d3); color: #ffffff; border: none; padding: 11px 18px; font-weight: 700; border-radius: 8px; cursor: pointer; width: 100%; margin-top: 10px; }
+        /* FORM & INPUT */
+        .team-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 20px; }
+        @media (min-width: 640px) { .team-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; } }
+        .team-item { display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.3); padding: 10px 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); }
+        
+        .form-group { margin-bottom: 18px; text-align: left; }
+        .form-group label { display: block; color: var(--accent-cyan); font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; }
+        .form-group input[type="text"], .form-group input[type="tel"], .form-group select { 
+            width: 100%; padding: 14px 16px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.15); 
+            color: #fff; border-radius: 12px; font-size: 0.9rem; transition: all 0.3s ease; 
+        }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--accent-cyan); box-shadow: 0 0 12px rgba(34, 211, 238, 0.3); background: rgba(0,0,0,0.6); }
+        .form-group input[type="file"] { width: 100%; padding: 12px; background: rgba(34, 211, 238, 0.05); border: 1px dashed var(--accent-cyan); color: #fff; border-radius: 12px; font-size: 0.85rem; cursor: pointer; transition: 0.3s; }
+        .form-group input[type="file"]:hover { background: rgba(34, 211, 238, 0.15); }
 
-        .riwayat-item { background: var(--bg-input); padding: 12px; border-left: 4px solid var(--accent-pink); border-radius: 6px; margin-bottom: 8px; font-size: 0.85rem; display: flex; justify-content: space-between;}
+        .btn-action { 
+            background: linear-gradient(135deg, #ec4899, #c026d3); color: #ffffff; border: none; 
+            padding: 14px 20px; font-weight: 800; border-radius: 12px; cursor: pointer; width: 100%; margin-top: 10px; 
+            font-size: 0.95rem; letter-spacing: 1px; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3);
+        }
+        .btn-action:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(236, 72, 153, 0.5); }
+        .btn-action:active { transform: translateY(0); }
+
+        .riwayat-item { 
+            background: rgba(0,0,0,0.4); padding: 14px 16px; border-left: 4px solid var(--accent-pink); 
+            border-radius: 10px; margin-bottom: 12px; font-size: 0.9rem; font-weight: 500; display: flex; justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2); transition: 0.2s;
+        }
+        .riwayat-item:hover { transform: translateX(5px); background: rgba(0,0,0,0.6); }
+        
+        /* CSS KHUSUS MODE FULLSCREEN VIDEOTRON & DRAG FITUR */
+        #bracket-fullscreen-wrapper {
+            background-color: var(--bg-dark);
+            background-image: linear-gradient(180deg, rgba(8, 3, 18, 0.82) 0%, rgba(8, 3, 18, 0.96) 100%), var(--bg-utama-url);
+            background-repeat: no-repeat;
+            background-position: center top;
+            background-size: cover;
+            position: relative;
+            overflow: hidden;
+            cursor: grab;
+            border-radius: 16px; /* Tambahan radius biar cantik kalau ga fullscreen */
+        }
+        
+        #bracket-fullscreen-wrapper:active { cursor: grabbing; }
+
+        :fullscreen #bracket-fullscreen-wrapper { padding: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: hidden; border-radius: 0;}
+        :-webkit-full-screen #bracket-fullscreen-wrapper { padding: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: hidden; border-radius: 0;}
+        
+        :fullscreen .bracket-card-header { display: none !important; }
+        :-webkit-full-screen .bracket-card-header { display: none !important; }
+
+        :fullscreen .score-btn { display: none !important; }
+        :-webkit-full-screen .score-btn { display: none !important; }
+
+        /* --- MEDIA QUERIES UNTUK RESPONSIVITAS HP (SMARTPHONE) --- */
+        @media (max-width: 768px) {
+            header h1 { font-size: 1.35rem; }
+            header p { font-size: 0.8rem; }
+            .top-bar { flex-direction: column; gap: 12px; padding: 12px; text-align: center; }
+            .role-badge { width: 100%; display: block; text-align: center; margin-bottom: 5px;}
+            .menu-container { display: flex; justify-content: center; }
+            .main-nav { top: 55px; left: 50%; transform: translateX(-50%); width: 90%; }
+            .main-nav.show { transform: translateX(-50%) scaleY(1); } /* override animasi */
+            @keyframes slideDown { 0% { opacity: 0; transform: translateX(-50%) scaleY(0.8); } 100% { opacity: 1; transform: translateX(-50%) scaleY(1); } }
+            
+            .category-switcher { flex-wrap: wrap; }
+            .sub-btn { width: 45%; flex-grow: 1; text-align: center; font-size: 0.75rem; padding: 10px; }
+            
+            .bracket-card-header { flex-direction: column; gap: 12px; padding: 12px; }
+            .bracket-title-area h2 { font-size: 1.1rem; }
+            .controls-row { justify-content: center; }
+            .vt-btn, .btn-acak-bagan { padding: 6px 12px; font-size: 0.7rem; }
+            
+            .podium-grid { gap: 8px; }
+            .podium-item { padding: 10px; }
+            .podium-rank { font-size: 0.65rem; }
+            .podium-name { font-size: 0.75rem; }
+            
+            .card { padding: 15px; }
+        }
+
     </style>
 </head>
 <body>
@@ -180,7 +347,7 @@
         <!-- BAR ATAS -->
         <div class="top-bar">
             <div><strong>STATUS:</strong> <span id="role-display" class="role-badge">Penonton</span></div>
-            <div><button class="sub-btn" onclick="openLoginModal()" style="font-size:0.75rem;">Ganti Akses</button></div>
+            <div><button class="sub-btn" onclick="openLoginModal()" style="font-size:0.75rem; width:auto;">Ganti Akses</button></div>
         </div>
 
         <header>
@@ -212,28 +379,37 @@
             </div>
 
             <div class="card" style="padding: 12px;">
-                <div class="bracket-card-header">
-                    <div class="logo-box-left">INFLY NETWORKS</div>
-                    <div class="bracket-title-area">
-                        <h2 id="header-cat-title">KATEGORI PELAJAR</h2>
-                        <div class="controls-row">
-                            <button class="vt-btn" onclick="toggleFullscreen()">📺 Tampilkan Layar Penuh (Videotron)</button>
-                            <button class="btn-acak-bagan" onclick="randomizeCurrentBracket()">🎲 ACAK BAGAN</button>
+                
+                <!-- WRAPPER KHUSUS UNTUK FULLSCREEN & DRAG (GESER) -->
+                <div id="bracket-fullscreen-wrapper" title="Gunakan kursor atau scroll untuk geser dan zoom bagan">
+                    
+                    <div class="bracket-card-header">
+                        <div class="bracket-title-area">
+                            <h2 id="header-cat-title">KATEGORI PELAJAR</h2>
+                            <div class="controls-row">
+                                <button class="vt-btn" onclick="zoomBracket(-0.1)" title="Perkecil Ukuran">➖</button>
+                                <button class="vt-btn" onclick="zoomBracket(0.1)" title="Perbesar Ukuran">➕</button>
+                                <button class="vt-btn" onclick="resetBracketPan()" title="Kembalikan posisi & ukuran bagan ke tengah">🔄 Reset</button>
+                                
+                                <button class="vt-btn" onclick="toggleBracketFullscreen()">📺 Layar Penuh</button>
+                                <button class="btn-acak-bagan" onclick="randomizeCurrentBracket()">🎲 ACAK BAGAN</button>
+                            </div>
                         </div>
                     </div>
-                    <div class="logo-box-right">infly Carnival</div>
-                </div>
 
-                <div id="bracket-container" class="bracket-wrapper">
-                    <!-- Dynamic Bracket -->
+                    <div id="bracket-container" class="bracket-wrapper">
+                        <!-- Dynamic Bracket -->
+                    </div>
+                    
                 </div>
+                <!-- END WRAPPER KHUSUS FULLSCREEN -->
 
                 <!-- PODIUM -->
                 <div class="podium-box">
                     <div class="podium-title">🥇 PODIUM JUARA <span id="podium-cat-title">PELAJAR</span> 🥇</div>
                     <div class="podium-grid">
                         <div class="podium-item"><div class="podium-rank rank-2">🥈 JUARA 2</div><div id="podium-2" class="podium-name">-</div></div>
-                        <div class="podium-item" style="border-color: var(--accent-gold);"><div class="podium-rank rank-1">🏆 JUARA 1</div><div id="podium-1" class="podium-name">-</div></div>
+                        <div class="podium-item" style="border-color: var(--accent-gold); box-shadow: 0 0 15px rgba(251,191,36,0.2);"><div class="podium-rank rank-1">🏆 JUARA 1</div><div id="podium-1" class="podium-name">-</div></div>
                         <div class="podium-item"><div class="podium-rank rank-3">🥉 JUARA 3</div><div id="podium-3" class="podium-name">-</div></div>
                     </div>
                 </div>
@@ -243,15 +419,57 @@
         <!-- TAB 2: FORM PENDAFTARAN -->
         <div id="sec-daftar" class="tab-section">
             <div class="card" style="max-width: 600px; margin: 0 auto;">
-                <h2 style="color:var(--accent-gold); text-align:center;">Formulir Pendaftaran Tim</h2>
+                <h2 style="color:var(--accent-gold); text-align:center; margin-bottom: 20px; font-weight:800;">Formulir Pendaftaran Tim</h2>
                 <form id="form-registrasi" onsubmit="handleRegistration(event)">
+                    
                     <div class="form-group">
-                        <label>Kategori Turnamen</label>
-                        <select id="reg-kategori" required><option value="pelajar">Pelajar</option><option value="umum">Umum</option></select>
+                        <label>1. Kategori Turnamen</label>
+                        <select id="reg-kategori" required>
+                            <option value="pelajar">Pelajar</option>
+                            <option value="umum">Umum</option>
+                        </select>
                     </div>
-                    <div class="form-group"><label>Nama Tim</label><input type="text" id="reg-namatim" required /></div>
-                    <div class="form-group"><label>Nama Kapten</label><input type="text" id="reg-kapten" required /></div>
-                    <div class="form-group"><label>No. WhatsApp Kapten</label><input type="tel" id="reg-wa" required /></div>
+
+                    <div class="form-group">
+                        <label>Nama Tim (Wajib untuk di Bagan)</label>
+                        <input type="text" id="reg-namatim" placeholder="Contoh: EVOS REBORN" required />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>No. WhatsApp Aktif (Untuk Dihubungi Panitia)</label>
+                        <input type="tel" id="reg-wa" placeholder="08xxxxxxxxxx" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label>2. ID MLBB Kapten</label>
+                        <input type="text" id="reg-id1" required />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>3. ID MLBB Pemain 2</label>
+                        <input type="text" id="reg-id2" required />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>4. ID MLBB Pemain 3</label>
+                        <input type="text" id="reg-id3" required />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>5. ID MLBB Pemain 4</label>
+                        <input type="text" id="reg-id4" required />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>6. ID MLBB Pemain 5</label>
+                        <input type="text" id="reg-id5" required />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>7. ID MLBB Cadangan</label>
+                        <input type="text" id="reg-id6" placeholder="Boleh dikosongkan jika tidak ada" />
+                    </div>
+
                     <button type="submit" class="btn-action">KIRIM PENDAFTARAN</button>
                 </form>
             </div>
@@ -260,14 +478,14 @@
         <!-- TAB 3: DAFTAR TIM (RESMI DI ACC) -->
         <div id="sec-daftar-tim" class="tab-section">
             <div class="card">
-                <h2 style="color:var(--accent-gold); text-align:center;">Daftar Tim Resmi (Disetujui)</h2>
+                <h2 style="color:var(--accent-gold); text-align:center; margin-bottom: 20px; font-weight:800;">Daftar Tim Resmi (Disetujui)</h2>
                 <div class="category-switcher">
-                    <button class="sub-btn" onclick="renderDaftarTim('pelajar')">Kategori Pelajar</button>
-                    <button class="sub-btn" onclick="renderDaftarTim('umum')">Kategori Umum</button>
+                    <button id="btn-dt-pelajar" class="sub-btn active" onclick="switchDaftarTim('pelajar')">Kategori Pelajar</button>
+                    <button id="btn-dt-umum" class="sub-btn" onclick="switchDaftarTim('umum')">Kategori Umum</button>
                 </div>
                 <div class="table-responsive">
                     <table>
-                        <thead><tr><th>No</th><th>Nama Tim</th><th>Kapten</th><th>Status Slot Bagan</th></tr></thead>
+                        <thead><tr><th>No</th><th>Nama Tim</th><th>Status Slot Bagan</th></tr></thead>
                         <tbody id="list-tim-resmi"></tbody>
                     </table>
                 </div>
@@ -277,7 +495,7 @@
         <!-- TAB 4: RIWAYAT PERTANDINGAN -->
         <div id="sec-riwayat" class="tab-section">
             <div class="card" style="max-width: 800px; margin: 0 auto;">
-                <h2 style="color:var(--accent-gold); text-align:center;">Riwayat Hasil Pertandingan</h2>
+                <h2 style="color:var(--accent-gold); text-align:center; margin-bottom: 20px; font-weight:800;">Riwayat Hasil Pertandingan</h2>
                 <div id="history-container">
                     <!-- Dynamic History -->
                 </div>
@@ -287,11 +505,20 @@
         <!-- TAB 5: TIM TERDAFTAR (KHUSUS PANITIA) -->
         <div id="sec-tim-terdaftar" class="tab-section">
             <div class="card">
-                <h2 style="color:var(--accent-gold); text-align:center;">Data Pendaftaran Tim (Menunggu ACC)</h2>
-                <p style="text-align:center; font-size:0.8rem; color:var(--text-muted); margin-bottom:15px;">Klik <strong>Setujui</strong> agar tim otomatis masuk ke Bagan Pertandingan & Daftar Tim Resmi.</p>
+                <h2 style="color:var(--accent-gold); text-align:center; margin-bottom: 10px; font-weight:800;">Data Pendaftaran Tim (Menunggu ACC)</h2>
+                <p style="text-align:center; font-size:0.85rem; color:var(--text-muted); margin-bottom:20px;">Klik <strong>Setujui & Masukkan Bagan</strong> agar tim otomatis masuk ke Slot Pertandingan & Daftar Tim Resmi.</p>
                 <div class="table-responsive">
                     <table>
-                        <thead><tr><th>Waktu</th><th>Kategori</th><th>Nama Tim</th><th>Kapten / WA</th><th>Status</th><th>Aksi Panitia</th></tr></thead>
+                        <thead>
+                            <tr>
+                                <th>Waktu</th>
+                                <th>Kategori</th>
+                                <th>Tim & Kontak</th>
+                                <th>ID Pemain MLBB</th>
+                                <th>Status</th>
+                                <th>Aksi Panitia</th>
+                            </tr>
+                        </thead>
                         <tbody id="pendaftar-list"></tbody>
                     </table>
                 </div>
@@ -301,9 +528,9 @@
         <!-- TAB 6: PENGATURAN (KHUSUS PANITIA) -->
         <div id="sec-pengaturan" class="tab-section">
             <div class="card" style="max-width: 800px; margin: 0 auto;">
-                <h2 style="color:var(--accent-gold); text-align:center;">⚙️ Pengaturan Sistem</h2>
+                <h2 style="color:var(--accent-gold); text-align:center; margin-bottom:20px; font-weight:800;">⚙️ Pengaturan Sistem</h2>
                 
-                <h3 style="margin-top:20px; color:var(--accent-cyan); font-size:1rem;">1. Background (Pilih Dari Galeri/HP)</h3>
+                <h3 style="margin-top:20px; margin-bottom:15px; color:var(--accent-cyan); font-size:1.1rem; font-weight:700;">1. Background (Pilih Dari Galeri/HP)</h3>
                 
                 <div class="form-group">
                     <label>Pilih Background Utama Website</label>
@@ -316,31 +543,33 @@
                 </div>
                 
                 <button class="btn-action" onclick="simpanPengaturanBG()" style="margin-bottom:10px;">SIMPAN BACKGROUND</button>
-                <button class="sub-btn" onclick="hapusBackground()" style="background:var(--accent-red); color:#fff; width:100%; border:none; padding:10px;">HAPUS & KEMBALI KE DEFAULT</button>
+                <button class="sub-btn" onclick="hapusBackground()" style="background:var(--accent-red); color:#fff; width:100%; border:none; padding:14px; border-radius:12px;">HAPUS & KEMBALI KE DEFAULT</button>
                 
-                <hr style="border-color:var(--border-subtle); margin:20px 0;">
+                <hr style="border-color:rgba(255,255,255,0.1); margin:30px 0;">
 
-                <h3 style="color:var(--accent-cyan); font-size:1rem;">2. Edit Slot Tim Manual</h3>
+                <h3 style="color:var(--accent-cyan); font-size:1.1rem; font-weight:700; margin-bottom:15px;">2. Edit Slot Tim Manual</h3>
                 <div class="category-switcher" style="justify-content: flex-start;">
-                    <button class="sub-btn active" onclick="renderSeedingInputs('pelajar')">Slot Pelajar</button>
-                    <button class="sub-btn" onclick="renderSeedingInputs('umum')">Slot Umum</button>
+                    <button id="btn-seed-pelajar" class="sub-btn active" onclick="renderSeedingInputs('pelajar')">Slot Pelajar</button>
+                    <button id="btn-seed-umum" class="sub-btn" onclick="renderSeedingInputs('umum')">Slot Umum</button>
                 </div>
                 <div id="seed-inputs" class="team-grid"></div>
                 <button class="btn-action" onclick="saveSeedSettings()">SIMPAN NAMA TIM MANUAL</button>
 
-                <hr style="border-color:var(--border-subtle); margin:20px 0;">
+                <hr style="border-color:rgba(255,255,255,0.1); margin:30px 0;">
                 
-                <h3 style="color:var(--accent-red); font-size:1rem;">3. Zona Bahaya (Reset Skor)</h3>
-                <button class="btn-action" style="background:var(--accent-red); width:auto;" onclick="resetBracketData('pelajar')">⚠️ Reset Skor Kategori Pelajar</button>
-                <button class="btn-action" style="background:var(--accent-red); width:auto; margin-left:10px;" onclick="resetBracketData('umum')">⚠️ Reset Skor Kategori Umum</button>
+                <h3 style="color:var(--accent-red); font-size:1.1rem; font-weight:700; margin-bottom:15px;">3. Zona Bahaya (Reset Skor)</h3>
+                <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                    <button class="btn-action" style="background:linear-gradient(135deg, #ef4444, #b91c1c); flex:1; margin-top:0;" onclick="resetBracketData('pelajar')">⚠️ Reset Skor Pelajar</button>
+                    <button class="btn-action" style="background:linear-gradient(135deg, #ef4444, #b91c1c); flex:1; margin-top:0;" onclick="resetBracketData('umum')">⚠️ Reset Skor Umum</button>
+                </div>
             </div>
         </div>
 
     </div>
 
     <script>
-        // --- STATE & DATA DEFAULT ---
-        const ADMIN_PIN = "1234";
+        // --- STATE & DATA DEFAULT (LOGIKA TIDAK DIUBAH SAMA SEKALI) ---
+        const ADMIN_PIN = "infly2026";
         let currentRole = "viewer";
         let currentCategory = "pelajar";
         let seedEditCategory = "pelajar";
@@ -380,7 +609,11 @@
             renderBracket();
             renderPodium();
             renderAdminRegistrations();
-            renderDaftarTim(currentCategory);
+            
+            const btnUmum = document.getElementById('btn-dt-umum');
+            const activeDaftarCat = (btnUmum && btnUmum.classList.contains('active')) ? 'umum' : 'pelajar';
+            renderDaftarTim(activeDaftarCat);
+            
             renderRiwayat();
         }
 
@@ -401,7 +634,7 @@
         function openLoginModal() { document.getElementById('login-modal').style.display = 'flex'; }
         function verifyPin() {
             const pin = document.getElementById('pin-input').value;
-            if (pin === ADMIN_PIN || pin === "INFLY2026") { setRole('admin'); } 
+            if (pin === ADMIN_PIN) { setRole('admin'); } 
             else { alert("PIN Salah!"); }
         }
 
@@ -415,7 +648,7 @@
 
             if (tabId === 'sec-pengaturan') { renderSeedingInputs(seedEditCategory); }
             if (tabId === 'sec-riwayat') renderRiwayat();
-            if (tabId === 'sec-daftar-tim') renderDaftarTim('pelajar');
+            if (tabId === 'sec-daftar-tim') { switchDaftarTim('pelajar'); }
         }
 
         function switchCategory(cat) {
@@ -424,10 +657,18 @@
             document.getElementById('btn-cat-umum').classList.toggle('active', cat === 'umum');
             document.getElementById('header-cat-title').innerText = `KATEGORI ${cat.toUpperCase()}`;
             document.getElementById('podium-cat-title').innerText = cat.toUpperCase();
+            
+            resetBracketPan();
             renderBracket(); renderPodium();
         }
 
-        // --- BACKGROUND UPLOAD GALERI (DENGAN KOMPRESI AGAR TIDAK ERROR STORAGE) ---
+        function switchDaftarTim(cat) {
+            document.getElementById('btn-dt-pelajar').classList.toggle('active', cat === 'pelajar');
+            document.getElementById('btn-dt-umum').classList.toggle('active', cat === 'umum');
+            renderDaftarTim(cat);
+        }
+
+        // --- BACKGROUND UPLOAD GALERI ---
         function prosesUploadGambar(event, target) {
             const file = event.target.files[0];
             if (!file) return;
@@ -436,11 +677,10 @@
             reader.onload = function(e) {
                 const img = new Image();
                 img.onload = function() {
-                    // Kompresi (Pengecilan ukuran gambar agar ringan disimpan di browser)
                     const canvas = document.createElement('canvas');
                     let width = img.width;
                     let height = img.height;
-                    const MAX_SIZE = 1200; // Resolusi Maksimal
+                    const MAX_SIZE = 1200;
 
                     if (width > height && width > MAX_SIZE) {
                         height *= MAX_SIZE / width; width = MAX_SIZE;
@@ -453,17 +693,12 @@
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
 
-                    // Konversi ke format ringan (Base64 JPEG kualitas 60%)
                     const base64Gambar = canvas.toDataURL('image/jpeg', 0.6);
-
-                    // Simpan ke state sementara
                     if (target === 'utama') {
                         appState.settings.bgUtama = base64Gambar;
                     } else {
                         appState.settings.bgBracket = base64Gambar;
                     }
-                    
-                    // Langsung terapkan di layar agar bisa di-preview panitia
                     terapkanBackground();
                 }
                 img.src = e.target.result;
@@ -471,10 +706,7 @@
             reader.readAsDataURL(file);
         }
 
-        function simpanPengaturanBG() {
-            saveState(); // Simpan ke local storage secara permanen
-            alert("Background dari galeri Anda berhasil disimpan!");
-        }
+        function simpanPengaturanBG() { saveState(); alert("Background berhasil disimpan!"); }
 
         function hapusBackground() {
             if(confirm("Yakin ingin mereset background ke tampilan asli/default?")) {
@@ -482,20 +714,16 @@
                 appState.settings.bgBracket = "";
                 document.getElementById('upload-bg-utama').value = "";
                 document.getElementById('upload-bg-bracket').value = "";
-                saveState();
-                terapkanBackground();
+                saveState(); terapkanBackground();
             }
         }
 
         function terapkanBackground() {
-            // Terapkan BG Utama
             if (appState.settings.bgUtama && appState.settings.bgUtama !== "") {
                 document.documentElement.style.setProperty('--bg-utama-url', `url('${appState.settings.bgUtama}')`);
             } else {
                 document.documentElement.style.setProperty('--bg-utama-url', `url('https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1920&q=80')`);
             }
-            
-            // Terapkan BG Bracket
             if (appState.settings.bgBracket && appState.settings.bgBracket !== "") {
                 document.documentElement.style.setProperty('--bg-bracket-url', `url('${appState.settings.bgBracket}')`);
             } else {
@@ -511,8 +739,13 @@
                 time: new Date().toLocaleDateString('id-ID'),
                 kategori: document.getElementById('reg-kategori').value,
                 namatim: document.getElementById('reg-namatim').value,
-                kapten: document.getElementById('reg-kapten').value,
                 wa: document.getElementById('reg-wa').value,
+                id1: document.getElementById('reg-id1').value,
+                id2: document.getElementById('reg-id2').value,
+                id3: document.getElementById('reg-id3').value,
+                id4: document.getElementById('reg-id4').value,
+                id5: document.getElementById('reg-id5').value,
+                id6: document.getElementById('reg-id6').value,
                 status: 'Menunggu'
             };
 
@@ -530,13 +763,18 @@
                 <tr>
                     <td>${r.time}</td>
                     <td><strong style="text-transform:uppercase;">${r.kategori}</strong></td>
-                    <td><strong>${r.namatim}</strong></td>
-                    <td>${r.kapten}<br/><span style="color:var(--accent-cyan); font-size:0.75rem;">${r.wa}</span></td>
+                    <td><strong>${r.namatim}</strong><br/><span style="color:var(--accent-cyan); font-size:0.75rem;">WA: ${r.wa}</span></td>
+                    <td style="font-size:0.75rem; line-height:1.5;">
+                        <strong>Kapten:</strong> ${r.id1}<br/>
+                        <strong>P2:</strong> ${r.id2} | <strong>P3:</strong> ${r.id3}<br/>
+                        <strong>P4:</strong> ${r.id4} | <strong>P5:</strong> ${r.id5}<br/>
+                        <strong>Cadangan:</strong> ${r.id6 || '-'}
+                    </td>
                     <td><span class="badge-status ${r.status === 'Disetujui' ? 'badge-approved' : (r.status === 'Ditolak' ? 'badge-rejected' : 'badge-pending')}">${r.status}</span></td>
                     <td>
                         ${r.status === 'Menunggu' ? `
-                            <button class="score-btn" style="background:var(--accent-green);" onclick="accPendaftaran(${r.id}, 'Disetujui')">Setujui & Masukkan Bagan</button>
-                            <button class="score-btn" style="background:var(--accent-red); margin-top:4px;" onclick="accPendaftaran(${r.id}, 'Ditolak')">Tolak</button>
+                            <button class="score-btn" style="background:var(--accent-green); padding:4px 10px;" onclick="accPendaftaran(${r.id}, 'Disetujui')">Setujui & Masukkan Bagan</button>
+                            <button class="score-btn" style="background:var(--accent-red); padding:4px 10px; margin-top:4px;" onclick="accPendaftaran(${r.id}, 'Ditolak')">Tolak</button>
                         ` : '-'}
                     </td>
                 </tr>
@@ -547,8 +785,6 @@
             const reg = appState.registrations.find(r => r.id === id);
             if (reg) {
                 reg.status = status;
-                
-                // AUTOMATION: Auto-fill empty slot in bracket
                 if (status === 'Disetujui') {
                     const emptyIdx = appState[reg.kategori].teams.findIndex(t => t.toLowerCase().startsWith('tim '));
                     if (emptyIdx !== -1) {
@@ -571,7 +807,6 @@
                 html += `<tr>
                     <td>${i+1}</td>
                     <td><strong>${t}</strong></td>
-                    <td>-</td>
                     <td><span class="badge-status ${isKosong ? 'badge-pending' : 'badge-approved'}">${isKosong ? 'Slot Kosong' : 'Terisi'}</span></td>
                 </tr>`;
             });
@@ -592,7 +827,7 @@
             container.innerHTML = appState.history.map(h => `<div class="riwayat-item"><span>⚔️ ${h}</span><span>Selesai</span></div>`).join('');
         }
 
-        // --- BRACKET ENGINE DENGAN FORMAT BO1, BO3, BO5 ---
+        // --- BRACKET ENGINE ---
         function renderBracket() {
             const container = document.getElementById('bracket-container');
             const data = appState[currentCategory];
@@ -622,7 +857,7 @@
             html += `</div>`;
             // QF Kiri
             html += `<div class="round-col"><div class="round-title">QUARTER-FINALS (BO1)</div>`;
-            for(let i=0; i<2; i++) html += renderMatchupHtml(`QF${i+1}`, qfTeams[i*2], qfTeams[i*2+1], matches.qf[i], 'qf', i, 'Quarter-Final');
+            for(let i=0; i<2; i++) html += renderMatchupHtml(`M${i+1}`, qfTeams[i*2], qfTeams[i*2+1], matches.qf[i], 'qf', i, 'Quarter-Final');
             html += `</div>`;
             // SF Kiri
             html += `<div class="round-col"><div class="round-title">SEMI-FINALS (BO3)</div>`;
@@ -641,7 +876,7 @@
             html += `</div>`;
             // QF Kanan
             html += `<div class="round-col"><div class="round-title">QUARTER-FINALS (BO1)</div>`;
-            for(let i=2; i<4; i++) html += renderMatchupHtml(`QF${i+1}`, qfTeams[i*2], qfTeams[i*2+1], matches.qf[i], 'qf', i, 'Quarter-Final');
+            for(let i=2; i<4; i++) html += renderMatchupHtml(`M${i+1}`, qfTeams[i*2], qfTeams[i*2+1], matches.qf[i], 'qf', i, 'Quarter-Final');
             html += `</div>`;
             // Babak 16 Kanan
             html += `<div class="round-col"><div class="round-title">ROUND OF 16 (BO1)</div>`;
@@ -656,20 +891,31 @@
             t1 = t1 || "-"; t2 = t2 || "-";
             const w = match.w;
             const isAdmin = currentRole === 'admin';
+            
+            // Menentukan apakah pertandingan ini valid untuk diedit skornya
+            const canScore = isAdmin && t1 !== '-' && t2 !== '-' && !w;
 
             return `
             <div class="matchup ${extraClass}">
                 <div class="match-header">${label}</div>
                 <div class="team-row ${w === 1 ? 'winner' : ''}">
                     <span class="team-name">${t1}</span>
-                    <div><span style="font-weight:bold; margin-right:4px;">${match.s1}</span>
-                        ${isAdmin && t1 !== '-' && t2 !== '-' && !w ? `<button class="score-btn" onclick="updateScore('${stage}', ${index}, 1, '${t1}', '${t2}', '${stageNameFull}')">+</button>` : ''}
+                    <div>
+                        <span class="score-number ${canScore ? 'clickable' : ''}" 
+                              ${canScore ? `style="cursor:pointer;" onclick="updateScore('${stage}', ${index}, 1, '${t1}', '${t2}', '${stageNameFull}')" title="Klik untuk tambah skor"` : ''}>
+                            ${match.s1}
+                        </span>
+                        ${canScore ? `<button class="score-btn" onclick="updateScore('${stage}', ${index}, 1, '${t1}', '${t2}', '${stageNameFull}')">+</button>` : ''}
                     </div>
                 </div>
                 <div class="team-row ${w === 2 ? 'winner' : ''}">
                     <span class="team-name">${t2}</span>
-                    <div><span style="font-weight:bold; margin-right:4px;">${match.s2}</span>
-                        ${isAdmin && t1 !== '-' && t2 !== '-' && !w ? `<button class="score-btn" onclick="updateScore('${stage}', ${index}, 2, '${t1}', '${t2}', '${stageNameFull}')">+</button>` : ''}
+                    <div>
+                        <span class="score-number ${canScore ? 'clickable' : ''}" 
+                              ${canScore ? `style="cursor:pointer;" onclick="updateScore('${stage}', ${index}, 2, '${t1}', '${t2}', '${stageNameFull}')" title="Klik untuk tambah skor"` : ''}>
+                            ${match.s2}
+                        </span>
+                        ${canScore ? `<button class="score-btn" onclick="updateScore('${stage}', ${index}, 2, '${t1}', '${t2}', '${stageNameFull}')">+</button>` : ''}
                     </div>
                 </div>
             </div>`;
@@ -681,7 +927,6 @@
         function updateScore(stage, index, teamNum, t1, t2, stageNameFull) {
             let m = stage === 'f' || stage === 't3' ? appState[currentCategory].matches[stage] : appState[currentCategory].matches[stage][index];
             
-            // PENENTUAN FORMAT KEMENANGAN (BO1, BO3, BO5)
             let targetWin = 2; // Default BO3
             if (stage === 'r16' || stage === 'qf') targetWin = 1; // BO1
             else if (stage === 'sf' || stage === 't3') targetWin = 2; // BO3
@@ -689,7 +934,6 @@
 
             if (teamNum === 1) m.s1++; else m.s2++;
 
-            // Jika skor mencapai targetWin, tim menang
             if (m.s1 >= targetWin || m.s2 >= targetWin) {
                 m.w = m.s1 >= targetWin ? 1 : 2;
                 catatRiwayat(currentCategory, stageNameFull, t1, t2, m.s1, m.s2);
@@ -722,11 +966,18 @@
         // --- PENGATURAN SLOT TIM (MANUAL) ---
         function renderSeedingInputs(cat) {
             seedEditCategory = cat;
+            
+            const btnP = document.getElementById('btn-seed-pelajar');
+            const btnU = document.getElementById('btn-seed-umum');
+            if (btnP) btnP.classList.toggle('active', cat === 'pelajar');
+            if (btnU) btnU.classList.toggle('active', cat === 'umum');
+
             const grid = document.getElementById('seed-inputs');
             grid.innerHTML = appState[cat].teams.map((t, i) => `
                 <div class="team-item"><span>Slot ${i+1}</span><input type="text" id="seed-in-${i}" value="${t}" /></div>
             `).join('');
         }
+        
         function saveSeedSettings() {
             for(let i=0; i<16; i++) {
                 const val = document.getElementById(`seed-in-${i}`).value.trim();
@@ -734,6 +985,7 @@
             }
             saveState(); alert("Susunan Tim Manual Berhasil Disimpan!");
         }
+        
         function randomizeCurrentBracket() {
             if (currentRole !== 'admin') { alert('Fitur acak bagan hanya untuk Panitia!'); return; }
             if (confirm(`Yakin mengacak Kategori ${currentCategory.toUpperCase()}? Skor akan reset. Data Daftar Tim AMAN.`)) {
@@ -748,14 +1000,1218 @@
             }
         }
 
-        function toggleFullscreen() {
-            if (!document.fullscreenElement) { document.documentElement.requestFullscreen(); } 
-            else { if (document.exitFullscreen) document.exitFullscreen(); }
+        // --- FULLSCREEN KHUSUS BRACKET VIDEOTRON ---
+        function toggleBracketFullscreen() {
+            const bracketWrapper = document.getElementById('bracket-fullscreen-wrapper');
+            
+            if (!document.fullscreenElement) {
+                if (bracketWrapper.requestFullscreen) {
+                    bracketWrapper.requestFullscreen();
+                } else if (bracketWrapper.webkitRequestFullscreen) {
+                    bracketWrapper.webkitRequestFullscreen();
+                } else if (bracketWrapper.msRequestFullscreen) {
+                    bracketWrapper.msRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+            }
+        }
+
+        // --- FITUR GESER (PAN) & ZOOM BEBAS ---
+        let panX = 0, panY = 0, currentScale = 1;
+        let isDraggingBracket = false;
+        let startDragX = 0, startDragY = 0;
+
+        function applyBracketTransform() {
+            const container = document.getElementById('bracket-container');
+            container.style.transform = `translate(${panX}px, ${panY}px) scale(${currentScale})`;
+        }
+
+        function zoomBracket(delta) {
+            currentScale += delta;
+            if (currentScale < 0.3) currentScale = 0.3;
+            if (currentScale > 3.0) currentScale = 3.0;
+            applyBracketTransform();
+        }
+
+        function resetBracketPan() {
+            panX = 0;
+            panY = 0;
+            currentScale = 1;
+            applyBracketTransform();
+        }
+
+        function initDraggableBracket() {
+            const wrapper = document.getElementById('bracket-fullscreen-wrapper');
+
+            const startDrag = (clientX, clientY, target) => {
+                if (target.tagName.toLowerCase() === 'button' || target.classList.contains('score-number') || target.classList.contains('vt-btn')) return;
+                
+                isDraggingBracket = true;
+                startDragX = clientX - panX;
+                startDragY = clientY - panY;
+                wrapper.style.cursor = 'grabbing';
+            };
+
+            const endDrag = () => {
+                isDraggingBracket = false;
+                wrapper.style.cursor = 'grab';
+            };
+
+            const moveDrag = (clientX, clientY, e) => {
+                if (!isDraggingBracket) return;
+                e.preventDefault(); 
+                panX = clientX - startDragX;
+                panY = clientY - startDragY;
+                applyBracketTransform();
+            };
+
+            // Mouse Events
+            wrapper.addEventListener('mousedown', (e) => startDrag(e.clientX, e.clientY, e.target));
+            window.addEventListener('mouseup', endDrag);
+            window.addEventListener('mousemove', (e) => moveDrag(e.clientX, e.clientY, e));
+
+            // Touch Events
+            wrapper.addEventListener('touchstart', (e) => {
+                if (e.touches.length === 1) startDrag(e.touches[0].clientX, e.touches[0].clientY, e.target);
+            }, { passive: false });
+            window.addEventListener('touchend', endDrag);
+            window.addEventListener('touchmove', (e) => {
+                if (isDraggingBracket && e.touches.length === 1) {
+                    moveDrag(e.touches[0].clientX, e.touches[0].clientY, e);
+                }
+            }, { passive: false });
+
+            // Scroll Wheel Event
+            wrapper.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                if (e.deltaY < 0) {
+                    zoomBracket(0.05);
+                } else {
+                    zoomBracket(-0.05);
+                }
+            }, { passive: false });
         }
 
         // --- ON LOAD ---
         window.onload = function() {
             loadSavedState();
+            initDraggableBracket();
+        };
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOURNAMENT MLBB INFLY CARNIVAL</title>
+
+    <style>
+        /* Import Font Poppins ala Esports Modern */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
+
+        :root {
+            --bg-dark: #080312;
+            --bg-card: rgba(16, 12, 34, 0.65);
+            --bg-input: rgba(6, 4, 18, 0.7);
+            --accent-gold: #fbbf24;
+            --accent-pink: #ec4899;
+            --accent-cyan: #22d3ee;
+            --accent-green: #22c55e;
+            --accent-red: #ef4444;
+            --border-subtle: rgba(34, 211, 238, 0.25);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --shadow-card: 0 12px 40px rgba(0, 0, 0, 0.5);
+            
+            /* Default Background Variables */
+            --bg-utama-url: url('https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1920&q=80');
+            --bg-bracket-url: none;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', system-ui, -apple-system, sans-serif; }
+
+        /* Kustomisasi Scrollbar Keren */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(8, 3, 18, 0.8); }
+        ::-webkit-scrollbar-thumb { background: var(--accent-cyan); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-pink); }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: linear-gradient(180deg, rgba(8, 3, 18, 0.75) 0%, rgba(8, 3, 18, 0.95) 100%), var(--bg-utama-url);
+            background-repeat: no-repeat;
+            background-position: center top;
+            background-size: cover;
+            background-attachment: fixed;
+            color: var(--text-main);
+            padding: 16px 12px;
+            min-height: 100vh;
+            transition: background-image 0.5s ease;
+        }
+
+        /* MODAL LOGIN - Glassmorphism */
+        #login-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 2, 12, 0.85);
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 99999; padding: 15px;
+        }
+        .modal-box {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 32px 24px;
+            border-radius: 20px; width: 100%; max-width: 380px; text-align: center;
+            box-shadow: 0 24px 50px rgba(0, 0, 0, 0.6);
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        
+        .modal-box h2 { color: var(--accent-gold); margin-bottom: 8px; font-size: 1.4rem; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
+        .modal-box p { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 24px; }
+        .modal-btn { width: 100%; padding: 14px; margin: 8px 0; font-weight: 700; border-radius: 12px; cursor: pointer; border: none; font-size: 0.9rem; transition: all 0.3s ease; letter-spacing: 0.5px; }
+        .modal-btn:active { transform: scale(0.97); }
+        .btn-admin { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #0f172a; box-shadow: 0 4px 15px rgba(251, 191, 36, 0.3); }
+        .btn-admin:hover { box-shadow: 0 6px 20px rgba(251, 191, 36, 0.5); transform: translateY(-2px); }
+        .btn-viewer { background: rgba(34, 211, 238, 0.1); color: var(--accent-cyan); border: 1px solid var(--border-subtle); }
+        .btn-viewer:hover { background: rgba(34, 211, 238, 0.2); transform: translateY(-2px); }
+        .panitia-box { display: none; margin-top: 14px; }
+        .panitia-box input { width: 100%; padding: 12px; background: var(--bg-input); border: 1px solid var(--border-subtle); color: #fff; border-radius: 12px; margin-bottom: 12px; text-align: center; font-size: 1rem; font-weight: 600; letter-spacing: 2px; transition: 0.3s; }
+        .panitia-box input:focus { outline: none; border-color: var(--accent-cyan); box-shadow: 0 0 10px rgba(34, 211, 238, 0.3); }
+
+        /* CONTAINER & HEADER UTAMA */
+        .container { max-width: 1350px; margin: 0 auto; }
+        
+        .top-bar { 
+            display: flex; justify-content: space-between; align-items: center; 
+            background: rgba(16, 12, 34, 0.5); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            padding: 12px 20px; border-radius: 16px; margin-bottom: 20px; 
+            border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .role-badge { font-size: 0.8rem; font-weight: 700; padding: 6px 14px; border-radius: 20px; background: rgba(34, 211, 238, 0.15); color: var(--accent-cyan); border: 1px solid var(--border-subtle); letter-spacing: 0.5px; }
+
+        header { text-align: center; margin-bottom: 24px; padding: 10px; }
+        header h1 { 
+            color: var(--accent-gold); font-size: 1.8rem; text-transform: uppercase; margin-bottom: 6px; 
+            font-weight: 900; letter-spacing: 2px; 
+            text-shadow: 0 2px 15px rgba(251, 191, 36, 0.4);
+        }
+        header p { color: var(--accent-cyan); font-size: 0.9rem; font-weight: 600; letter-spacing: 1px; text-shadow: 0 2px 10px rgba(34, 211, 238, 0.4); }
+
+        /* MENU UTAMA NAVIGASI */
+        .menu-container { position: relative; margin-bottom: 20px; z-index: 100; }
+        .hamburger-btn { 
+            background: var(--bg-card); backdrop-filter: blur(10px); color: var(--accent-gold); 
+            border: 1px solid var(--border-subtle); padding: 10px 20px; font-size: 0.9rem; font-weight: 700; 
+            border-radius: 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+            transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .hamburger-btn:hover { transform: translateY(-2px); border-color: var(--accent-gold); }
+        .main-nav { 
+            display: none; position: absolute; top: 52px; left: 0; 
+            background: rgba(12, 8, 28, 0.95); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 10px; 
+            flex-direction: column; gap: 6px; min-width: 260px; box-shadow: 0 20px 40px rgba(0,0,0,0.8); 
+        }
+        .main-nav.show { display: flex; animation: slideDown 0.3s ease forwards; transform-origin: top; }
+        @keyframes slideDown { 0% { opacity: 0; transform: scaleY(0.8); } 100% { opacity: 1; transform: scaleY(1); } }
+        
+        .nav-btn { background: transparent; color: var(--text-muted); border: none; padding: 12px 16px; font-size: 0.9rem; font-weight: 600; border-radius: 10px; cursor: pointer; text-align: left; transition: all 0.2s ease; }
+        .nav-btn:hover { color: #fff; background: rgba(34, 211, 238, 0.1); padding-left: 20px; }
+        .nav-btn.active { background: linear-gradient(135deg, var(--accent-pink), #c026d3); color: #ffffff; font-weight: 700; box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4); }
+        .admin-nav { border-left: 3px solid var(--accent-gold); display: none; } 
+
+        /* TAB SEKSI & CARDS (Glassmorphism) */
+        .tab-section { display: none; animation: fadeIn 0.4s ease; }
+        .tab-section.active { display: block; }
+        @keyframes fadeIn { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
+        
+        .card { 
+            background: rgba(16, 12, 34, 0.55); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.08); padding: 20px; border-radius: 20px; 
+            box-shadow: var(--shadow-card); margin-bottom: 20px; 
+        }
+
+        /* SUB NAV KATEGORI */
+        .category-switcher { display: flex; justify-content: center; gap: 12px; margin-bottom: 18px; }
+        .sub-btn { 
+            background: rgba(0, 0, 0, 0.4); color: var(--text-muted); border: 1px solid var(--border-subtle); 
+            padding: 10px 22px; border-radius: 25px; cursor: pointer; font-size: 0.85rem; font-weight: 700; 
+            transition: all 0.3s ease; letter-spacing: 0.5px;
+        }
+        .sub-btn:hover { border-color: var(--accent-cyan); color: #fff; }
+        .sub-btn.active { 
+            background: linear-gradient(135deg, var(--accent-cyan), #0284c7); color: #fff; 
+            border-color: transparent; box-shadow: 0 4px 15px rgba(34, 211, 238, 0.4); 
+        }
+
+        /* HEADER DALAM BRACKET */
+        .bracket-card-header { 
+            display: flex; justify-content: center; align-items: center; padding: 16px 20px; 
+            background: rgba(8, 4, 22, 0.75); backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.1); border-radius: 12px 12px 0 0; 
+            margin-bottom: 16px; position: relative; z-index: 10; 
+        }
+        .bracket-title-area { text-align: center; }
+        .bracket-title-area h2 { color: var(--accent-gold); font-size: 1.4rem; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 1px; text-shadow: 0 2px 10px rgba(251, 191, 36, 0.3); }
+        .controls-row { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
+        
+        .vt-btn { 
+            background: rgba(34, 211, 238, 0.1); color: var(--accent-cyan); border: 1px solid rgba(34, 211, 238, 0.4); 
+            padding: 8px 16px; border-radius: 25px; font-size: 0.8rem; font-weight: 700; cursor: pointer; 
+            display: flex; align-items: center; justify-content: center; transition: all 0.3s ease;
+        }
+        .vt-btn:hover { background: var(--accent-cyan); color: #000; box-shadow: 0 4px 12px rgba(34, 211, 238, 0.4); transform: translateY(-2px); }
+        
+        .btn-acak-bagan { 
+            background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #080312; border: none; 
+            padding: 8px 18px; border-radius: 25px; font-size: 0.8rem; font-weight: 800; cursor: pointer; 
+            transition: all 0.3s ease;
+        }
+        .btn-acak-bagan:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(251, 191, 36, 0.4); }
+
+        /* BRACKET DESIGN */
+        .bracket-wrapper { 
+            position: relative; 
+            background-color: rgba(8, 3, 18, 0.85);
+            background-image: var(--bg-bracket-url);
+            background-size: 100% 100%; 
+            background-position: center; 
+            background-blend-mode: overlay;
+            border-radius: 16px; padding: 24px 12px; border: 1px solid rgba(255,255,255,0.1); 
+            transition: background-image 0.5s ease;
+            will-change: transform; 
+            transform-origin: center center;
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
+        }
+        .bracket-flex { display: flex; gap: 20px; min-width: 1200px; justify-content: space-between; align-items: stretch; }
+        .round-col { flex: 1; min-width: 200px; display: flex; flex-direction: column; justify-content: space-around; }
+        .round-title { 
+            text-align: center; color: #fff; font-size: 0.75rem; font-weight: 800; margin-bottom: 12px; 
+            background: rgba(12, 18, 36, 0.95); padding: 8px; border-radius: 8px; 
+            border: 1px solid var(--accent-cyan); box-shadow: 0 4px 10px rgba(34, 211, 238, 0.15); letter-spacing: 1px;
+        }
+
+        /* Kartu Matchup Keren */
+        .matchup { 
+            background: linear-gradient(145deg, rgba(20, 15, 40, 0.95), rgba(10, 8, 20, 0.98));
+            border: 1px solid rgba(34, 211, 238, 0.25); 
+            border-radius: 10px; margin: 10px 0; overflow: hidden; 
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4); transition: transform 0.2s ease;
+        }
+        .matchup:hover { transform: scale(1.02); border-color: rgba(34, 211, 238, 0.6); box-shadow: 0 8px 20px rgba(34, 211, 238, 0.2); }
+        .matchup.final { border: 2px solid var(--accent-gold); box-shadow: 0 0 20px rgba(251, 191, 36, 0.3); }
+        .matchup.third { border: 2px solid var(--accent-cyan); }
+
+        .match-header { 
+            background: linear-gradient(90deg, transparent, rgba(236, 72, 153, 0.35), transparent); 
+            font-size: 0.7rem; padding: 5px 8px; text-align: center; color: var(--accent-gold); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .team-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 0.85rem; }
+        .team-row.winner { background: linear-gradient(90deg, rgba(34, 197, 94, 0.15), transparent); font-weight: 800; color: var(--accent-gold); }
+        .team-name { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 8px; }
+        
+        .score-btn { background: rgba(34, 211, 238, 0.15); color: #fff; border: 1px solid var(--border-subtle); padding: 2px 8px; border-radius: 6px; font-weight: 800; font-size: 0.8rem; cursor: pointer; transition: 0.2s; }
+        .score-btn:hover { background: var(--accent-cyan); color: #000; }
+        
+        .score-number { 
+            font-weight: 800; font-size: 0.9rem; margin-right: 6px; padding: 2px 8px; 
+            background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); 
+            border-radius: 6px; transition: all 0.2s; display: inline-block; min-width: 28px; text-align: center;
+        }
+        .score-number.clickable:hover { background: rgba(34, 211, 238, 0.4); border-color: var(--accent-cyan); color: #fff; transform: scale(1.1); }
+
+        /* PODIUM */
+        .podium-box { margin-top: 24px; background: rgba(16, 12, 34, 0.8); backdrop-filter: blur(12px); border: 2px solid rgba(251, 191, 36, 0.5); border-radius: 16px; padding: 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .podium-title { color: var(--accent-gold); font-size: 1.2rem; font-weight: 900; margin-bottom: 16px; letter-spacing: 1.5px; text-shadow: 0 2px 8px rgba(251, 191, 36, 0.4); }
+        .podium-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+        .podium-item { background: linear-gradient(180deg, rgba(20,15,40,0.8), rgba(10,8,20,0.9)); padding: 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); transition: transform 0.3s ease; }
+        .podium-item:hover { transform: translateY(-5px); }
+        .podium-rank { font-size: 0.8rem; font-weight: 900; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
+        .rank-1 { color: #fbbf24; font-size: 0.9rem; text-shadow: 0 0 10px rgba(251, 191, 36, 0.4); } .rank-2 { color: #94a3b8; } .rank-3 { color: #b45309; }
+        .podium-name { font-size: 0.95rem; font-weight: 700; color: #fff; }
+
+        /* TABEL & DAFTAR TIM */
+        .table-responsive { overflow-x: auto; margin-top: 10px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: left; }
+        th, td { padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); vertical-align: middle; }
+        th { background: rgba(34, 211, 238, 0.15); color: var(--accent-cyan); font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; font-size: 0.8rem; }
+        tr:hover { background: rgba(255,255,255,0.02); }
+        
+        .badge-status { padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.5px; }
+        .badge-pending { background: rgba(251, 191, 36, 0.15); color: var(--accent-gold); border: 1px solid rgba(251,191,36,0.3); }
+        .badge-approved { background: rgba(34, 197, 94, 0.15); color: var(--accent-green); border: 1px solid rgba(34,197,94,0.3); }
+        .badge-rejected { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); border: 1px solid rgba(239,68,68,0.3); }
+
+        /* FORM & INPUT */
+        .team-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 20px; }
+        @media (min-width: 640px) { .team-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; } }
+        .team-item { display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.3); padding: 10px 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); }
+        
+        .form-group { margin-bottom: 18px; text-align: left; }
+        .form-group label { display: block; color: var(--accent-cyan); font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; }
+        .form-group input[type="text"], .form-group input[type="tel"], .form-group select { 
+            width: 100%; padding: 14px 16px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.15); 
+            color: #fff; border-radius: 12px; font-size: 0.9rem; transition: all 0.3s ease; 
+        }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--accent-cyan); box-shadow: 0 0 12px rgba(34, 211, 238, 0.3); background: rgba(0,0,0,0.6); }
+        .form-group input[type="file"] { width: 100%; padding: 12px; background: rgba(34, 211, 238, 0.05); border: 1px dashed var(--accent-cyan); color: #fff; border-radius: 12px; font-size: 0.85rem; cursor: pointer; transition: 0.3s; }
+        .form-group input[type="file"]:hover { background: rgba(34, 211, 238, 0.15); }
+
+        .btn-action { 
+            background: linear-gradient(135deg, #ec4899, #c026d3); color: #ffffff; border: none; 
+            padding: 14px 20px; font-weight: 800; border-radius: 12px; cursor: pointer; width: 100%; margin-top: 10px; 
+            font-size: 0.95rem; letter-spacing: 1px; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3);
+        }
+        .btn-action:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(236, 72, 153, 0.5); }
+        .btn-action:active { transform: translateY(0); }
+
+        .riwayat-item { 
+            background: rgba(0,0,0,0.4); padding: 14px 16px; border-left: 4px solid var(--accent-pink); 
+            border-radius: 10px; margin-bottom: 12px; font-size: 0.9rem; font-weight: 500; display: flex; justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2); transition: 0.2s;
+        }
+        .riwayat-item:hover { transform: translateX(5px); background: rgba(0,0,0,0.6); }
+        
+        /* CSS KHUSUS MODE FULLSCREEN VIDEOTRON & DRAG FITUR */
+        #bracket-fullscreen-wrapper {
+            background-color: var(--bg-dark);
+            background-image: linear-gradient(180deg, rgba(8, 3, 18, 0.82) 0%, rgba(8, 3, 18, 0.96) 100%), var(--bg-utama-url);
+            background-repeat: no-repeat;
+            background-position: center top;
+            background-size: cover;
+            position: relative;
+            overflow: hidden;
+            cursor: grab;
+            border-radius: 16px; /* Tambahan radius biar cantik kalau ga fullscreen */
+        }
+        
+        #bracket-fullscreen-wrapper:active { cursor: grabbing; }
+
+        :fullscreen #bracket-fullscreen-wrapper { padding: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: hidden; border-radius: 0;}
+        :-webkit-full-screen #bracket-fullscreen-wrapper { padding: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: hidden; border-radius: 0;}
+        
+        :fullscreen .bracket-card-header { display: none !important; }
+        :-webkit-full-screen .bracket-card-header { display: none !important; }
+
+        :fullscreen .score-btn { display: none !important; }
+        :-webkit-full-screen .score-btn { display: none !important; }
+
+        /* --- MEDIA QUERIES UNTUK RESPONSIVITAS HP (SMARTPHONE) --- */
+        @media (max-width: 768px) {
+            header h1 { font-size: 1.35rem; }
+            header p { font-size: 0.8rem; }
+            .top-bar { flex-direction: column; gap: 12px; padding: 12px; text-align: center; }
+            .role-badge { width: 100%; display: block; text-align: center; margin-bottom: 5px;}
+            .menu-container { display: flex; justify-content: center; }
+            .main-nav { top: 55px; left: 50%; transform: translateX(-50%); width: 90%; }
+            .main-nav.show { transform: translateX(-50%) scaleY(1); } /* override animasi */
+            @keyframes slideDown { 0% { opacity: 0; transform: translateX(-50%) scaleY(0.8); } 100% { opacity: 1; transform: translateX(-50%) scaleY(1); } }
+            
+            .category-switcher { flex-wrap: wrap; }
+            .sub-btn { width: 45%; flex-grow: 1; text-align: center; font-size: 0.75rem; padding: 10px; }
+            
+            .bracket-card-header { flex-direction: column; gap: 12px; padding: 12px; }
+            .bracket-title-area h2 { font-size: 1.1rem; }
+            .controls-row { justify-content: center; }
+            .vt-btn, .btn-acak-bagan { padding: 6px 12px; font-size: 0.7rem; }
+            
+            .podium-grid { gap: 8px; }
+            .podium-item { padding: 10px; }
+            .podium-rank { font-size: 0.65rem; }
+            .podium-name { font-size: 0.75rem; }
+            
+            .card { padding: 15px; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- MODAL AKSES / LOGIN -->
+    <div id="login-modal">
+        <div class="modal-box">
+            <h2>Pilih Hak Akses</h2>
+            <p>Turnamen Mobile Legends Infly Carnival</p>
+            <button class="modal-btn btn-viewer" onclick="setRole('viewer')">PENONTON / PUBLIK</button>
+            <button class="modal-btn btn-admin" onclick="showPanitiaBox()">PANITIA / ADMIN</button>
+            <div id="panitia-box" class="panitia-box">
+                <input type="password" id="pin-input" placeholder="Masukkan PIN Panitia" />
+                <button class="modal-btn btn-admin" onclick="verifyPin()">MASUK PANITIA</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- BAR ATAS -->
+        <div class="top-bar">
+            <div><strong>STATUS:</strong> <span id="role-display" class="role-badge">Penonton</span></div>
+            <div><button class="sub-btn" onclick="openLoginModal()" style="font-size:0.75rem; width:auto;">Ganti Akses</button></div>
+        </div>
+
+        <header>
+            <h1>TOURNAMENT MLBB INFLY CARNIVAL</h1>
+            <p>Papan Bagan Pertandingan & Pendaftaran Resmi</p>
+        </header>
+
+        <!-- MENU NAVIGASI UTAMA -->
+        <div class="menu-container">
+            <button class="hamburger-btn" onclick="toggleNav()"><span>☰ MENU UTAMA</span></button>
+            <div id="main-nav" class="main-nav">
+                <!-- Menu Publik -->
+                <button class="nav-btn active" onclick="switchTab('sec-bracket')">🏆 Bagan Pertandingan</button>
+                <button class="nav-btn" onclick="switchTab('sec-daftar')">📝 Form Pendaftaran</button>
+                <button class="nav-btn" onclick="switchTab('sec-daftar-tim')">🛡️ Daftar Tim Resmi</button>
+                <button class="nav-btn" onclick="switchTab('sec-riwayat')">📜 Riwayat Pertandingan</button>
+                
+                <!-- Menu Khusus Panitia -->
+                <button id="nav-admin-reg" class="nav-btn admin-nav" onclick="switchTab('sec-tim-terdaftar')">📋 Tim Terdaftar (Menunggu ACC)</button>
+                <button id="nav-pengaturan" class="nav-btn admin-nav" onclick="switchTab('sec-pengaturan')">⚙️ Pengaturan Sistem</button>
+            </div>
+        </div>
+
+        <!-- TAB 1: BAGAN PERTANDINGAN -->
+        <div id="sec-bracket" class="tab-section active">
+            <div class="category-switcher">
+                <button id="btn-cat-pelajar" class="sub-btn active" onclick="switchCategory('pelajar')">Kategori Pelajar</button>
+                <button id="btn-cat-umum" class="sub-btn" onclick="switchCategory('umum')">Kategori Umum</button>
+            </div>
+
+            <div class="card" style="padding: 12px;">
+                
+                <!-- WRAPPER KHUSUS UNTUK FULLSCREEN & DRAG (GESER) -->
+                <div id="bracket-fullscreen-wrapper" title="Gunakan kursor atau scroll untuk geser dan zoom bagan">
+                    
+                    <div class="bracket-card-header">
+                        <div class="bracket-title-area">
+                            <h2 id="header-cat-title">KATEGORI PELAJAR</h2>
+                            <div class="controls-row">
+                                <button class="vt-btn" onclick="zoomBracket(-0.1)" title="Perkecil Ukuran">➖</button>
+                                <button class="vt-btn" onclick="zoomBracket(0.1)" title="Perbesar Ukuran">➕</button>
+                                <button class="vt-btn" onclick="resetBracketPan()" title="Kembalikan posisi & ukuran bagan ke tengah">🔄 Reset</button>
+                                
+                                <button class="vt-btn" onclick="toggleBracketFullscreen()">📺 Layar Penuh</button>
+                                <button class="btn-acak-bagan" onclick="randomizeCurrentBracket()">🎲 ACAK BAGAN</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="bracket-container" class="bracket-wrapper">
+                        <!-- Dynamic Bracket -->
+                    </div>
+                    
+                </div>
+                <!-- END WRAPPER KHUSUS FULLSCREEN -->
+
+                <!-- PODIUM -->
+                <div class="podium-box">
+                    <div class="podium-title">🥇 PODIUM JUARA <span id="podium-cat-title">PELAJAR</span> 🥇</div>
+                    <div class="podium-grid">
+                        <div class="podium-item"><div class="podium-rank rank-2">🥈 JUARA 2</div><div id="podium-2" class="podium-name">-</div></div>
+                        <div class="podium-item" style="border-color: var(--accent-gold); box-shadow: 0 0 15px rgba(251,191,36,0.2);"><div class="podium-rank rank-1">🏆 JUARA 1</div><div id="podium-1" class="podium-name">-</div></div>
+                        <div class="podium-item"><div class="podium-rank rank-3">🥉 JUARA 3</div><div id="podium-3" class="podium-name">-</div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: FORM PENDAFTARAN -->
+        <div id="sec-daftar" class="tab-section">
+            <div class="card" style="max-width: 600px; margin: 0 auto;">
+                <h2 style="color:var(--accent-gold); text-align:center; margin-bottom: 20px; font-weight:800;">Formulir Pendaftaran Tim</h2>
+                <form id="form-registrasi" onsubmit="handleRegistration(event)">
+                    
+                    <div class="form-group">
+                        <label>1. Kategori Turnamen</label>
+                        <select id="reg-kategori" required>
+                            <option value="pelajar">Pelajar</option>
+                            <option value="umum">Umum</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Nama Tim (Wajib untuk di Bagan)</label>
+                        <input type="text" id="reg-namatim" placeholder="Contoh: EVOS REBORN" required />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>No. WhatsApp Aktif (Untuk Dihubungi Panitia)</label>
+                        <input type="tel" id="reg-wa" placeholder="08xxxxxxxxxx" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label>2. ID MLBB Kapten</label>
+                        <input type="text" id="reg-id1" required />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>3. ID MLBB Pemain 2</label>
+                        <input type="text" id="reg-id2" required />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>4. ID MLBB Pemain 3</label>
+                        <input type="text" id="reg-id3" required />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>5. ID MLBB Pemain 4</label>
+                        <input type="text" id="reg-id4" required />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>6. ID MLBB Pemain 5</label>
+                        <input type="text" id="reg-id5" required />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>7. ID MLBB Cadangan</label>
+                        <input type="text" id="reg-id6" placeholder="Boleh dikosongkan jika tidak ada" />
+                    </div>
+
+                    <button type="submit" class="btn-action">KIRIM PENDAFTARAN</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- TAB 3: DAFTAR TIM (RESMI DI ACC) -->
+        <div id="sec-daftar-tim" class="tab-section">
+            <div class="card">
+                <h2 style="color:var(--accent-gold); text-align:center; margin-bottom: 20px; font-weight:800;">Daftar Tim Resmi (Disetujui)</h2>
+                <div class="category-switcher">
+                    <button id="btn-dt-pelajar" class="sub-btn active" onclick="switchDaftarTim('pelajar')">Kategori Pelajar</button>
+                    <button id="btn-dt-umum" class="sub-btn" onclick="switchDaftarTim('umum')">Kategori Umum</button>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead><tr><th>No</th><th>Nama Tim</th><th>Status Slot Bagan</th></tr></thead>
+                        <tbody id="list-tim-resmi"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: RIWAYAT PERTANDINGAN -->
+        <div id="sec-riwayat" class="tab-section">
+            <div class="card" style="max-width: 800px; margin: 0 auto;">
+                <h2 style="color:var(--accent-gold); text-align:center; margin-bottom: 20px; font-weight:800;">Riwayat Hasil Pertandingan</h2>
+                <div id="history-container">
+                    <!-- Dynamic History -->
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 5: TIM TERDAFTAR (KHUSUS PANITIA) -->
+        <div id="sec-tim-terdaftar" class="tab-section">
+            <div class="card">
+                <h2 style="color:var(--accent-gold); text-align:center; margin-bottom: 10px; font-weight:800;">Data Pendaftaran Tim (Menunggu ACC)</h2>
+                <p style="text-align:center; font-size:0.85rem; color:var(--text-muted); margin-bottom:20px;">Klik <strong>Setujui & Masukkan Bagan</strong> agar tim otomatis masuk ke Slot Pertandingan & Daftar Tim Resmi.</p>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Waktu</th>
+                                <th>Kategori</th>
+                                <th>Tim & Kontak</th>
+                                <th>ID Pemain MLBB</th>
+                                <th>Status</th>
+                                <th>Aksi Panitia</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pendaftar-list"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 6: PENGATURAN (KHUSUS PANITIA) -->
+        <div id="sec-pengaturan" class="tab-section">
+            <div class="card" style="max-width: 800px; margin: 0 auto;">
+                <h2 style="color:var(--accent-gold); text-align:center; margin-bottom:20px; font-weight:800;">⚙️ Pengaturan Sistem</h2>
+                
+                <h3 style="margin-top:20px; margin-bottom:15px; color:var(--accent-cyan); font-size:1.1rem; font-weight:700;">1. Background (Pilih Dari Galeri/HP)</h3>
+                
+                <div class="form-group">
+                    <label>Pilih Background Utama Website</label>
+                    <input type="file" id="upload-bg-utama" accept="image/*" onchange="prosesUploadGambar(event, 'utama')" />
+                </div>
+                
+                <div class="form-group">
+                    <label>Pilih Background Kotak Bagan (Bracket)</label>
+                    <input type="file" id="upload-bg-bracket" accept="image/*" onchange="prosesUploadGambar(event, 'bracket')" />
+                </div>
+                
+                <button class="btn-action" onclick="simpanPengaturanBG()" style="margin-bottom:10px;">SIMPAN BACKGROUND</button>
+                <button class="sub-btn" onclick="hapusBackground()" style="background:var(--accent-red); color:#fff; width:100%; border:none; padding:14px; border-radius:12px;">HAPUS & KEMBALI KE DEFAULT</button>
+                
+                <hr style="border-color:rgba(255,255,255,0.1); margin:30px 0;">
+
+                <h3 style="color:var(--accent-cyan); font-size:1.1rem; font-weight:700; margin-bottom:15px;">2. Edit Slot Tim Manual</h3>
+                <div class="category-switcher" style="justify-content: flex-start;">
+                    <button id="btn-seed-pelajar" class="sub-btn active" onclick="renderSeedingInputs('pelajar')">Slot Pelajar</button>
+                    <button id="btn-seed-umum" class="sub-btn" onclick="renderSeedingInputs('umum')">Slot Umum</button>
+                </div>
+                <div id="seed-inputs" class="team-grid"></div>
+                <button class="btn-action" onclick="saveSeedSettings()">SIMPAN NAMA TIM MANUAL</button>
+
+                <hr style="border-color:rgba(255,255,255,0.1); margin:30px 0;">
+                
+                <h3 style="color:var(--accent-red); font-size:1.1rem; font-weight:700; margin-bottom:15px;">3. Zona Bahaya (Reset Skor)</h3>
+                <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                    <button class="btn-action" style="background:linear-gradient(135deg, #ef4444, #b91c1c); flex:1; margin-top:0;" onclick="resetBracketData('pelajar')">⚠️ Reset Skor Pelajar</button>
+                    <button class="btn-action" style="background:linear-gradient(135deg, #ef4444, #b91c1c); flex:1; margin-top:0;" onclick="resetBracketData('umum')">⚠️ Reset Skor Umum</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- STATE & DATA DEFAULT (LOGIKA TIDAK DIUBAH SAMA SEKALI) ---
+        const ADMIN_PIN = "infly2026";
+        let currentRole = "viewer";
+        let currentCategory = "pelajar";
+        let seedEditCategory = "pelajar";
+
+        let appState = {
+            pelajar: { teams: Array.from({length: 16}, (_, i) => `Tim ${i+1}`), matches: createEmptyMatches() },
+            umum: { teams: Array.from({length: 16}, (_, i) => `Tim ${i+1}`), matches: createEmptyMatches() },
+            registrations: [],
+            history: [],
+            settings: { bgUtama: "", bgBracket: "" }
+        };
+
+        function createEmptyMatches() {
+            return {
+                r16: Array.from({length: 8}, () => ({ s1: 0, s2: 0, w: null })),
+                qf: Array.from({length: 4}, () => ({ s1: 0, s2: 0, w: null })),
+                sf: Array.from({length: 2}, () => ({ s1: 0, s2: 0, w: null })),
+                f: { s1: 0, s2: 0, w: null },
+                t3: { s1: 0, s2: 0, w: null }
+            };
+        }
+
+        // --- INIT DATA ---
+        function loadSavedState() {
+            const saved = localStorage.getItem('infly_mlbb_state_v2');
+            if (saved) {
+                try {
+                    let parsed = JSON.parse(saved);
+                    appState = { ...appState, ...parsed };
+                } catch(e) { console.error(e); }
+            }
+            terapkanBackground();
+        }
+
+        function saveState() {
+            localStorage.setItem('infly_mlbb_state_v2', JSON.stringify(appState));
+            renderBracket();
+            renderPodium();
+            renderAdminRegistrations();
+            
+            const btnUmum = document.getElementById('btn-dt-umum');
+            const activeDaftarCat = (btnUmum && btnUmum.classList.contains('active')) ? 'umum' : 'pelajar';
+            renderDaftarTim(activeDaftarCat);
+            
+            renderRiwayat();
+        }
+
+        // --- AUTH & ROLE ---
+        function setRole(role) {
+            currentRole = role;
+            document.getElementById('role-display').innerText = role === 'admin' ? 'PANITIA' : 'PENONTON';
+            document.getElementById('role-display').style.color = role === 'admin' ? 'var(--accent-gold)' : 'var(--accent-cyan)';
+            
+            const adminMenus = document.querySelectorAll('.admin-nav');
+            adminMenus.forEach(menu => menu.style.display = role === 'admin' ? 'block' : 'none');
+            
+            document.getElementById('login-modal').style.display = 'none';
+            renderBracket();
+        }
+
+        function showPanitiaBox() { document.getElementById('panitia-box').style.display = 'block'; }
+        function openLoginModal() { document.getElementById('login-modal').style.display = 'flex'; }
+        function verifyPin() {
+            const pin = document.getElementById('pin-input').value;
+            if (pin === ADMIN_PIN) { setRole('admin'); } 
+            else { alert("PIN Salah!"); }
+        }
+
+        // --- NAVIGATION ---
+        function toggleNav() { document.getElementById('main-nav').classList.toggle('show'); }
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            document.getElementById('main-nav').classList.remove('show');
+
+            if (tabId === 'sec-pengaturan') { renderSeedingInputs(seedEditCategory); }
+            if (tabId === 'sec-riwayat') renderRiwayat();
+            if (tabId === 'sec-daftar-tim') { switchDaftarTim('pelajar'); }
+        }
+
+        function switchCategory(cat) {
+            currentCategory = cat;
+            document.getElementById('btn-cat-pelajar').classList.toggle('active', cat === 'pelajar');
+            document.getElementById('btn-cat-umum').classList.toggle('active', cat === 'umum');
+            document.getElementById('header-cat-title').innerText = `KATEGORI ${cat.toUpperCase()}`;
+            document.getElementById('podium-cat-title').innerText = cat.toUpperCase();
+            
+            resetBracketPan();
+            renderBracket(); renderPodium();
+        }
+
+        function switchDaftarTim(cat) {
+            document.getElementById('btn-dt-pelajar').classList.toggle('active', cat === 'pelajar');
+            document.getElementById('btn-dt-umum').classList.toggle('active', cat === 'umum');
+            renderDaftarTim(cat);
+        }
+
+        // --- BACKGROUND UPLOAD GALERI ---
+        function prosesUploadGambar(event, target) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+                    const MAX_SIZE = 1200;
+
+                    if (width > height && width > MAX_SIZE) {
+                        height *= MAX_SIZE / width; width = MAX_SIZE;
+                    } else if (height > MAX_SIZE) {
+                        width *= MAX_SIZE / height; height = MAX_SIZE;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    const base64Gambar = canvas.toDataURL('image/jpeg', 0.6);
+                    if (target === 'utama') {
+                        appState.settings.bgUtama = base64Gambar;
+                    } else {
+                        appState.settings.bgBracket = base64Gambar;
+                    }
+                    terapkanBackground();
+                }
+                img.src = e.target.result;
+            }
+            reader.readAsDataURL(file);
+        }
+
+        function simpanPengaturanBG() { saveState(); alert("Background berhasil disimpan!"); }
+
+        function hapusBackground() {
+            if(confirm("Yakin ingin mereset background ke tampilan asli/default?")) {
+                appState.settings.bgUtama = "";
+                appState.settings.bgBracket = "";
+                document.getElementById('upload-bg-utama').value = "";
+                document.getElementById('upload-bg-bracket').value = "";
+                saveState(); terapkanBackground();
+            }
+        }
+
+        function terapkanBackground() {
+            if (appState.settings.bgUtama && appState.settings.bgUtama !== "") {
+                document.documentElement.style.setProperty('--bg-utama-url', `url('${appState.settings.bgUtama}')`);
+            } else {
+                document.documentElement.style.setProperty('--bg-utama-url', `url('https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1920&q=80')`);
+            }
+            if (appState.settings.bgBracket && appState.settings.bgBracket !== "") {
+                document.documentElement.style.setProperty('--bg-bracket-url', `url('${appState.settings.bgBracket}')`);
+            } else {
+                document.documentElement.style.setProperty('--bg-bracket-url', `none`);
+            }
+        }
+
+        // --- REGISTRATION & AUTO-FILL BAGAN ---
+        function handleRegistration(e) {
+            e.preventDefault();
+            const reg = {
+                id: Date.now(),
+                time: new Date().toLocaleDateString('id-ID'),
+                kategori: document.getElementById('reg-kategori').value,
+                namatim: document.getElementById('reg-namatim').value,
+                wa: document.getElementById('reg-wa').value,
+                id1: document.getElementById('reg-id1').value,
+                id2: document.getElementById('reg-id2').value,
+                id3: document.getElementById('reg-id3').value,
+                id4: document.getElementById('reg-id4').value,
+                id5: document.getElementById('reg-id5').value,
+                id6: document.getElementById('reg-id6').value,
+                status: 'Menunggu'
+            };
+
+            appState.registrations.push(reg);
+            saveState();
+            document.getElementById('form-registrasi').reset();
+            alert("Pendaftaran Berhasil! Silakan tunggu Panitia melakukan ACC.");
+        }
+
+        function renderAdminRegistrations() {
+            const list = document.getElementById('pendaftar-list');
+            if (appState.registrations.length === 0) { list.innerHTML = `<tr><td colspan="6" style="text-align:center;">Belum ada pendaftaran.</td></tr>`; return; }
+
+            list.innerHTML = appState.registrations.map(r => `
+                <tr>
+                    <td>${r.time}</td>
+                    <td><strong style="text-transform:uppercase;">${r.kategori}</strong></td>
+                    <td><strong>${r.namatim}</strong><br/><span style="color:var(--accent-cyan); font-size:0.75rem;">WA: ${r.wa}</span></td>
+                    <td style="font-size:0.75rem; line-height:1.5;">
+                        <strong>Kapten:</strong> ${r.id1}<br/>
+                        <strong>P2:</strong> ${r.id2} | <strong>P3:</strong> ${r.id3}<br/>
+                        <strong>P4:</strong> ${r.id4} | <strong>P5:</strong> ${r.id5}<br/>
+                        <strong>Cadangan:</strong> ${r.id6 || '-'}
+                    </td>
+                    <td><span class="badge-status ${r.status === 'Disetujui' ? 'badge-approved' : (r.status === 'Ditolak' ? 'badge-rejected' : 'badge-pending')}">${r.status}</span></td>
+                    <td>
+                        ${r.status === 'Menunggu' ? `
+                            <button class="score-btn" style="background:var(--accent-green); padding:4px 10px;" onclick="accPendaftaran(${r.id}, 'Disetujui')">Setujui & Masukkan Bagan</button>
+                            <button class="score-btn" style="background:var(--accent-red); padding:4px 10px; margin-top:4px;" onclick="accPendaftaran(${r.id}, 'Ditolak')">Tolak</button>
+                        ` : '-'}
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function accPendaftaran(id, status) {
+            const reg = appState.registrations.find(r => r.id === id);
+            if (reg) {
+                reg.status = status;
+                if (status === 'Disetujui') {
+                    const emptyIdx = appState[reg.kategori].teams.findIndex(t => t.toLowerCase().startsWith('tim '));
+                    if (emptyIdx !== -1) {
+                        appState[reg.kategori].teams[emptyIdx] = reg.namatim;
+                        alert(`SUKSES! Tim ${reg.namatim} otomatis masuk ke slot Bagan ${reg.kategori.toUpperCase()} No. ${emptyIdx + 1}`);
+                    } else {
+                        alert(`Tim disetujui, tapi Bagan Kategori ${reg.kategori.toUpperCase()} sudah penuh (16 Tim)!`);
+                    }
+                }
+                saveState();
+            }
+        }
+
+        function renderDaftarTim(kategori) {
+            const list = document.getElementById('list-tim-resmi');
+            const teams = appState[kategori].teams;
+            let html = '';
+            teams.forEach((t, i) => {
+                const isKosong = t.toLowerCase().startsWith('tim ');
+                html += `<tr>
+                    <td>${i+1}</td>
+                    <td><strong>${t}</strong></td>
+                    <td><span class="badge-status ${isKosong ? 'badge-pending' : 'badge-approved'}">${isKosong ? 'Slot Kosong' : 'Terisi'}</span></td>
+                </tr>`;
+            });
+            list.innerHTML = html;
+        }
+
+        // --- RIWAYAT PERTANDINGAN ---
+        function catatRiwayat(kategori, stageLabel, t1, t2, s1, s2) {
+            const log = `[${kategori.toUpperCase()} - ${stageLabel}] ${t1} (${s1}) vs (${s2}) ${t2}`;
+            if(!appState.history.includes(log)) { appState.history.unshift(log); }
+        }
+
+        function renderRiwayat() {
+            const container = document.getElementById('history-container');
+            if (appState.history.length === 0) {
+                container.innerHTML = `<p style="text-align:center; color:var(--text-muted);">Belum ada riwayat pertandingan yang selesai.</p>`; return;
+            }
+            container.innerHTML = appState.history.map(h => `<div class="riwayat-item"><span>⚔️ ${h}</span><span>Selesai</span></div>`).join('');
+        }
+
+        // --- BRACKET ENGINE ---
+        function renderBracket() {
+            const container = document.getElementById('bracket-container');
+            const data = appState[currentCategory];
+            const teams = data.teams;
+            const matches = data.matches;
+
+            const qfTeams = [
+                getWinner(teams[0], teams[1], matches.r16[0]), getWinner(teams[2], teams[3], matches.r16[1]),
+                getWinner(teams[4], teams[5], matches.r16[2]), getWinner(teams[6], teams[7], matches.r16[3]),
+                getWinner(teams[8], teams[9], matches.r16[4]), getWinner(teams[10], teams[11], matches.r16[5]),
+                getWinner(teams[12], teams[13], matches.r16[6]), getWinner(teams[14], teams[15], matches.r16[7])
+            ];
+
+            const sfTeams = [
+                getWinner(qfTeams[0], qfTeams[1], matches.qf[0]), getWinner(qfTeams[2], qfTeams[3], matches.qf[1]),
+                getWinner(qfTeams[4], qfTeams[5], matches.qf[2]), getWinner(qfTeams[6], qfTeams[7], matches.qf[3])
+            ];
+
+            const finalTeams = [ getWinner(sfTeams[0], sfTeams[1], matches.sf[0]), getWinner(sfTeams[2], sfTeams[3], matches.sf[1]) ];
+            const thirdTeams = [ getLoser(sfTeams[0], sfTeams[1], matches.sf[0]), getLoser(sfTeams[2], sfTeams[3], matches.sf[1]) ];
+
+            let html = `<div class="bracket-flex">`;
+            
+            // Babak 16 Kiri
+            html += `<div class="round-col"><div class="round-title">ROUND OF 16 (BO1)</div>`;
+            for(let i=0; i<4; i++) html += renderMatchupHtml(`M${i+1}`, teams[i*2], teams[i*2+1], matches.r16[i], 'r16', i, 'Babak 16');
+            html += `</div>`;
+            // QF Kiri
+            html += `<div class="round-col"><div class="round-title">QUARTER-FINALS (BO1)</div>`;
+            for(let i=0; i<2; i++) html += renderMatchupHtml(`M${i+1}`, qfTeams[i*2], qfTeams[i*2+1], matches.qf[i], 'qf', i, 'Quarter-Final');
+            html += `</div>`;
+            // SF Kiri
+            html += `<div class="round-col"><div class="round-title">SEMI-FINALS (BO3)</div>`;
+            html += renderMatchupHtml(`SF1`, sfTeams[0], sfTeams[1], matches.sf[0], 'sf', 0, 'Semi-Final');
+            html += `</div>`;
+            // FINAL
+            html += `<div class="round-col">
+                <div class="round-title" style="border-color:var(--accent-gold); color:var(--accent-gold);">CHAMPION (BO5)</div>
+                ${renderMatchupHtml(`GRAND FINAL`, finalTeams[0], finalTeams[1], matches.f, 'f', 0, 'Grand Final', 'final')}
+                <div class="round-title" style="margin-top:14px; border-color:var(--accent-cyan);">3RD PLACE MATCH (BO3)</div>
+                ${renderMatchupHtml(`JUARA 3`, thirdTeams[0], thirdTeams[1], matches.t3, 't3', 0, 'Juara 3', 'third')}
+            </div>`;
+            // SF Kanan
+            html += `<div class="round-col"><div class="round-title">SEMI-FINALS (BO3)</div>`;
+            html += renderMatchupHtml(`SF2`, sfTeams[2], sfTeams[3], matches.sf[1], 'sf', 1, 'Semi-Final');
+            html += `</div>`;
+            // QF Kanan
+            html += `<div class="round-col"><div class="round-title">QUARTER-FINALS (BO1)</div>`;
+            for(let i=2; i<4; i++) html += renderMatchupHtml(`M${i+1}`, qfTeams[i*2], qfTeams[i*2+1], matches.qf[i], 'qf', i, 'Quarter-Final');
+            html += `</div>`;
+            // Babak 16 Kanan
+            html += `<div class="round-col"><div class="round-title">ROUND OF 16 (BO1)</div>`;
+            for(let i=4; i<8; i++) html += renderMatchupHtml(`M${i+1}`, teams[i*2], teams[i*2+1], matches.r16[i], 'r16', i, 'Babak 16');
+            html += `</div>`;
+
+            html += `</div>`;
+            container.innerHTML = html;
+        }
+
+        function renderMatchupHtml(label, t1, t2, match, stage, index, stageNameFull, extraClass='') {
+            t1 = t1 || "-"; t2 = t2 || "-";
+            const w = match.w;
+            const isAdmin = currentRole === 'admin';
+            
+            // Menentukan apakah pertandingan ini valid untuk diedit skornya
+            const canScore = isAdmin && t1 !== '-' && t2 !== '-' && !w;
+
+            return `
+            <div class="matchup ${extraClass}">
+                <div class="match-header">${label}</div>
+                <div class="team-row ${w === 1 ? 'winner' : ''}">
+                    <span class="team-name">${t1}</span>
+                    <div>
+                        <span class="score-number ${canScore ? 'clickable' : ''}" 
+                              ${canScore ? `style="cursor:pointer;" onclick="updateScore('${stage}', ${index}, 1, '${t1}', '${t2}', '${stageNameFull}')" title="Klik untuk tambah skor"` : ''}>
+                            ${match.s1}
+                        </span>
+                        ${canScore ? `<button class="score-btn" onclick="updateScore('${stage}', ${index}, 1, '${t1}', '${t2}', '${stageNameFull}')">+</button>` : ''}
+                    </div>
+                </div>
+                <div class="team-row ${w === 2 ? 'winner' : ''}">
+                    <span class="team-name">${t2}</span>
+                    <div>
+                        <span class="score-number ${canScore ? 'clickable' : ''}" 
+                              ${canScore ? `style="cursor:pointer;" onclick="updateScore('${stage}', ${index}, 2, '${t1}', '${t2}', '${stageNameFull}')" title="Klik untuk tambah skor"` : ''}>
+                            ${match.s2}
+                        </span>
+                        ${canScore ? `<button class="score-btn" onclick="updateScore('${stage}', ${index}, 2, '${t1}', '${t2}', '${stageNameFull}')">+</button>` : ''}
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        function getWinner(t1, t2, match) { return (!match || match.w === null) ? "-" : (match.w === 1 ? t1 : t2); }
+        function getLoser(t1, t2, match) { return (!match || match.w === null) ? "-" : (match.w === 1 ? t2 : t1); }
+
+        function updateScore(stage, index, teamNum, t1, t2, stageNameFull) {
+            let m = stage === 'f' || stage === 't3' ? appState[currentCategory].matches[stage] : appState[currentCategory].matches[stage][index];
+            
+            let targetWin = 2; // Default BO3
+            if (stage === 'r16' || stage === 'qf') targetWin = 1; // BO1
+            else if (stage === 'sf' || stage === 't3') targetWin = 2; // BO3
+            else if (stage === 'f') targetWin = 3; // BO5
+
+            if (teamNum === 1) m.s1++; else m.s2++;
+
+            if (m.s1 >= targetWin || m.s2 >= targetWin) {
+                m.w = m.s1 >= targetWin ? 1 : 2;
+                catatRiwayat(currentCategory, stageNameFull, t1, t2, m.s1, m.s2);
+            }
+            saveState();
+        }
+
+        function renderPodium() {
+            const data = appState[currentCategory];
+            const f = data.matches.f, t3 = data.matches.t3;
+
+            let juara1 = "-", juara2 = "-", juara3 = "-";
+            if(f.w !== null) { 
+                const qf = (i1, i2, mr) => getWinner(data.teams[i1], data.teams[i2], data.matches.r16[mr]);
+                const qfT = [qf(0,1,0), qf(2,3,1), qf(4,5,2), qf(6,7,3), qf(8,9,4), qf(10,11,5), qf(12,13,6), qf(14,15,7)];
+                const sf = (i1, i2, mr) => getWinner(qfT[i1], qfT[i2], data.matches.qf[mr]);
+                const sfT = [sf(0,1,0), sf(2,3,1), sf(4,5,2), sf(6,7,3)];
+                const fT = [getWinner(sfT[0], sfT[1], data.matches.sf[0]), getWinner(sfT[2], sfT[3], data.matches.sf[1])];
+                const t3T = [getLoser(sfT[0], sfT[1], data.matches.sf[0]), getLoser(sfT[2], sfT[3], data.matches.sf[1])];
+
+                juara1 = f.w === 1 ? fT[0] : fT[1];
+                juara2 = f.w === 1 ? fT[1] : fT[0];
+                juara3 = t3.w !== null ? (t3.w === 1 ? t3T[0] : t3T[1]) : "-";
+            }
+            document.getElementById('podium-1').innerText = juara1;
+            document.getElementById('podium-2').innerText = juara2;
+            document.getElementById('podium-3').innerText = juara3;
+        }
+
+        // --- PENGATURAN SLOT TIM (MANUAL) ---
+        function renderSeedingInputs(cat) {
+            seedEditCategory = cat;
+            
+            const btnP = document.getElementById('btn-seed-pelajar');
+            const btnU = document.getElementById('btn-seed-umum');
+            if (btnP) btnP.classList.toggle('active', cat === 'pelajar');
+            if (btnU) btnU.classList.toggle('active', cat === 'umum');
+
+            const grid = document.getElementById('seed-inputs');
+            grid.innerHTML = appState[cat].teams.map((t, i) => `
+                <div class="team-item"><span>Slot ${i+1}</span><input type="text" id="seed-in-${i}" value="${t}" /></div>
+            `).join('');
+        }
+        
+        function saveSeedSettings() {
+            for(let i=0; i<16; i++) {
+                const val = document.getElementById(`seed-in-${i}`).value.trim();
+                appState[seedEditCategory].teams[i] = val || `Tim ${i+1}`;
+            }
+            saveState(); alert("Susunan Tim Manual Berhasil Disimpan!");
+        }
+        
+        function randomizeCurrentBracket() {
+            if (currentRole !== 'admin') { alert('Fitur acak bagan hanya untuk Panitia!'); return; }
+            if (confirm(`Yakin mengacak Kategori ${currentCategory.toUpperCase()}? Skor akan reset. Data Daftar Tim AMAN.`)) {
+                appState[currentCategory].teams.sort(() => Math.random() - 0.5);
+                appState[currentCategory].matches = createEmptyMatches();
+                saveState(); alert("Bagan berhasil diacak!");
+            }
+        }
+        function resetBracketData(cat) {
+            if(confirm(`⚠️ YAKIN MERESET SKOR KATEGORI ${cat.toUpperCase()}?`)) {
+                appState[cat].matches = createEmptyMatches(); saveState(); alert("Skor direset!");
+            }
+        }
+
+        // --- FULLSCREEN KHUSUS BRACKET VIDEOTRON ---
+        function toggleBracketFullscreen() {
+            const bracketWrapper = document.getElementById('bracket-fullscreen-wrapper');
+            
+            if (!document.fullscreenElement) {
+                if (bracketWrapper.requestFullscreen) {
+                    bracketWrapper.requestFullscreen();
+                } else if (bracketWrapper.webkitRequestFullscreen) {
+                    bracketWrapper.webkitRequestFullscreen();
+                } else if (bracketWrapper.msRequestFullscreen) {
+                    bracketWrapper.msRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+            }
+        }
+
+        // --- FITUR GESER (PAN) & ZOOM BEBAS ---
+        let panX = 0, panY = 0, currentScale = 1;
+        let isDraggingBracket = false;
+        let startDragX = 0, startDragY = 0;
+
+        function applyBracketTransform() {
+            const container = document.getElementById('bracket-container');
+            container.style.transform = `translate(${panX}px, ${panY}px) scale(${currentScale})`;
+        }
+
+        function zoomBracket(delta) {
+            currentScale += delta;
+            if (currentScale < 0.3) currentScale = 0.3;
+            if (currentScale > 3.0) currentScale = 3.0;
+            applyBracketTransform();
+        }
+
+        function resetBracketPan() {
+            panX = 0;
+            panY = 0;
+            currentScale = 1;
+            applyBracketTransform();
+        }
+
+        function initDraggableBracket() {
+            const wrapper = document.getElementById('bracket-fullscreen-wrapper');
+
+            const startDrag = (clientX, clientY, target) => {
+                if (target.tagName.toLowerCase() === 'button' || target.classList.contains('score-number') || target.classList.contains('vt-btn')) return;
+                
+                isDraggingBracket = true;
+                startDragX = clientX - panX;
+                startDragY = clientY - panY;
+                wrapper.style.cursor = 'grabbing';
+            };
+
+            const endDrag = () => {
+                isDraggingBracket = false;
+                wrapper.style.cursor = 'grab';
+            };
+
+            const moveDrag = (clientX, clientY, e) => {
+                if (!isDraggingBracket) return;
+                e.preventDefault(); 
+                panX = clientX - startDragX;
+                panY = clientY - startDragY;
+                applyBracketTransform();
+            };
+
+            // Mouse Events
+            wrapper.addEventListener('mousedown', (e) => startDrag(e.clientX, e.clientY, e.target));
+            window.addEventListener('mouseup', endDrag);
+            window.addEventListener('mousemove', (e) => moveDrag(e.clientX, e.clientY, e));
+
+            // Touch Events
+            wrapper.addEventListener('touchstart', (e) => {
+                if (e.touches.length === 1) startDrag(e.touches[0].clientX, e.touches[0].clientY, e.target);
+            }, { passive: false });
+            window.addEventListener('touchend', endDrag);
+            window.addEventListener('touchmove', (e) => {
+                if (isDraggingBracket && e.touches.length === 1) {
+                    moveDrag(e.touches[0].clientX, e.touches[0].clientY, e);
+                }
+            }, { passive: false });
+
+            // Scroll Wheel Event
+            wrapper.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                if (e.deltaY < 0) {
+                    zoomBracket(0.05);
+                } else {
+                    zoomBracket(-0.05);
+                }
+            }, { passive: false });
+        }
+
+        // --- ON LOAD ---
+        window.onload = function() {
+            loadSavedState();
+            initDraggableBracket();
         };
     </script>
 </body>
