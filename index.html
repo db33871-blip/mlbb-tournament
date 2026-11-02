@@ -1,1007 +1,531 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TOURNAMENT MLBB INFLY CARNIVAL</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>INFLY CARNIVAL</title>
+<style>
+:root{--bg:#070d1b;--panel:#111d32;--blue:#00d9ff;--gold:#ffc857;--green:#36e5a0}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:#fff;font-family:Arial,sans-serif}
+header{text-align:center;padding:25px;background:linear-gradient(120deg,#07101e,#12345a);border-bottom:2px solid var(--blue)}
+header h1{margin:0;color:var(--blue);letter-spacing:4px;font-size:clamp(25px,5vw,45px)}
+header p{color:var(--gold);margin-bottom:0;letter-spacing:2px}
+nav{display:flex;gap:7px;justify-content:center;flex-wrap:wrap;padding:12px;background:#0d1729;position:sticky;top:0;z-index:5}
+button{background:#1b2c46;color:white;border:1px solid #345071;padding:10px 14px;border-radius:7px;cursor:pointer;font-weight:bold}
+button:hover{border-color:var(--blue);color:var(--blue)}
+.primary{background:#006d89;border-color:var(--blue)}
+.danger{background:#7c2035;border-color:#ff526f}
+.success{background:#155b42;border-color:var(--green)}
+main{max-width:1400px;margin:auto;padding:18px}
+.page{display:none}.page.active{display:block}
+.card{background:var(--panel);border:1px solid #293e5c;border-radius:10px;padding:18px;margin-bottom:15px}
+h2,h3{color:var(--blue)}
+input,select{width:100%;padding:12px;margin:7px 0 14px;background:#081222;color:white;border:1px solid #344963;border-radius:6px}
+label{color:#aebbd0}
+.hidden{display:none!important}
+.muted{color:#aebbd0}
+.bracket-toolbar{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:15px}
+.bracket-wrap{overflow-x:auto;padding:15px;background:#0b1425;border-radius:12px}
+.bracket-image-layout{
+ display:grid;
+ grid-template-columns:minmax(0,1fr) 250px minmax(0,1fr);
+ gap:16px;
+ align-items:center;
+ min-width:1100px;
+ padding:20px 10px;
+}
+.bracket-side{
+ display:grid;
+ grid-template-columns:1fr 1fr 1fr;
+ gap:10px;
+ align-items:center;
+}
+.round-column{display:flex;flex-direction:column;justify-content:space-around;gap:28px;min-width:0}
+.round-title{text-align:center;color:var(--gold);font-size:12px;font-weight:bold;margin:8px 0 15px}
+.match{background:#14233b;border:1px solid #345071;border-radius:7px;overflow:hidden;min-width:0}
+.match-title{font-size:10px;color:#8da4c3;padding:5px 7px;background:#0d192c}
+.team{display:flex;justify-content:space-between;gap:5px;padding:8px;border-top:1px solid #2b3c57;min-height:34px;font-size:12px}
+.team.winner{color:var(--green);font-weight:bold}
+.team span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.score{color:var(--gold);flex-shrink:0}
+.bracket-center{display:flex;flex-direction:column;justify-content:center;gap:30px}
+.finalbox,.thirdbox{background:#17243a;border:2px solid var(--gold);border-radius:10px;padding:12px}
+.thirdbox{border-color:#aebbd0}
+.finalbox h3,.thirdbox h3{text-align:center;margin:5px 0 12px}
+.thirdbox h3{color:#cbd5e1}
+.champion{text-align:center;padding:10px 3px;color:var(--gold);font-weight:bold;font-size:13px}
 
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
+/* HILANGKAN TULISAN JUARA 1, 2, 3, 4 DI BAGAN */
+.bracket-center .champion{
+ display:none!important;
+}
 
-        :root {
-            --bg-dark: #060b14;
-            --bg-card: #0d1527;
-            --bg-input: #080d1a;
-            --accent-gold: #fbbf24;
-            --accent-pink: #ec4899;
-            --accent-cyan: #38bdf8;
-            --accent-green: #22c55e;
-            --accent-red: #ef4444;
-            --border-subtle: rgba(255, 255, 255, 0.08);
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --shadow-card: 0 12px 40px rgba(0, 0, 0, 0.4);
-            
-            --bg-utama-url: none;
-            --bg-bracket-url: none;
-            --bg-fullscreen-custom: #22c55e; 
-        }
+.admin-match{padding:12px;background:#101e34;margin:10px 0;border-radius:8px}
+.score-row{display:grid;grid-template-columns:minmax(0,1fr) 60px 60px minmax(0,1fr);gap:7px;align-items:center;margin:8px 0;padding:10px;background:#101e34;border-radius:7px}
+.score-row input{margin:0;text-align:center;min-width:0}
+.score-row span{font-size:12px;overflow-wrap:anywhere}
+#fullscreen{display:none;position:fixed;inset:0;z-index:50;background:var(--bg);overflow:auto;padding:15px}
+#fullscreen.show{display:block}
+#fullscreen .bracket-wrap{min-height:90vh}
+/* Area luar/pembungkus bagan menjadi hijau saat fullscreen */
+#fullscreen .bracket-wrap{
+  background:#01ff06 !important;
+  background-image:none !important;
+}
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', system-ui, -apple-system, sans-serif; }
-
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: var(--bg-dark); }
-        ::-webkit-scrollbar-thumb { background: rgba(56, 189, 248, 0.5); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--accent-cyan); }
-
-        body {
-            background-color: var(--bg-dark);
-            background-image: linear-gradient(180deg, #09101f 0%, #04070d 100%), var(--bg-utama-url);
-            background-repeat: no-repeat;
-            background-position: center top;
-            background-size: cover;
-            background-attachment: fixed;
-            color: var(--text-main);
-            padding: 16px 12px;
-            min-height: 100vh;
-            transition: background-image 0.5s ease;
-        }
-
-        /* MODAL LOGIN */
-        #login-modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(4, 7, 13, 0.9);
-            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-            display: none;
-            justify-content: center; align-items: center;
-            z-index: 99999; padding: 15px;
-        }
-        .modal-box {
-            background: var(--bg-card);
-            border: 1px solid var(--border-subtle);
-            padding: 32px 24px;
-            border-radius: 20px; width: 100%; max-width: 340px; text-align: center;
-            box-shadow: 0 24px 50px rgba(0, 0, 0, 0.6);
-            animation: popIn 0.3s ease;
-        }
-        @keyframes popIn { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-        
-        .top-bar { display: none !important; }
-
-        header { text-align: center; margin-bottom: 24px; padding: 10px; }
-        header h1 { color: var(--accent-gold); font-size: 1.5rem; text-transform: uppercase; margin-bottom: 4px; font-weight: 900; letter-spacing: 1.5px; }
-        header p { color: var(--accent-cyan); font-size: 0.85rem; font-weight: 600; letter-spacing: 1px; }
-
-        /* MENU NAVIGASI */
-        .menu-container { margin-bottom: 24px; }
-        .hamburger-btn { display: none; } 
-        .main-nav { 
-            display: flex !important; position: static; background: transparent; 
-            flex-direction: row; flex-wrap: wrap; gap: 10px; padding: 0; 
-            box-shadow: none; border: none; justify-content: center;
-        }
-        .nav-btn { 
-            background: rgba(255, 255, 255, 0.05); color: #cbd5e1; 
-            border: 1px solid rgba(255, 255, 255, 0.05); padding: 10px 18px; 
-            font-size: 0.85rem; font-weight: 600; border-radius: 12px; 
-            cursor: pointer; text-align: center; transition: all 0.2s ease; 
-        }
-        .nav-btn:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
-        .nav-btn.active { background: var(--accent-cyan); color: #080312; border: none; font-weight: 700; box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3); }
-        .admin-nav { display: none; } 
-
-        /* TAB SEKSI & CARDS */
-        .tab-section { display: none; animation: fadeIn 0.4s ease; }
-        .tab-section.active { display: block; }
-        @keyframes fadeIn { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
-        
-        .card { 
-            background: var(--bg-card); 
-            border: 1px solid var(--border-subtle); padding: 24px 20px; 
-            border-radius: 16px; box-shadow: var(--shadow-card); margin-bottom: 20px; 
-        }
-
-        /* FORM REGISTRASI */
-        .form-group { margin-bottom: 16px; text-align: left; }
-        .form-group label { display: block; color: #cbd5e1; font-size: 0.8rem; font-weight: 500; margin-bottom: 6px; }
-        .form-group input[type="text"], .form-group input[type="tel"], .form-group select { 
-            width: 100%; padding: 14px 16px; background: var(--bg-input); 
-            border: 1px solid var(--border-subtle); color: #fff; 
-            border-radius: 10px; font-size: 0.9rem; transition: all 0.3s ease; 
-        }
-        .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--accent-cyan); }
-        .form-group input[type="file"] { width: 100%; padding: 12px; background: rgba(56, 189, 248, 0.05); border: 1px dashed var(--accent-cyan); color: #fff; border-radius: 10px; font-size: 0.85rem; cursor: pointer; }
-
-        .btn-action { 
-            background: linear-gradient(135deg, #ec4899, #c026d3); color: #ffffff; border: none; 
-            padding: 14px 20px; font-weight: 700; border-radius: 10px; cursor: pointer; width: 100%; 
-            font-size: 0.95rem; transition: all 0.3s ease;
-        }
-        .btn-action:active { transform: scale(0.98); }
-
-        /* SUB NAV KATEGORI */
-        .category-switcher { display: flex; justify-content: center; gap: 10px; margin-bottom: 18px; }
-        .sub-btn { background: var(--bg-input); color: var(--text-muted); border: 1px solid var(--border-subtle); padding: 8px 18px; border-radius: 20px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: 0.2s;}
-        .sub-btn.active { background: var(--accent-cyan); color: #000; border-color: var(--accent-cyan); font-weight: 700;}
-
-        /* HEADER DALAM BRACKET */
-        .bracket-card-header { display: flex; justify-content: center; align-items: center; padding: 12px; background: rgba(0, 0, 0, 0.2); border-radius: 12px; margin-bottom: 16px; transition: opacity 0.5s ease; }
-        .bracket-title-area { text-align: center; }
-        .bracket-title-area h2 { color: var(--accent-gold); font-size: 1.2rem; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; }
-        .controls-row { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
-        
-        /* TOMBOL EDIT & ZOOM DI FULLSCREEN */
-        .fullscreen-only-item { display: none; } 
-        .edit-controls-panel { display: none; gap: 6px; align-items: center; justify-content: center; width: 100%; margin-top: 8px; flex-wrap: wrap; }
-
-        .vt-btn { background: rgba(56, 189, 248, 0.1); color: var(--accent-cyan); border: 1px solid rgba(56, 189, 248, 0.3); padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; cursor: pointer; }
-        .vt-btn.active-edit { background: var(--accent-gold); color: #000; border-color: var(--accent-gold); font-weight: 700; }
-        .btn-acak-bagan { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #080312; border: none; padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; cursor: pointer; }
-
-        /* BRACKET DESIGN */
-        .bracket-wrapper { 
-            position: relative; 
-            background-color: transparent; 
-            background-image: var(--bg-bracket-url);
-            background-size: 100% 100%; background-position: center; background-blend-mode: overlay;
-            border-radius: 16px; padding: 24px 12px; border: 1px solid var(--border-subtle); 
-            transition: background-image 0.5s ease; will-change: transform; transform-origin: center center;
-        }
-        .bracket-flex { display: flex; gap: 20px; min-width: 1200px; justify-content: space-between; align-items: stretch; }
-        .round-col { flex: 1; min-width: 200px; display: flex; flex-direction: column; justify-content: space-around; }
-        .round-title { text-align: center; color: #fff; font-size: 0.75rem; font-weight: 700; margin-bottom: 12px; background: rgba(0, 0, 0, 0.4); padding: 6px; border-radius: 8px; border: 1px solid rgba(56, 189, 248, 0.3); }
-
-        /* KOTAK MATCHUP TRANSPARAN */
-        .matchup { background: transparent; border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 10px; margin: 10px 0; overflow: hidden; }
-        .matchup.final { border: 1px solid var(--accent-gold); box-shadow: 0 0 10px rgba(251, 191, 36, 0.2); }
-        .matchup.third { border: 1px solid var(--accent-cyan); }
-        .match-header { background: rgba(236, 72, 153, 0.2); font-size: 0.65rem; padding: 4px 8px; text-align: center; color: var(--accent-gold); font-weight: 700; }
-        .team-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.8rem; }
-        .team-row.winner { background: rgba(34, 197, 94, 0.15); color: var(--accent-gold); font-weight: 700;}
-        .team-name { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 8px; }
-        
-        .score-btn { background: rgba(56, 189, 248, 0.2); color: #fff; border: none; padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 0.8rem; cursor: pointer; }
-        .score-number { font-weight: 700; font-size: 0.85rem; margin-right: 4px; padding: 2px 6px; background: rgba(0,0,0,0.4); border-radius: 4px; display: inline-block; min-width: 24px; text-align: center; }
-        .score-number.clickable:hover { background: rgba(56, 189, 248, 0.4); cursor: pointer; }
-
-        /* PODIUM */
-        .podium-box { margin-top: 24px; background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(251, 191, 36, 0.3); border-radius: 16px; padding: 20px; text-align: center; }
-        .podium-title { color: var(--accent-gold); font-size: 1.1rem; font-weight: 800; margin-bottom: 16px; }
-        .podium-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-        .podium-item { background: var(--bg-input); padding: 14px; border-radius: 12px; border: 1px solid var(--border-subtle); }
-        .podium-rank { font-size: 0.75rem; font-weight: 800; margin-bottom: 4px; text-transform: uppercase; }
-        .rank-1 { color: #fbbf24; font-size: 0.85rem; } .rank-2 { color: #94a3b8; } .rank-3 { color: #b45309; }
-        .podium-name { font-size: 0.85rem; font-weight: 600; color: #fff; }
-
-        /* TABEL & DAFTAR TIM */
-        .table-responsive { overflow-x: auto; margin-top: 10px; border-radius: 10px; border: 1px solid var(--border-subtle); }
-        table { width: 100%; border-collapse: collapse; font-size: 0.8rem; text-align: left; }
-        th, td { padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.02); }
-        th { background: rgba(56, 189, 248, 0.1); color: var(--accent-cyan); font-weight: 600; font-size: 0.75rem; text-transform: uppercase;}
-        
-        .badge-status { padding: 6px 12px; border-radius: 12px; font-size: 0.7rem; font-weight: 600; }
-        .badge-pending { background: rgba(251, 191, 36, 0.1); color: var(--accent-gold); border: 1px solid rgba(251,191,36,0.2); }
-        .badge-approved { background: rgba(34, 197, 94, 0.1); color: var(--accent-green); border: 1px solid rgba(34,197,94,0.2); }
-        .badge-rejected { background: rgba(239, 68, 68, 0.1); color: var(--accent-red); border: 1px solid rgba(239,68,68,0.2); }
-
-        .team-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 20px; }
-        @media (min-width: 640px) { .team-grid { grid-template-columns: repeat(2, 1fr); } }
-        .team-item { display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.2); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border-subtle); }
-        
-        .riwayat-item { background: rgba(0,0,0,0.2); padding: 12px 16px; border-left: 3px solid var(--accent-pink); border-radius: 8px; margin-bottom: 10px; font-size: 0.85rem; font-weight: 500; display: flex; justify-content: space-between; }
-        
-        /* CSS KHUSUS MODE FULLSCREEN - HANYA WRAPPER BRACKET YANG FULL SATU LAYAR */
-        #bracket-fullscreen-wrapper {
-            position: relative; 
-            background-color: var(--bg-dark);
-            background-image: linear-gradient(180deg, #09101f 0%, #04070d 100%), var(--bg-utama-url);
-            background-repeat: no-repeat; background-position: center top; background-size: cover;
-            overflow: auto; 
-            border-radius: 12px;
-            padding-bottom: 10px;
-        }
-
-        :fullscreen #bracket-fullscreen-wrapper, :-webkit-full-screen #bracket-fullscreen-wrapper {
-            position: fixed !important;
-            top: 0 !important; left: 0 !important;
-            width: 100vw !important;
-            height: 100vh !important;
-            max-width: none !important;
-            max-height: none !important;
-            background: var(--bg-fullscreen-custom) !important; /* MENGGUNAKAN VARIABEL BACKGROUND CUSTOM (WARNA/GAMBAR) */
-            background-repeat: no-repeat !important;
-            background-position: center !important;
-            background-size: cover !important;
-            padding: 20px !important; 
-            display: flex !important; 
-            flex-direction: column !important; 
-            justify-content: center !important; 
-            align-items: center !important; 
-            border-radius: 0 !important; 
-            z-index: 999999 !important;
-            cursor: grab; 
-            overflow: hidden !important;
-        }
-
-        :fullscreen #bracket-fullscreen-wrapper:active, :-webkit-full-screen #bracket-fullscreen-wrapper:active { cursor: grabbing; }
-        
-        /* KELAS IDLE MODE UNTUK MENYEMBUNYIKAN KURSOR & KONTROL SAAT DIAM DI FULLSCREEN */
-        :fullscreen.idle-mode, :-webkit-full-screen.idle-mode { cursor: none !important; }
-        :fullscreen.idle-mode .bracket-card-header, :-webkit-full-screen.idle-mode .bracket-card-header { opacity: 0; pointer-events: none; }
-        :fullscreen.idle-mode .dpad-container, :-webkit-full-screen.idle-mode .dpad-container { opacity: 0; pointer-events: none; }
-
-        /* TAMPILKAN TOMBOL EDIT HANYA DI FULLSCREEN */
-        :fullscreen .fullscreen-only-item, :-webkit-full-screen .fullscreen-only-item { display: inline-block !important; }
-
-        :fullscreen .score-btn, :-webkit-full-screen .score-btn { display: none !important; }
-
-        /* TOMBOL ARAH (DPAD) - MUNCUL HANYA DI FULLSCREEN DAN SAAT EDIT AKTIF */
-        .dpad-container {
-            position: absolute; bottom: 20px; right: 20px;
-            display: none; 
-            grid-template-columns: repeat(3, 46px); grid-template-rows: repeat(3, 46px);
-            gap: 6px; z-index: 1000; transition: opacity 0.5s ease;
-        }
-        :fullscreen.edit-active .dpad-container, :-webkit-full-screen.edit-active .dpad-container { display: grid; opacity: 1; }
-
-        .dpad-btn {
-            background: rgba(13, 21, 39, 0.8); color: var(--text-main);
-            border: 1px solid var(--accent-cyan); border-radius: 8px; font-size: 1.2rem;
-            cursor: pointer; display: flex; justify-content: center; align-items: center;
-            user-select: none; box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-        }
-        .dpad-btn:active { background: var(--accent-cyan); color: #000; transform: scale(0.92); }
-        .dpad-up { grid-column: 2; grid-row: 1; }
-        .dpad-left { grid-column: 1; grid-row: 2; }
-        .dpad-right { grid-column: 3; grid-row: 2; }
-        .dpad-down { grid-column: 2; grid-row: 3; }
-
-        @media (max-width: 768px) {
-            .nav-btn { flex: 1 1 calc(33% - 10px); padding: 10px 6px; font-size: 0.75rem; }
-            .card { padding: 16px; }
-            .bracket-card-header { padding: 10px; }
-            .bracket-title-area h2 { font-size: 1rem; }
-            .vt-btn, .btn-acak-bagan { padding: 6px 10px; font-size: 0.7rem; }
-            .dpad-container { bottom: 10px; right: 10px; transform: scale(0.85); transform-origin: bottom right;}
-        }
-    </style>
+.closefs{position:fixed;right:12px;top:12px;z-index:55}
+#fullscreen:fullscreen .closefs{display:none!important}
+footer{text-align:center;padding:25px;color:#7788a5}
+@media(max-width:600px){main{padding:10px}.score-row{grid-template-columns:minmax(0,1fr) 48px 48px minmax(0,1fr)}.score-row span{font-size:10px}}
+</style>
 </head>
 <body>
 
-    <!-- MODAL AKSES / LOGIN -->
-    <div id="login-modal">
-        <div class="modal-box">
-            <h2 style="color: var(--accent-cyan); font-size:1.3rem;">LOGIN PANITIA</h2>
-            <p style="margin-bottom:15px; font-size:0.8rem;">Akses pengaturan & bagan</p>
-            <input type="password" id="pin-input" placeholder="Masukkan PIN" style="width: 100%; padding: 12px; background: var(--bg-input); border: 1px solid var(--border-subtle); color: #fff; border-radius: 10px; margin-bottom: 12px; text-align: center; font-size: 1rem; letter-spacing: 2px;" />
-            <button class="btn-action" style="margin-top:0;" onclick="verifyPin()">MASUK</button>
-            <button onclick="closeLoginModal()" style="width:100%; margin-top:10px; background:transparent; border:none; color:var(--text-muted); font-size:0.8rem; cursor:pointer;">Batal</button>
-        </div>
+<header>
+<h1>INFLY CARNIVAL</h1>
+<p>MOBILE LEGENDS TOURNAMENT</p>
+</header>
+
+<nav>
+<button onclick="page('register')">Pendaftaran</button>
+<button onclick="page('waiting')">Tim Terdaftar</button>
+<button onclick="page('teams')">Daftar Tim</button>
+<button onclick="page('scores')">Daftar Skor</button>
+<button onclick="page('bracketPage')">Bracket</button>
+<button onclick="page('settings')">Pengaturan</button>
+</nav>
+
+<main>
+<section id="register" class="page active">
+<div class="card">
+<h2>Pendaftaran Tim</h2>
+<form id="regForm">
+<label>Nama Tim</label><input id="teamName" required maxlength="40">
+<label>Kategori</label>
+<select id="category"><option>Pelajar</option><option>Umum</option></select>
+<label>Nama Kapten</label><input id="captain" required>
+<label>Nomor WhatsApp</label><input id="phone" required>
+<label>Nama 5 Pemain</label>
+<input class="player" placeholder="Pemain 1" required>
+<input class="player" placeholder="Pemain 2" required>
+<input class="player" placeholder="Pemain 3" required>
+<input class="player" placeholder="Pemain 4" required>
+<input class="player" placeholder="Pemain 5" required>
+<button class="primary">KIRIM PENDAFTARAN</button>
+</form>
+</div>
+</section>
+
+<section id="waiting" class="page">
+<div class="card"><h2>Tim Menunggu Persetujuan</h2><div id="waitingList"></div></div>
+</section>
+
+<section id="teams" class="page">
+<div class="card"><h2>Daftar Tim Resmi</h2><div id="teamList"></div></div>
+</section>
+
+<section id="scores" class="page">
+<div class="card"><h2>Input Skor Pertandingan</h2><div id="scorePanel"></div></div>
+</section>
+
+<section id="bracketPage" class="page">
+<div class="bracket-toolbar">
+<select id="bracketCat" onchange="renderBracket()">
+<option>Pelajar</option><option>Umum</option>
+</select>
+<button class="primary" onclick="openFS()">FULLSCREEN VIDEOTRON</button>
+</div>
+<div id="bracketContent"></div>
+</section>
+
+<section id="settings" class="page">
+<div class="card" id="loginBox">
+<h2>Login Panitia</h2>
+<label>Username</label><input id="loginUser" value="admin">
+<label>Password</label><input id="loginPass" type="password">
+<button class="primary" onclick="login()">LOGIN</button>
+<p class="muted">Login panitia hanya tersedia di menu Pengaturan.</p>
+</div>
+
+<div id="adminPanel" class="hidden">
+<div class="card">
+<h2>Persetujuan Pendaftaran</h2><div id="approvalList"></div>
+</div>
+<div class="card">
+<h2>Tambah Akun Panitia</h2>
+<input id="newUser" placeholder="Username">
+<input id="newPass" type="password" placeholder="Password minimal 6 karakter">
+<button onclick="addUser()">Tambah Akun</button>
+<div id="usersList"></div>
+</div>
+<div class="card">
+<h2>Ganti Password</h2>
+<input id="oldPass" type="password" placeholder="Password lama">
+<input id="changePass" type="password" placeholder="Password baru">
+<button onclick="changePassword()">Simpan Password</button>
+</div>
+<div class="card">
+<h2>Pengaturan Background Bracket</h2>
+<label>Warna background</label><input id="bgColor" type="color">
+<label>URL gambar background</label><input id="bgImage" placeholder="https://...">
+<button onclick="saveBackground()">Simpan Background</button>
+</div>
+<button class="danger" onclick="logout()">LOGOUT</button>
+</div>
+</section>
+</main>
+
+<div id="fullscreen">
+
+<div id="fsContent"></div>
+</div>
+
+<footer>INFLY CARNIVAL • OFFICIAL TOURNAMENT</footer>
+
+<script>
+const get=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}};
+const put=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+
+let registrations=get("ic_reg",[]);
+let teams=get("ic_teams",[]);
+let users=get("ic_users",[{username:"admin",password:"admin123"}]);
+let results=get("ic_results",{Pelajar:{},Umum:{}});
+let backgrounds=get("ic_bg",{color:"#070d1b",image:""});
+let logged=null;
+
+function esc(s){
+ return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function page(id){
+ document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
+ document.getElementById(id).classList.add("active");
+ if(id==="waiting")renderWaiting();
+ if(id==="teams")renderTeams();
+ if(id==="scores")renderScores();
+ if(id==="settings")renderSettings();
+ if(id==="bracketPage")renderBracket();
+}
+
+/* PENDAFTARAN PUBLIK */
+document.getElementById("regForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ const name=document.getElementById("teamName").value.trim();
+ if([...registrations,...teams].some(t=>t.name.toLowerCase()===name.toLowerCase())){
+  alert("Nama tim sudah terdaftar.");return;
+ }
+ registrations.push({
+  id:Date.now(),name,
+  category:document.getElementById("category").value,
+  captain:document.getElementById("captain").value.trim(),
+  phone:document.getElementById("phone").value.trim(),
+  players:[...document.querySelectorAll(".player")].map(x=>x.value.trim()),
+  status:"Menunggu"
+ });
+ put("ic_reg",registrations);
+ e.target.reset();
+ alert("Pendaftaran berhasil dikirim. Tunggu persetujuan panitia.");
+});
+
+/* DAFTAR PUBLIK */
+function renderWaiting(){
+ waitingList.innerHTML=registrations.length?registrations.map(t=>
+ `<div class="card"><b>${esc(t.name)}</b> — ${esc(t.category)} <span class="muted">MENUNGGU PERSETUJUAN</span></div>`
+ ).join(""):"Belum ada pendaftaran.";
+}
+function renderTeams(){
+ teamList.innerHTML=teams.length?teams.map(t=>
+ `<div class="card"><b>${esc(t.name)}</b> — ${esc(t.category)} <span style="color:var(--green)">RESMI</span></div>`
+ ).join(""):"Belum ada tim disetujui.";
+}
+
+/* LOGIN PANITIA */
+function login(){
+ const u=document.getElementById("loginUser").value.trim();
+ const p=document.getElementById("loginPass").value;
+ if(!users.some(x=>x.username===u&&x.password===p)){
+  alert("Username atau password salah.");return;
+ }
+ logged=u;
+ loginBox.classList.add("hidden");
+ adminPanel.classList.remove("hidden");
+ renderSettings();
+}
+function logout(){
+ logged=null;
+ loginBox.classList.remove("hidden");
+ adminPanel.classList.add("hidden");
+ document.getElementById("loginPass").value="";
+}
+function renderSettings(){
+ if(!logged)return;
+ approvalList.innerHTML=registrations.length?registrations.map(t=>`
+ <div class="card">
+ <b>${esc(t.name)}</b> — ${esc(t.category)}<br>
+ Kapten: ${esc(t.captain)}<br>
+ WhatsApp: ${esc(t.phone)}<br>
+ Pemain: ${t.players.map(esc).join(", ")}<br><br>
+ <button class="success" onclick="approve(${t.id})">SETUJUI</button>
+ <button class="danger" onclick="reject(${t.id})">TOLAK</button>
+ </div>`).join(""):"Tidak ada pendaftaran.";
+ usersList.innerHTML=users.map(u=>`<p>${esc(u.username)}</p>`).join("");
+ bgColor.value=backgrounds.color;
+ bgImage.value=backgrounds.image;
+}
+function approve(id){
+ if(!logged)return;
+ const t=registrations.find(x=>x.id===id);
+ if(!t)return;
+ if(teams.filter(x=>x.category===t.category).length>=16){
+  alert("Kategori "+t.category+" sudah penuh 16 tim.");return;
+ }
+ teams.push({...t,status:"Disetujui"});
+ registrations=registrations.filter(x=>x.id!==id);
+ put("ic_reg",registrations);put("ic_teams",teams);
+ renderSettings();renderTeams();renderBracket();
+}
+function reject(id){
+ if(!logged)return;
+ registrations=registrations.filter(x=>x.id!==id);
+ put("ic_reg",registrations);renderSettings();
+}
+
+/* AKUN PANITIA */
+function addUser(){
+ if(!logged)return;
+ const u=newUser.value.trim(),p=newPass.value;
+ if(!u||p.length<6)return alert("Isi username dan password minimal 6 karakter.");
+ if(users.some(x=>x.username===u))return alert("Username sudah digunakan.");
+ users.push({username:u,password:p});
+ put("ic_users",users);
+ newUser.value="";newPass.value="";
+ renderSettings();
+}
+function changePassword(){
+ if(!logged)return;
+ const u=users.find(x=>x.username===logged);
+ if(!u||u.password!==oldPass.value)return alert("Password lama salah.");
+ if(changePass.value.length<6)return alert("Password minimal 6 karakter.");
+ u.password=changePass.value;
+ put("ic_users",users);
+ oldPass.value="";changePass.value="";
+ alert("Password berhasil diganti.");
+}
+function saveBackground(){
+ if(!logged)return;
+ backgrounds={
+  color:bgColor.value,
+  image:bgImage.value.trim()
+ };
+ put("ic_bg",backgrounds);
+ renderBracket();
+ alert("Background bracket berhasil disimpan.");
+}
+
+/* MESIN PERTANDINGAN */
+function seedTeams(cat){
+ const list=teams.filter(t=>t.category===cat).slice(0,16);
+ return Array.from({length:16},(_,i)=>list[i]?.name||null);
+}
+function matchId(round,i){return round+"_"+i}
+function getMatch(cat,id){return results[cat][id]||{}}
+function setMatch(cat,id,data){
+ results[cat][id]={...getMatch(cat,id),...data};
+ put("ic_results",results);
+}
+function winner(cat,id){
+ const m=getMatch(cat,id);
+ if(!m.a||!m.b||m.sa==null||m.sb==null||m.sa===m.sb)return null;
+ return m.sa>m.sb?m.a:m.b;
+}
+function loser(cat,id){
+ const m=getMatch(cat,id),w=winner(cat,id);
+ if(!w)return null;
+ return w===m.a?m.b:m.a;
+}
+function participants(cat,round,i){
+ if(round==="r16"){
+  const seeds=seedTeams(cat);
+  const pairs=[[0,2],[4,6],[8,10],[12,14],[1,3],[5,7],[9,11],[13,15]];
+  return pairs[i].map(n=>seeds[n]||"Menunggu");
+ }
+ if(round==="qf"){
+  return [winner(cat,"r16_"+(i*2)),winner(cat,"r16_"+(i*2+1))].map(x=>x||"Menunggu");
+ }
+ if(round==="sf"){
+  return [winner(cat,"qf_"+(i*2)),winner(cat,"qf_"+(i*2+1))].map(x=>x||"Menunggu");
+ }
+ if(round==="final")return [winner(cat,"sf_0"),winner(cat,"sf_1")].map(x=>x||"Menunggu");
+ if(round==="third")return [loser(cat,"sf_0"),loser(cat,"sf_1")].map(x=>x||"Menunggu");
+ return ["Menunggu","Menunggu"];
+}
+
+/* KOSONGKAN SKOR LANJUTAN JIKA PESERTA BERUBAH */
+function syncParticipants(cat){
+ const order=[
+  ["qf",4],["sf",2],["final",1],["third",1]
+ ];
+ order.forEach(([round,count])=>{
+  for(let i=0;i<count;i++){
+   const id=matchId(round,i);
+   const p=participants(cat,round,i);
+   const m=getMatch(cat,id);
+   if(m.a!==p[0]||m.b!==p[1]){
+    delete results[cat][id];
+   }
+  }
+ });
+ put("ic_results",results);
+}
+
+/* KARTU PERTANDINGAN */
+function matchCard(cat,round,i,title){
+ const id=matchId(round,i);
+ const m=getMatch(cat,id);
+ const p=participants(cat,round,i);
+ const w=winner(cat,id);
+ return `<div class="match">
+ <div class="match-title">${title}</div>
+ <div class="team ${w===p[0]?"winner":""}">
+ <span>${esc(p[0])}</span><span class="score">${m.sa??"—"}</span>
+ </div>
+ <div class="team ${w===p[1]?"winner":""}">
+ <span>${esc(p[1])}</span><span class="score">${m.sb??"—"}</span>
+ </div>
+ </div>`;
+}
+
+/* BAGAN SIMETRIS SEPERTI GAMBAR */
+function renderBracket(){
+ const cat=bracketCat.value;
+ syncParticipants(cat);
+
+ const match=(r,i,t)=>matchCard(cat,r,i,t);
+
+ const left16=[0,1,2,3].map(i=>match("r16",i,"PERTANDINGAN "+(i+1))).join("");
+ const leftQF=[0,1].map(i=>match("qf",i,"PEREMPAT FINAL "+(i+1))).join("");
+ const leftSF=match("sf",0,"SEMIFINAL 1");
+
+ const right16=[4,5,6,7].map(i=>match("r16",i,"PERTANDINGAN "+(i+1))).join("");
+ const rightQF=[2,3].map(i=>match("qf",i,"PEREMPAT FINAL "+(i+1))).join("");
+ const rightSF=match("sf",1,"SEMIFINAL 2");
+
+ const html=`
+ <div class="bracket-wrap" style="
+ background-color:${backgrounds.color};
+ ${backgrounds.image?'background-image:url('+JSON.stringify(backgrounds.image)+');background-size:cover;background-position:center;':''}
+ ">
+ <h2 style="display:flex;align-items:center;justify-content:center;width:100%;text-align:center;margin:10px auto 20px">TOURNAMENT MLBB INFLY CARNIVAL</h2>
+ <div class="bracket-image-layout">
+
+  <div class="bracket-side">
+   <div class="round-column">
+    <div class="round-title">BABAK 16 BESAR</div>${left16}
+   </div>
+   <div class="round-column">
+    <div class="round-title">PEREMPAT FINAL</div>${leftQF}
+   </div>
+   <div class="round-column">
+    <div class="round-title">SEMIFINAL</div>${leftSF}
+   </div>
+  </div>
+
+  <div class="bracket-center">
+   <div class="finalbox">
+    <h3>🏆 GRAND FINAL</h3>
+    ${match("final",0,"GRAND FINAL")}
+    <div class="champion">JUARA 1<br>${esc(winner(cat,"final")||"BELUM DITENTUKAN")}</div>
+    <div class="champion">JUARA 2<br>${esc(loser(cat,"final")||"BELUM DITENTUKAN")}</div>
+   </div>
+   <div class="thirdbox">
+    <h3>🥉 PENENTUAN JUARA 3 &amp; 4</h3>
+    ${match("third",0,"PERTANDINGAN")}
+    <div class="champion">JUARA 3<br>${esc(winner(cat,"third")||"BELUM DITENTUKAN")}</div>
+   </div>
+  </div>
+
+  <div class="bracket-side">
+   <div class="round-column">
+    <div class="round-title">SEMIFINAL</div>${rightSF}
+   </div>
+   <div class="round-column">
+    <div class="round-title">PEREMPAT FINAL</div>${rightQF}
+   </div>
+   <div class="round-column">
+    <div class="round-title">BABAK 16 BESAR</div>${right16}
+   </div>
+  </div>
+
+ </div>
+ </div>`;
+ bracketContent.innerHTML=html;
+}
+
+/* INPUT SKOR KHUSUS PANITIA */
+function renderScores(){
+ if(!logged){
+  scorePanel.innerHTML='<p class="muted">Input skor hanya untuk panitia. Silakan login melalui Pengaturan.</p><button onclick="page(\'settings\')">KE PENGATURAN</button>';
+  return;
+ }
+ let html="";
+ ["Pelajar","Umum"].forEach(cat=>{
+  html+=`<h3>KATEGORI ${cat.toUpperCase()}</h3>`;
+  const matches=[];
+  for(let i=0;i<8;i++)matches.push(["r16",i,"Babak 16 Besar"]);
+  for(let i=0;i<4;i++)matches.push(["qf",i,"Perempat Final"]);
+  for(let i=0;i<2;i++)matches.push(["sf",i,"Semifinal"]);
+  matches.push(["final",0,"Final Juara 1 & 2"]);
+  matches.push(["third",0,"Perebutan Juara 3"]);
+  matches.forEach(([round,i,label])=>{
+   const id=matchId(round,i),p=participants(cat,round,i),m=getMatch(cat,id);
+   html+=`<div class="admin-match">
+    <b>${label} ${round==="r16"?i+1:round==="qf"?i+1:round==="sf"?i+1:""}</b>
+    <div class="score-row">
+     <span>${esc(p[0])}</span>
+     <input type="number" min="0" id="${cat}_${id}_a" value="${m.sa??""}" placeholder="0">
+     <input type="number" min="0" id="${cat}_${id}_b" value="${m.sb??""}" placeholder="0">
+     <span>${esc(p[1])}</span>
     </div>
+    <button onclick="saveResult('${cat}','${id}')">SIMPAN SKOR</button>
+   </div>`;
+  });
+ });
+ scorePanel.innerHTML=html;
+}
+function saveResult(cat,id){
+ if(!logged)return alert("Login panitia terlebih dahulu.");
+ const parts=id.split("_");
+ const round=parts[0],i=Number(parts[1]);
+ const p=participants(cat,round,i);
+ if(!p[0]||!p[1]||p.includes("Menunggu"))return alert("Peserta pertandingan belum lengkap.");
+ const a=document.getElementById(cat+"_"+id+"_a").value;
+ const b=document.getElementById(cat+"_"+id+"_b").value;
+ if(a===""||b==="")return alert("Masukkan kedua skor.");
+ if(Number(a)===Number(b))return alert("Skor tidak boleh seri.");
+ setMatch(cat,id,{a:p[0],b:p[1],sa:Number(a),sb:Number(b)});
+ syncParticipants(cat);
+ renderScores();
+ renderBracket();
+ alert("Skor tersimpan. Pemenang diteruskan ke babak berikutnya.");
+}
 
-    <div class="container">
-        <header>
-            <h1>TOURNAMENT MLBB INFLY CARNIVAL</h1>
-            <p>Papan Bagan Pertandingan & Pendaftaran Resmi</p>
-        </header>
+/* FULLSCREEN VIDEOTRON */
+function openFS(){
+ renderBracket();
+ fsContent.innerHTML=bracketContent.innerHTML;
+ fullscreen.classList.add("show");
+ if(fullscreen.requestFullscreen)fullscreen.requestFullscreen().catch(()=>{});
+}
+function closeFS(){
+ fullscreen.classList.remove("show");
+ if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});
+}
 
-        <!-- MENU NAVIGASI -->
-        <div class="menu-container">
-            <div id="main-nav" class="main-nav">
-                <button class="nav-btn" onclick="switchTab('sec-daftar')">Daftar Tim</button>
-                <button class="nav-btn" onclick="switchTab('sec-daftar-tim')">Tim Terdaftar</button>
-                <button class="nav-btn active" onclick="switchTab('sec-bracket')">Bracket</button>
-                <button class="nav-btn" onclick="switchTab('sec-riwayat')">Riwayat</button>
-                
-                <button class="nav-btn" id="btn-login-admin" onclick="openLoginModal()">Admin</button>
-                
-                <!-- Menu Khusus Panitia -->
-                <button id="nav-admin-reg" class="nav-btn admin-nav" onclick="switchTab('sec-tim-terdaftar')">Masuk Pendaftaran</button>
-                <button id="nav-pengaturan" class="nav-btn admin-nav" onclick="switchTab('sec-pengaturan')">Pengaturan</button>
-                <button id="btn-logout" class="nav-btn admin-nav" style="color:var(--accent-red);" onclick="logoutAdmin()">Keluar</button>
-            </div>
-        </div>
-
-        <!-- TAB 1: BAGAN PERTANDINGAN (BRACKET) -->
-        <div id="sec-bracket" class="tab-section active">
-            <div class="category-switcher">
-                <button id="btn-cat-pelajar" class="sub-btn active" onclick="switchCategory('pelajar')">Kategori Pelajar</button>
-                <button id="btn-cat-umum" class="sub-btn" onclick="switchCategory('umum')">Kategori Umum</button>
-            </div>
-
-            <div class="card" style="padding: 12px;">
-                <div id="bracket-fullscreen-wrapper" title="Masuk ke Layar Penuh untuk menggunakan fitur edit bagan">
-                    <div class="bracket-card-header">
-                        <div class="bracket-title-area">
-                            <h2 id="header-cat-title">KATEGORI PELAJAR</h2>
-                            <div class="controls-row">
-                                <button class="vt-btn" onclick="toggleBracketFullscreen()">📺 Layar Penuh</button>
-                                <!-- TOMBOL EDIT HANYA MUNCUL DI FULLSCREEN -->
-                                <button id="btn-edit-toggle" class="vt-btn fullscreen-only-item" onclick="toggleEditMode()">✏️ Edit</button>
-                                <button class="btn-acak-bagan admin-nav" onclick="randomizeCurrentBracket()" style="display:none;">🎲 ACAK BAGAN</button>
-                            </div>
-                            
-                            <!-- PANEL KONTROL TAMBAHAN KETIKA EDIT DIKLIK -->
-                            <div id="edit-panel" class="edit-controls-panel">
-                                <button class="vt-btn" onclick="zoomBracket(-0.1)" title="Perkecil">➖ Perkecil</button>
-                                <button class="vt-btn" onclick="zoomBracket(0.1)" title="Perbesar">➕ Perbesar</button>
-                                <button class="vt-btn" onclick="resetBracketPan()" title="Reset Posisi">🔄 Reset</button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div id="bracket-container" class="bracket-wrapper">
-                        <!-- Dynamic Bracket -->
-                    </div>
-                    
-                    <!-- TOMBOL ARAH (DPAD) UNTUK GESER KETIKA EDIT AKTIF DI FULLSCREEN -->
-                    <div id="dpad-controls" class="dpad-container">
-                        <button class="dpad-btn dpad-up" onmousedown="startPan(0, -15)" onmouseup="stopPan()" onmouseleave="stopPan()" ontouchstart="event.preventDefault(); startPan(0, -15);" ontouchend="stopPan()">⬆️</button>
-                        <button class="dpad-btn dpad-left" onmousedown="startPan(-15, 0)" onmouseup="stopPan()" onmouseleave="stopPan()" ontouchstart="event.preventDefault(); startPan(-15, 0);" ontouchend="stopPan()">⬅️</button>
-                        <button class="dpad-btn dpad-right" onmousedown="startPan(15, 0)" onmouseup="stopPan()" onmouseleave="stopPan()" ontouchstart="event.preventDefault(); startPan(15, 0);" ontouchend="stopPan()">➡️</button>
-                        <button class="dpad-btn dpad-down" onmousedown="startPan(0, 15)" onmouseup="stopPan()" onmouseleave="stopPan()" ontouchstart="event.preventDefault(); startPan(0, 15);" ontouchend="stopPan()">⬇️</button>
-                    </div>
-                </div>
-
-                <div class="podium-box">
-                    <div class="podium-title">🥇 PODIUM JUARA <span id="podium-cat-title">PELAJAR</span> 🥇</div>
-                    <div class="podium-grid">
-                        <div class="podium-item"><div class="podium-rank rank-2">🥈 JUARA 2</div><div id="podium-2" class="podium-name">-</div></div>
-                        <div class="podium-item" style="border-color: rgba(251,191,36,0.5);"><div class="podium-rank rank-1">🏆 JUARA 1</div><div id="podium-1" class="podium-name">-</div></div>
-                        <div class="podium-item"><div class="podium-rank rank-3">🥉 JUARA 3</div><div id="podium-3" class="podium-name">-</div></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB 2: FORM PENDAFTARAN -->
-        <div id="sec-daftar" class="tab-section">
-            <div class="card" style="max-width: 600px; margin: 0 auto;">
-                <h2 style="color:var(--accent-cyan); margin-bottom: 20px; font-weight:700; font-size:1.3rem;">Registrasi Turnamen</h2>
-                <form id="form-registrasi" onsubmit="handleRegistration(event)">
-                    
-                    <div class="form-group">
-                        <label>Nama Tim</label>
-                        <input type="text" id="reg-namatim" placeholder="Nama squad" required />
-                    </div>
-
-                    <div class="form-group">
-                        <label>Kategori</label>
-                        <select id="reg-kategori" required>
-                            <option value="pelajar">Pelajar</option>
-                            <option value="umum">Umum</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>WhatsApp Ketua Tim</label>
-                        <input type="tel" id="reg-wa" placeholder="08xxxxxxxxxx" required />
-                    </div>
-
-                    <div class="form-group">
-                        <label>Pemain 1 • ID Game</label>
-                        <input type="text" id="reg-id1" placeholder="ID (Server) / Nickname" required />
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Pemain 2 • ID Game</label>
-                        <input type="text" id="reg-id2" placeholder="ID (Server) / Nickname" required />
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Pemain 3 • ID Game</label>
-                        <input type="text" id="reg-id3" placeholder="ID (Server) / Nickname" required />
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Pemain 4 • ID Game</label>
-                        <input type="text" id="reg-id4" placeholder="ID (Server) / Nickname" required />
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Pemain 5 • ID Game</label>
-                        <input type="text" id="reg-id5" placeholder="ID (Server) / Nickname" required />
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Cadangan • ID Game</label>
-                        <input type="text" id="reg-id6" placeholder="Boleh dikosongkan" />
-                    </div>
-
-                    <button type="submit" class="btn-action">KIRIM PENDAFTARAN</button>
-                </form>
-            </div>
-        </div>
-
-        <!-- TAB 3: DAFTAR TIM (RESMI DI ACC) -->
-        <div id="sec-daftar-tim" class="tab-section">
-            <div class="card">
-                <h2 style="color:var(--accent-cyan); text-align:center; margin-bottom: 20px; font-weight:700; font-size:1.3rem;">Daftar Tim Resmi</h2>
-                <div class="category-switcher">
-                    <button id="btn-dt-pelajar" class="sub-btn active" onclick="switchDaftarTim('pelajar')">Pelajar</button>
-                    <button id="btn-dt-umum" class="sub-btn" onclick="switchDaftarTim('umum')">Umum</button>
-                </div>
-                <div class="table-responsive">
-                    <table>
-                        <thead><tr><th>No</th><th>Nama Tim</th><th>Status Slot</th></tr></thead>
-                        <tbody id="list-tim-resmi"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB 4: RIWAYAT PERTANDINGAN -->
-        <div id="sec-riwayat" class="tab-section">
-            <div class="card" style="max-width: 800px; margin: 0 auto;">
-                <h2 style="color:var(--accent-cyan); text-align:center; margin-bottom: 20px; font-weight:700; font-size:1.3rem;">Riwayat Pertandingan</h2>
-                <div id="history-container">
-                    <!-- Dynamic History -->
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB 5: TIM TERDAFTAR (KHUSUS PANITIA) -->
-        <div id="sec-tim-terdaftar" class="tab-section">
-            <div class="card">
-                <h2 style="color:var(--accent-cyan); margin-bottom: 5px; font-weight:700;">Data Pendaftaran (Menunggu ACC)</h2>
-                <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:15px;">Setujui untuk memasukkan tim ke Bracket secara otomatis.</p>
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Waktu</th>
-                                <th>Kategori</th>
-                                <th>Tim & Kontak</th>
-                                <th>ID Pemain MLBB</th>
-                                <th>Status</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="pendaftar-list"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB 6: PENGATURAN (KHUSUS PANITIA) -->
-        <div id="sec-pengaturan" class="tab-section">
-            <div class="card" style="max-width: 800px; margin: 0 auto;">
-                <h2 style="color:var(--accent-cyan); text-align:center; margin-bottom:20px; font-weight:700;">⚙️ Pengaturan Sistem</h2>
-                
-                <h3 style="margin-top:20px; margin-bottom:10px; color:#fff; font-size:0.95rem; font-weight:600;">1. Ganti Background</h3>
-                <div class="form-group">
-                    <label>Background Utama Website</label>
-                    <input type="file" id="upload-bg-utama" accept="image/*" onchange="prosesUploadGambar(event, 'utama')" />
-                </div>
-                <div class="form-group">
-                    <label>Background Kotak Bagan (Bracket)</label>
-                    <input type="file" id="upload-bg-bracket" accept="image/*" onchange="prosesUploadGambar(event, 'bracket')" />
-                </div>
-                <div class="form-group">
-                    <label>Background / Warna Layar Penuh (Fullscreen)</label>
-                    <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px;">
-                        <input type="color" id="picker-bg-fullscreen" value="#22c55e" style="width: 50px; height: 40px; border: none; border-radius: 8px; cursor: pointer; background: transparent;" onchange="pilihWarnaFullscreen(this.value)" />
-                        <span style="font-size: 0.8rem; color: var(--text-muted);">Pilih warna solid atau upload gambar di bawah:</span>
-                    </div>
-                    <input type="file" id="upload-bg-fullscreen" accept="image/*" onchange="prosesUploadGambar(event, 'fullscreen')" />
-                </div>
-
-                <div style="display:flex; gap:10px;">
-                    <button class="btn-action" style="margin-top:0;" onclick="simpanPengaturanBG()">SIMPAN</button>
-                    <button class="btn-action" style="margin-top:0; background:var(--bg-input); border:1px solid var(--border-subtle); color:#fff;" onclick="hapusBackground()">RESET</button>
-                </div>
-                
-                <hr style="border-color:var(--border-subtle); margin:30px 0;">
-
-                <h3 style="color:#fff; font-size:0.95rem; font-weight:600; margin-bottom:15px;">2. Edit Slot Tim Manual</h3>
-                <div class="category-switcher" style="justify-content: flex-start;">
-                    <button id="btn-seed-pelajar" class="sub-btn active" onclick="renderSeedingInputs('pelajar')">Slot Pelajar</button>
-                    <button id="btn-seed-umum" class="sub-btn" onclick="renderSeedingInputs('umum')">Slot Umum</button>
-                </div>
-                <div id="seed-inputs" class="team-grid"></div>
-                <button class="btn-action" onclick="saveSeedSettings()">SIMPAN NAMA TIM</button>
-
-                <hr style="border-color:var(--border-subtle); margin:30px 0;">
-                
-                <h3 style="color:var(--accent-red); font-size:0.95rem; font-weight:600; margin-bottom:15px;">3. Zona Bahaya (Reset Skor)</h3>
-                <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                    <button class="btn-action" style="background:rgba(239, 68, 68, 0.2); border:1px solid var(--accent-red); color:var(--accent-red); flex:1; margin-top:0;" onclick="resetBracketData('pelajar')">⚠️ Reset Skor Pelajar</button>
-                    <button class="btn-action" style="background:rgba(239, 68, 68, 0.2); border:1px solid var(--accent-red); color:var(--accent-red); flex:1; margin-top:0;" onclick="resetBracketData('umum')">⚠️ Reset Skor Umum</button>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    <script>
-        const ADMIN_PIN = "infly2026";
-        let currentRole = "viewer"; 
-        let currentCategory = "pelajar";
-        let seedEditCategory = "pelajar";
-        let isEditModeActive = false;
-
-        let appState = {
-            pelajar: { teams: Array.from({length: 16}, (_, i) => `Tim ${i+1}`), matches: createEmptyMatches() },
-            umum: { teams: Array.from({length: 16}, (_, i) => `Tim ${i+1}`), matches: createEmptyMatches() },
-            registrations: [], history: [], settings: { bgUtama: "", bgBracket: "", bgFullscreen: "#22c55e" }
-        };
-
-        function createEmptyMatches() {
-            return {
-                r16: Array.from({length: 8}, () => ({ s1: 0, s2: 0, w: null })),
-                qf: Array.from({length: 4}, () => ({ s1: 0, s2: 0, w: null })),
-                sf: Array.from({length: 2}, () => ({ s1: 0, s2: 0, w: null })),
-                f: { s1: 0, s2: 0, w: null },
-                t3: { s1: 0, s2: 0, w: null }
-            };
-        }
-
-        function loadSavedState() {
-            const saved = localStorage.getItem('infly_mlbb_state_v2');
-            if (saved) {
-                try { 
-                    let parsed = JSON.parse(saved); 
-                    appState = { ...appState, ...parsed }; 
-                    if (!appState.settings.bgFullscreen) appState.settings.bgFullscreen = "#22c55e";
-                    if (!appState.pelajar || !appState.pelajar.teams || appState.pelajar.teams.length === 0) {
-                        appState.pelajar = { teams: Array.from({length: 16}, (_, i) => `Tim ${i+1}`), matches: createEmptyMatches() };
-                    }
-                    if (!appState.umum || !appState.umum.teams || appState.umum.teams.length === 0) {
-                        appState.umum = { teams: Array.from({length: 16}, (_, i) => `Tim ${i+1}`), matches: createEmptyMatches() };
-                    }
-                } catch(e) { console.error(e); }
-            }
-            terapkanBackground();
-            if(appState.settings.bgFullscreen && !appState.settings.bgFullscreen.startsWith('url')) {
-                const picker = document.getElementById('picker-bg-fullscreen');
-                if(picker) picker.value = appState.settings.bgFullscreen;
-            }
-        }
-
-        function saveState() {
-            localStorage.setItem('infly_mlbb_state_v2', JSON.stringify(appState));
-            renderBracket(); renderPodium(); renderAdminRegistrations();
-            const btnUmum = document.getElementById('btn-dt-umum');
-            const activeDaftarCat = (btnUmum && btnUmum.classList.contains('active')) ? 'umum' : 'pelajar';
-            renderDaftarTim(activeDaftarCat); renderRiwayat();
-        }
-
-        // --- MANAJEMEN MODAL & LOGIN ---
-        function openLoginModal() {
-            document.getElementById('login-modal').style.display = 'flex';
-            document.getElementById('pin-input').focus();
-        }
-        function closeLoginModal() {
-            document.getElementById('login-modal').style.display = 'none';
-            document.getElementById('pin-input').value = '';
-        }
-        function verifyPin() {
-            const pin = document.getElementById('pin-input').value;
-            if (pin === ADMIN_PIN) { setRole('admin'); closeLoginModal(); } 
-            else { alert("PIN Salah!"); }
-        }
-        function logoutAdmin() {
-            if(confirm("Yakin ingin keluar dari mode Admin?")) { setRole('viewer'); switchTab('sec-bracket'); }
-        }
-
-        function setRole(role) {
-            currentRole = role;
-            const adminMenus = document.querySelectorAll('.admin-nav');
-            adminMenus.forEach(menu => menu.style.display = role === 'admin' ? 'block' : 'none');
-            document.getElementById('btn-login-admin').style.display = role === 'admin' ? 'none' : 'block';
-            renderBracket();
-        }
-
-        // --- NAVIGATION LOGIC ---
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-section').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            event.currentTarget.classList.add('active');
-
-            if (tabId === 'sec-pengaturan') { renderSeedingInputs(seedEditCategory); }
-            if (tabId === 'sec-riwayat') renderRiwayat();
-            if (tabId === 'sec-daftar-tim') { switchDaftarTim('pelajar'); }
-        }
-
-        function switchCategory(cat) {
-            currentCategory = cat;
-            document.getElementById('btn-cat-pelajar').classList.toggle('active', cat === 'pelajar');
-            document.getElementById('btn-cat-umum').classList.toggle('active', cat === 'umum');
-            document.getElementById('header-cat-title').innerText = `KATEGORI ${cat.toUpperCase()}`;
-            document.getElementById('podium-cat-title').innerText = cat.toUpperCase();
-            
-            resetBracketPan();
-            renderBracket(); renderPodium();
-        }
-
-        function switchDaftarTim(cat) {
-            document.getElementById('btn-dt-pelajar').classList.toggle('active', cat === 'pelajar');
-            document.getElementById('btn-dt-umum').classList.toggle('active', cat === 'umum');
-            renderDaftarTim(cat);
-        }
-
-        // --- BACKGROUND ---
-        function pilihWarnaFullscreen(color) {
-            appState.settings.bgFullscreen = color;
-            terapkanBackground();
-        }
-
-        function prosesUploadGambar(event, target) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = new Image();
-                img.onload = function() {
-                    const canvas = document.createElement('canvas');
-                    let width = img.width, height = img.height;
-                    const MAX_SIZE = 1200;
-                    if (width > height && width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; } 
-                    else if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; }
-                    canvas.width = width; canvas.height = height;
-                    const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height);
-                    const base64Gambar = canvas.toDataURL('image/jpeg', 0.6);
-                    if (target === 'utama') appState.settings.bgUtama = base64Gambar;
-                    else if (target === 'bracket') appState.settings.bgBracket = base64Gambar;
-                    else if (target === 'fullscreen') appState.settings.bgFullscreen = `url('${base64Gambar}')`;
-                    terapkanBackground();
-                }
-                img.src = e.target.result;
-            }
-            reader.readAsDataURL(file);
-        }
-
-        function simpanPengaturanBG() { saveState(); alert("Background berhasil disimpan!"); }
-        function hapusBackground() {
-            if(confirm("Reset semua background ke default?")) {
-                appState.settings.bgUtama = ""; 
-                appState.settings.bgBracket = "";
-                appState.settings.bgFullscreen = "#22c55e";
-                document.getElementById('upload-bg-utama').value = ""; 
-                document.getElementById('upload-bg-bracket').value = "";
-                document.getElementById('upload-bg-fullscreen').value = "";
-                document.getElementById('picker-bg-fullscreen').value = "#22c55e";
-                saveState(); terapkanBackground();
-            }
-        }
-        function terapkanBackground() {
-            if (appState.settings.bgUtama) document.documentElement.style.setProperty('--bg-utama-url', `url('${appState.settings.bgUtama}')`);
-            else document.documentElement.style.setProperty('--bg-utama-url', `none`);
-            
-            if (appState.settings.bgBracket) document.documentElement.style.setProperty('--bg-bracket-url', `url('${appState.settings.bgBracket}')`);
-            else document.documentElement.style.setProperty('--bg-bracket-url', `none`);
-
-            if (appState.settings.bgFullscreen) {
-                let fsVal = appState.settings.bgFullscreen.startsWith('url') ? appState.settings.bgFullscreen : appState.settings.bgFullscreen;
-                document.documentElement.style.setProperty('--bg-fullscreen-custom', fsVal);
-            }
-        }
-
-        // --- REGISTRATION ---
-        function handleRegistration(e) {
-            e.preventDefault();
-            const reg = {
-                id: Date.now(), time: new Date().toLocaleDateString('id-ID'),
-                kategori: document.getElementById('reg-kategori').value,
-                namatim: document.getElementById('reg-namatim').value, wa: document.getElementById('reg-wa').value,
-                id1: document.getElementById('reg-id1').value, id2: document.getElementById('reg-id2').value,
-                id3: document.getElementById('reg-id3').value, id4: document.getElementById('reg-id4').value,
-                id5: document.getElementById('reg-id5').value, id6: document.getElementById('reg-id6').value,
-                status: 'Menunggu'
-            };
-            appState.registrations.push(reg); saveState(); document.getElementById('form-registrasi').reset();
-            alert("Pendaftaran Berhasil! Silakan tunggu Panitia melakukan ACC.");
-        }
-
-        function renderAdminRegistrations() {
-            const list = document.getElementById('pendaftar-list');
-            if (appState.registrations.length === 0) { list.innerHTML = `<tr><td colspan="6" style="text-align:center;">Belum ada pendaftaran.</td></tr>`; return; }
-            list.innerHTML = appState.registrations.map(r => `
-                <tr>
-                    <td>${r.time}</td><td><strong style="text-transform:uppercase;">${r.kategori}</strong></td>
-                    <td><strong>${r.namatim}</strong><br/><span style="color:var(--accent-cyan); font-size:0.75rem;">WA: ${r.wa}</span></td>
-                    <td style="font-size:0.7rem; line-height:1.4;"><strong>P1:</strong> ${r.id1}<br/><strong>P2:</strong> ${r.id2} | <strong>P3:</strong> ${r.id3}<br/><strong>P4:</strong> ${r.id4} | <strong>P5:</strong> ${r.id5}</td>
-                    <td><span class="badge-status ${r.status === 'Disetujui' ? 'badge-approved' : (r.status === 'Ditolak' ? 'badge-rejected' : 'badge-pending')}">${r.status}</span></td>
-                    <td>
-                        ${r.status === 'Menunggu' ? `
-                            <button class="score-btn" style="background:var(--accent-green);" onclick="accPendaftaran(${r.id}, 'Disetujui')">Setujui</button>
-                            <button class="score-btn" style="background:var(--accent-red); margin-top:4px;" onclick="accPendaftaran(${r.id}, 'Ditolak')">Tolak</button>
-                        ` : '-'}
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function accPendaftaran(id, status) {
-            const reg = appState.registrations.find(r => r.id === id);
-            if (reg) {
-                reg.status = status;
-                if (status === 'Disetujui') {
-                    const emptyIdx = appState[reg.kategori].teams.findIndex(t => t.toLowerCase().startsWith('tim '));
-                    if (emptyIdx !== -1) { appState[reg.kategori].teams[emptyIdx] = reg.namatim; alert(`SUKSES! Masuk Bagan ${reg.kategori.toUpperCase()} No.${emptyIdx + 1}`); } 
-                    else { alert(`Bagan Kategori ${reg.kategori.toUpperCase()} sudah penuh (16 Tim)!`); }
-                }
-                saveState();
-            }
-        }
-
-        function renderDaftarTim(kategori) {
-            const list = document.getElementById('list-tim-resmi');
-            const teams = appState[kategori].teams;
-            let html = '';
-            teams.forEach((t, i) => {
-                const isKosong = t.toLowerCase().startsWith('tim ');
-                html += `<tr><td>${i+1}</td><td><strong>${t}</strong></td><td><span class="badge-status ${isKosong ? 'badge-pending' : 'badge-approved'}">${isKosong ? 'Slot Kosong' : 'Terisi'}</span></td></tr>`;
-            });
-            list.innerHTML = html;
-        }
-
-        function catatRiwayat(kategori, stageLabel, t1, t2, s1, s2) {
-            const log = `[${kategori.toUpperCase()} - ${stageLabel}] ${t1} (${s1}) vs (${s2}) ${t2}`;
-            if(!appState.history.includes(log)) appState.history.unshift(log);
-        }
-
-        function renderRiwayat() {
-            const container = document.getElementById('history-container');
-            if (appState.history.length === 0) { container.innerHTML = `<p style="text-align:center; color:var(--text-muted);">Belum ada riwayat.</p>`; return; }
-            container.innerHTML = appState.history.map(h => `<div class="riwayat-item"><span>⚔️ ${h}</span><span>Selesai</span></div>`).join('');
-        }
-
-        // --- BRACKET ENGINE ---
-        function renderBracket() {
-            const container = document.getElementById('bracket-container');
-            const data = appState[currentCategory]; 
-            if (!data || !data.teams) return;
-            const teams = data.teams; const matches = data.matches;
-            const qfTeams = [
-                getWinner(teams[0], teams[1], matches.r16[0]), getWinner(teams[2], teams[3], matches.r16[1]),
-                getWinner(teams[4], teams[5], matches.r16[2]), getWinner(teams[6], teams[7], matches.r16[3]),
-                getWinner(teams[8], teams[9], matches.r16[4]), getWinner(teams[10], teams[11], matches.r16[5]),
-                getWinner(teams[12], teams[13], matches.r16[6]), getWinner(teams[14], teams[15], matches.r16[7])
-            ];
-            const sfTeams = [
-                getWinner(qfTeams[0], qfTeams[1], matches.qf[0]), getWinner(qfTeams[2], qfTeams[3], matches.qf[1]),
-                getWinner(qfTeams[4], qfTeams[5], matches.qf[2]), getWinner(qfTeams[6], qfTeams[7], matches.qf[3])
-            ];
-            const finalTeams = [ getWinner(sfTeams[0], sfTeams[1], matches.sf[0]), getWinner(sfTeams[2], sfTeams[3], matches.sf[1]) ];
-            const thirdTeams = [ getLoser(sfTeams[0], sfTeams[1], matches.sf[0]), getLoser(sfTeams[2], sfTeams[3], matches.sf[1]) ];
-
-            let html = `<div class="bracket-flex">`;
-            html += `<div class="round-col"><div class="round-title">ROUND OF 16 (BO1)</div>`;
-            for(let i=0; i<4; i++) html += renderMatchupHtml(`M${i+1}`, teams[i*2], teams[i*2+1], matches.r16[i], 'r16', i, 'Babak 16');
-            html += `</div><div class="round-col"><div class="round-title">QUARTER-FINALS (BO1)</div>`;
-            for(let i=0; i<2; i++) html += renderMatchupHtml(`M${i+1}`, qfTeams[i*2], qfTeams[i*2+1], matches.qf[i], 'qf', i, 'Quarter-Final');
-            html += `</div><div class="round-col"><div class="round-title">SEMI-FINALS (BO3)</div>`;
-            html += renderMatchupHtml(`SF1`, sfTeams[0], sfTeams[1], matches.sf[0], 'sf', 0, 'Semi-Final');
-            html += `</div><div class="round-col"><div class="round-title" style="border-color:var(--accent-gold); color:var(--accent-gold);">CHAMPION (BO5)</div>`;
-            html += renderMatchupHtml(`GRAND FINAL`, finalTeams[0], finalTeams[1], matches.f, 'f', 0, 'Grand Final', 'final');
-            html += `<div class="round-title" style="margin-top:14px; border-color:var(--accent-cyan);">3RD PLACE MATCH (BO3)</div>`;
-            html += renderMatchupHtml(`JUARA 3`, thirdTeams[0], thirdTeams[1], matches.t3, 't3', 0, 'Juara 3', 'third');
-            html += `</div><div class="round-col"><div class="round-title">SEMI-FINALS (BO3)</div>`;
-            html += renderMatchupHtml(`SF2`, sfTeams[2], sfTeams[3], matches.sf[1], 'sf', 1, 'Semi-Final');
-            html += `</div><div class="round-col"><div class="round-title">QUARTER-FINALS (BO1)</div>`;
-            for(let i=2; i<4; i++) html += renderMatchupHtml(`M${i+1}`, qfTeams[i*2], qfTeams[i*2+1], matches.qf[i], 'qf', i, 'Quarter-Final');
-            html += `</div><div class="round-col"><div class="round-title">ROUND OF 16 (BO1)</div>`;
-            for(let i=4; i<8; i++) html += renderMatchupHtml(`M${i+1}`, teams[i*2], teams[i*2+1], matches.r16[i], 'r16', i, 'Babak 16');
-            html += `</div></div>`;
-            container.innerHTML = html;
-        }
-
-        function renderMatchupHtml(label, t1, t2, match, stage, index, stageNameFull, extraClass='') {
-            t1 = t1 || "-"; t2 = t2 || "-"; const w = match.w; const isAdmin = currentRole === 'admin';
-            const canScore = isAdmin && t1 !== '-' && t2 !== '-' && !w;
-            return `
-            <div class="matchup ${extraClass}">
-                <div class="match-header">${label}</div>
-                <div class="team-row ${w === 1 ? 'winner' : ''}">
-                    <span class="team-name">${t1}</span>
-                    <div><span class="score-number ${canScore ? 'clickable' : ''}" ${canScore ? `onclick="updateScore('${stage}', ${index}, 1, '${t1}', '${t2}', '${stageNameFull}')"` : ''}>${match.s1}</span>
-                    ${canScore ? `<button class="score-btn" onclick="updateScore('${stage}', ${index}, 1, '${t1}', '${t2}', '${stageNameFull}')">+</button>` : ''}</div>
-                </div>
-                <div class="team-row ${w === 2 ? 'winner' : ''}">
-                    <span class="team-name">${t2}</span>
-                    <div><span class="score-number ${canScore ? 'clickable' : ''}" ${canScore ? `onclick="updateScore('${stage}', ${index}, 2, '${t1}', '${t2}', '${stageNameFull}')"` : ''}>${match.s2}</span>
-                    ${canScore ? `<button class="score-btn" onclick="updateScore('${stage}', ${index}, 2, '${t1}', '${t2}', '${stageNameFull}')">+</button>` : ''}</div>
-                </div>
-            </div>`;
-        }
-
-        function getWinner(t1, t2, match) { return (!match || match.w === null) ? "-" : (match.w === 1 ? t1 : t2); }
-        function getLoser(t1, t2, match) { return (!match || match.w === null) ? "-" : (match.w === 1 ? t2 : t1); }
-
-        function updateScore(stage, index, teamNum, t1, t2, stageNameFull) {
-            let m = stage === 'f' || stage === 't3' ? appState[currentCategory].matches[stage] : appState[currentCategory].matches[stage][index];
-            
-            let targetWin = 1; 
-            if (stage === 'sf' || stage === 't3') targetWin = 3; 
-            else if (stage === 'f') targetWin = 5; 
-
-            if (teamNum === 1) m.s1++; else m.s2++;
-            
-            if (m.s1 >= targetWin || m.s2 >= targetWin) { 
-                m.w = m.s1 >= targetWin ? 1 : 2; 
-                catatRiwayat(currentCategory, stageNameFull, t1, t2, m.s1, m.s2); 
-            }
-            saveState();
-        }
-
-        function renderPodium() {
-            const data = appState[currentCategory]; 
-            if (!data) return;
-            const f = data.matches.f, t3 = data.matches.t3;
-            let juara1 = "-", juara2 = "-", juara3 = "-";
-            if(f.w !== null) { 
-                const qf = (i1, i2, mr) => getWinner(data.teams[i1], data.teams[i2], data.matches.r16[mr]);
-                const qfT = [qf(0,1,0), qf(2,3,1), qf(4,5,2), qf(6,7,3), qf(8,9,4), qf(10,11,5), qf(12,13,6), qf(14,15,7)];
-                const sf = (i1, i2, mr) => getWinner(qfT[i1], qfT[i2], data.matches.qf[mr]);
-                const sfT = [sf(0,1,0), sf(2,3,1), sf(4,5,2), sf(6,7,3)];
-                const fT = [getWinner(sfT[0], sfT[1], data.matches.sf[0]), getWinner(sfT[2], sfT[3], data.matches.sf[1])];
-                const t3T = [getLoser(sfT[0], sfT[1], data.matches.sf[0]), getLoser(sfT[2], sfT[3], data.matches.sf[1])];
-                juara1 = f.w === 1 ? fT[0] : fT[1]; juara2 = f.w === 1 ? fT[1] : fT[0]; juara3 = t3.w !== null ? (t3.w === 1 ? t3T[0] : t3T[1]) : "-";
-            }
-            document.getElementById('podium-1').innerText = juara1; document.getElementById('podium-2').innerText = juara2; document.getElementById('podium-3').innerText = juara3;
-        }
-
-        function renderSeedingInputs(cat) {
-            seedEditCategory = cat;
-            const btnP = document.getElementById('btn-seed-pelajar'), btnU = document.getElementById('btn-seed-umum');
-            if (btnP) btnP.classList.toggle('active', cat === 'pelajar'); if (btnU) btnU.classList.toggle('active', cat === 'umum');
-            const grid = document.getElementById('seed-inputs');
-            grid.innerHTML = appState[cat].teams.map((t, i) => `<div class="team-item"><span>Slot ${i+1}</span><input type="text" id="seed-in-${i}" value="${t}" style="width:100%; background:rgba(0,0,0,0.5); padding:8px; border:1px solid rgba(255,255,255,0.1); color:#fff; border-radius:6px;"/></div>`).join('');
-        }
-        
-        function saveSeedSettings() {
-            for(let i=0; i<16; i++) { appState[seedEditCategory].teams[i] = document.getElementById(`seed-in-${i}`).value.trim() || `Tim ${i+1}`; }
-            saveState(); alert("Susunan Tim Manual Berhasil Disimpan!");
-        }
-        function randomizeCurrentBracket() {
-            if (confirm(`Yakin mengacak Kategori ${currentCategory.toUpperCase()}? Skor akan reset.`)) {
-                appState[currentCategory].teams.sort(() => Math.random() - 0.5); appState[currentCategory].matches = createEmptyMatches(); saveState(); alert("Bagan berhasil diacak!");
-            }
-        }
-        function resetBracketData(cat) {
-            if(confirm(`⚠️ YAKIN MERESET SKOR KATEGORI ${cat.toUpperCase()}?`)) { appState[cat].matches = createEmptyMatches(); saveState(); alert("Skor direset!"); }
-        }
-
-        // --- Cek Status Fullscreen ---
-        function isBracketFullscreen() {
-            const wrap = document.getElementById('bracket-fullscreen-wrapper');
-            return document.fullscreenElement === wrap || document.webkitFullscreenElement === wrap;
-        }
-
-        // --- TOGGLE EDIT MODE DI FULLSCREEN ---
-        function toggleEditMode() {
-            isEditModeActive = !isEditModeActive;
-            const wrapper = document.getElementById('bracket-fullscreen-wrapper');
-            const editBtn = document.getElementById('btn-edit-toggle');
-            const editPanel = document.getElementById('edit-panel');
-
-            if (isEditModeActive) {
-                wrapper.classList.add('edit-active');
-                editBtn.classList.add('active-edit');
-                editPanel.style.display = 'flex';
-            } else {
-                wrapper.classList.remove('edit-active');
-                editBtn.classList.remove('active-edit');
-                editPanel.style.display = 'none';
-            }
-        }
-
-        // --- DRAG, ZOOM & FULLSCREEN (KHUSUS WRAPPER BRACKET) ---
-        function toggleBracketFullscreen() {
-            const wrap = document.getElementById('bracket-fullscreen-wrapper');
-            if (!isBracketFullscreen()) { 
-                if (wrap.requestFullscreen) wrap.requestFullscreen(); 
-                else if (wrap.webkitRequestFullscreen) wrap.webkitRequestFullscreen(); 
-            } else { 
-                if (document.exitFullscreen) document.exitFullscreen(); 
-                else if (document.webkitExitFullscreen) document.webkitExitFullscreen(); 
-            }
-        }
-
-        let panX = 0, panY = 0, currentScale = 1, isDraggingBracket = false, startDragX = 0, startDragY = 0;
-        let panInterval;
-        
-        function startPan(dx, dy) {
-            if (!isBracketFullscreen() || !isEditModeActive) return; 
-            if(panInterval) clearInterval(panInterval);
-            panInterval = setInterval(() => { panX += dx; panY += dy; applyBracketTransform(); }, 30);
-            resetDpadIdle();
-        }
-        function stopPan() {
-            if(panInterval) clearInterval(panInterval);
-            resetDpadIdle();
-        }
-
-        function applyBracketTransform() { document.getElementById('bracket-container').style.transform = `translate(${panX}px, ${panY}px) scale(${currentScale})`; }
-        function zoomBracket(delta) { 
-            if (!isBracketFullscreen() || !isEditModeActive) return; 
-            currentScale += delta; if (currentScale < 0.3) currentScale = 0.3; if (currentScale > 3.0) currentScale = 3.0; applyBracketTransform(); 
-        }
-        function resetBracketPan() { panX = 0; panY = 0; currentScale = 1; applyBracketTransform(); }
-
-        let dpadIdleTimer;
-        function resetDpadIdle() {
-            const wrapper = document.getElementById('bracket-fullscreen-wrapper');
-            wrapper.classList.remove('idle-mode');
-            clearTimeout(dpadIdleTimer);
-            
-            if (isBracketFullscreen()) {
-                dpadIdleTimer = setTimeout(() => {
-                    wrapper.classList.add('idle-mode');
-                }, 2000); 
-            }
-        }
-
-        function initDraggableBracket() {
-            const wrapper = document.getElementById('bracket-fullscreen-wrapper');
-            
-            const startDrag = (clientX, clientY, target) => {
-                if (!isBracketFullscreen() || !isEditModeActive) return; 
-                if (target.tagName.toLowerCase() === 'button' || target.classList.contains('score-number') || target.classList.contains('vt-btn')) return;
-                
-                isDraggingBracket = true; startDragX = clientX - panX; startDragY = clientY - panY; wrapper.style.cursor = 'grabbing';
-            };
-            
-            const endDrag = () => { 
-                isDraggingBracket = false; 
-                if (isBracketFullscreen() && isEditModeActive) {
-                    wrapper.style.cursor = 'grab'; 
-                } else {
-                    wrapper.style.cursor = 'default';
-                }
-            };
-            
-            const moveDrag = (clientX, clientY, e) => {
-                if (!isDraggingBracket || !isBracketFullscreen() || !isEditModeActive) return; 
-                e.preventDefault(); panX = clientX - startDragX; panY = clientY - startDragY; applyBracketTransform();
-            };
-
-            wrapper.addEventListener('mousedown', (e) => {
-                startDrag(e.clientX, e.clientY, e.target);
-                resetDpadIdle();
-            });
-            window.addEventListener('mouseup', endDrag);
-            window.addEventListener('mousemove', (e) => {
-                moveDrag(e.clientX, e.clientY, e);
-                resetDpadIdle();
-            });
-            wrapper.addEventListener('touchstart', (e) => { 
-                resetDpadIdle();
-                if (e.touches.length === 1) startDrag(e.touches[0].clientX, e.touches[0].clientY, e.target); 
-            }, { passive: false });
-            window.addEventListener('touchend', endDrag);
-            window.addEventListener('touchmove', (e) => { 
-                resetDpadIdle();
-                if (isDraggingBracket && e.touches.length === 1) moveDrag(e.touches[0].clientX, e.touches[0].clientY, e); 
-            }, { passive: false });
-            
-            wrapper.addEventListener('wheel', (e) => { 
-                if (!isBracketFullscreen() || !isEditModeActive) return;
-                e.preventDefault(); if (e.deltaY < 0) zoomBracket(0.05); else zoomBracket(-0.05); 
-            }, { passive: false });
-            
-            function handleFullscreenChange() {
-                const wrapEl = document.getElementById('bracket-fullscreen-wrapper');
-                if (isBracketFullscreen()) {
-                    resetDpadIdle();
-                    wrapEl.style.cursor = isEditModeActive ? 'grab' : 'default';
-                } else {
-                    isEditModeActive = false;
-                    wrapEl.classList.remove('edit-active');
-                    document.getElementById('btn-edit-toggle').classList.remove('active-edit');
-                    document.getElementById('edit-panel').style.display = 'none';
-                    wrapEl.classList.remove('idle-mode');
-                    resetBracketPan(); 
-                    wrapEl.style.cursor = 'default';
-                }
-            }
-            document.addEventListener('fullscreenchange', handleFullscreenChange);
-            document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-        }
-
-        window.onload = function() { loadSavedState(); renderBracket(); renderPodium(); initDraggableBracket(); };
-    </script>
+/* MULAI */
+renderWaiting();
+renderTeams();
+renderBracket();
+</script>
 </body>
 </html>
