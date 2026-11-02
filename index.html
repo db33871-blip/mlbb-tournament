@@ -132,10 +132,10 @@
         .vt-btn { background: rgba(56, 189, 248, 0.1); color: var(--accent-cyan); border: 1px solid rgba(56, 189, 248, 0.3); padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; cursor: pointer; }
         .btn-acak-bagan { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #080312; border: none; padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; cursor: pointer; }
 
-        /* BRACKET DESIGN */
+        /* BRACKET DESIGN - Kembali ke asal tanpa warna hijau */
         .bracket-wrapper { 
             position: relative; 
-            background-color: rgba(22, 101, 52, 0.85); /* Latar Belakang Hijau */ 
+            background-color: transparent; 
             background-image: var(--bg-bracket-url);
             background-size: 100% 100%; background-position: center; background-blend-mode: overlay;
             border-radius: 16px; padding: 24px 12px; border: 1px solid var(--border-subtle); 
@@ -189,12 +189,12 @@
             background-image: linear-gradient(180deg, #09101f 0%, #04070d 100%), var(--bg-utama-url);
             background-repeat: no-repeat; background-position: center top; background-size: cover;
             position: relative; 
-            overflow: auto; /* INI KUNCI AGAR DI HP BISA DI-SCROLL NORMAL */
+            overflow: auto; /* Memungkinkan scroll normal di layar biasa */
             border-radius: 12px;
             padding-bottom: 10px;
         }
         
-        /* SAAT FULLSCREEN, SCROLL DIHILANGKAN AGAR BISA DIGESER BEBAS */
+        /* SAAT FULLSCREEN, DIKUNCI DAN AKTIFKAN DRAG & ZOOM */
         :fullscreen #bracket-fullscreen-wrapper { padding: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 0; cursor: grab; overflow: hidden;}
         :-webkit-full-screen #bracket-fullscreen-wrapper { padding: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 0; cursor: grab; overflow: hidden;}
         :fullscreen #bracket-fullscreen-wrapper:active { cursor: grabbing; }
@@ -281,7 +281,7 @@
             </div>
 
             <div class="card" style="padding: 12px;">
-                <div id="bracket-fullscreen-wrapper" title="Masuk ke Layar Penuh untuk menggeser bagan">
+                <div id="bracket-fullscreen-wrapper" title="Masuk ke Layar Penuh untuk menggeser & memperbesar bagan">
                     <div class="bracket-card-header">
                         <div class="bracket-title-area">
                             <h2 id="header-cat-title">KATEGORI PELAJAR</h2>
@@ -299,7 +299,7 @@
                         <!-- Dynamic Bracket -->
                     </div>
                     
-                    <!-- TOMBOL ARAH HANYA DI FULLSCREEN -->
+                    <!-- TOMBOL ARAH HANYA MUNCUL DI FULLSCREEN -->
                     <div id="dpad-controls" class="dpad-container">
                         <button class="dpad-btn dpad-up" onmousedown="startPan(0, -15)" onmouseup="stopPan()" onmouseleave="stopPan()" ontouchstart="event.preventDefault(); startPan(0, -15);" ontouchend="stopPan()">⬆️</button>
                         <button class="dpad-btn dpad-left" onmousedown="startPan(-15, 0)" onmouseup="stopPan()" onmouseleave="stopPan()" ontouchstart="event.preventDefault(); startPan(-15, 0);" ontouchend="stopPan()">⬅️</button>
@@ -804,7 +804,10 @@
         }
 
         function applyBracketTransform() { document.getElementById('bracket-container').style.transform = `translate(${panX}px, ${panY}px) scale(${currentScale})`; }
-        function zoomBracket(delta) { currentScale += delta; if (currentScale < 0.3) currentScale = 0.3; if (currentScale > 3.0) currentScale = 3.0; applyBracketTransform(); }
+        function zoomBracket(delta) { 
+            if (!isBracketFullscreen()) return; // Zoom hanya aktif saat fullscreen sesuai permintaan
+            currentScale += delta; if (currentScale < 0.3) currentScale = 0.3; if (currentScale > 3.0) currentScale = 3.0; applyBracketTransform(); 
+        }
         function resetBracketPan() { panX = 0; panY = 0; currentScale = 1; applyBracketTransform(); }
 
         let dpadIdleTimer;
@@ -856,7 +859,12 @@
             }, { passive: false });
             window.addEventListener('touchend', endDrag);
             window.addEventListener('touchmove', (e) => { if (isDraggingBracket && e.touches.length === 1) moveDrag(e.touches[0].clientX, e.touches[0].clientY, e); }, { passive: false });
-            wrapper.addEventListener('wheel', (e) => { e.preventDefault(); if (e.deltaY < 0) zoomBracket(0.05); else zoomBracket(-0.05); }, { passive: false });
+            
+            // Scroll wheel zoom hanya saat fullscreen
+            wrapper.addEventListener('wheel', (e) => { 
+                if (!isBracketFullscreen()) return;
+                e.preventDefault(); if (e.deltaY < 0) zoomBracket(0.05); else zoomBracket(-0.05); 
+            }, { passive: false });
             
             function handleFullscreenChange() {
                 if (isBracketFullscreen()) {
