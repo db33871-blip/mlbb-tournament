@@ -189,7 +189,7 @@
         
         .riwayat-item { background: rgba(0,0,0,0.2); padding: 12px 16px; border-left: 3px solid var(--accent-pink); border-radius: 8px; margin-bottom: 10px; font-size: 0.85rem; font-weight: 500; display: flex; justify-content: space-between; }
         
-        /* CSS KHUSUS MODE FULLSCREEN - FULL HIJAU SATU LAYAR & IDLE HIDE */
+        /* CSS KHUSUS MODE FULLSCREEN - FULL LAYAR (BACKGROUND HIJAU MENUTUPI SELURUH LAYAR MONITOR) */
         :fullscreen, :-webkit-full-screen {
             background: #22c55e !important;
             width: 100vw;
@@ -197,7 +197,7 @@
             overflow: hidden;
         }
 
-        /* KELAS IDLE MODE UNTUK MENYEMBUNYIKAN KURSOR & KONTROL DI FULLSCREEN */
+        /* KELAS IDLE MODE UNTUK MENYEMBUNYIKAN KURSOR & KONTROL DI FULLSCREEN SAAT DIAM */
         :fullscreen.idle-mode, :-webkit-full-screen.idle-mode { cursor: none !important; }
         :fullscreen.idle-mode .bracket-card-header, :-webkit-full-screen.idle-mode .bracket-card-header { opacity: 0; pointer-events: none; }
         :fullscreen.idle-mode .dpad-container, :-webkit-full-screen.idle-mode .dpad-container { opacity: 0; pointer-events: none; }
@@ -891,7 +891,7 @@
             if (isBracketFullscreen()) {
                 dpadIdleTimer = setTimeout(() => {
                     htmlTag.classList.add('idle-mode');
-                }, 2000); // 2 detik tidak ada gerakan mouse, kursor & header otomatis hilang
+                }, 2000); // 2 detik tidak ada aktivitas, kursor & header otomatis hilang
             }
         }
 
