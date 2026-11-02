@@ -136,7 +136,7 @@
         /* BRACKET DESIGN */
         .bracket-wrapper { 
             position: relative; 
-            background-color: rgba(22, 101, 52, 0.85); /* Latar Belakang Hijau sesuai permintaan */ 
+            background-color: rgba(22, 101, 52, 0.85); /* Latar Belakang Hijau */ 
             background-image: var(--bg-bracket-url);
             background-size: 100% 100%; background-position: center; background-blend-mode: overlay;
             border-radius: 16px; padding: 24px 12px; border: 1px solid var(--border-subtle); 
@@ -189,22 +189,32 @@
             background-color: var(--bg-dark);
             background-image: linear-gradient(180deg, #09101f 0%, #04070d 100%), var(--bg-utama-url);
             background-repeat: no-repeat; background-position: center top; background-size: cover;
-            position: relative; overflow: hidden; cursor: grab; border-radius: 12px;
+            position: relative; overflow: hidden; 
+            border-radius: 12px;
+            /* Cursor grab dihilangkan dari mode normal */
         }
-        #bracket-fullscreen-wrapper:active { cursor: grabbing; }
-        :fullscreen #bracket-fullscreen-wrapper { padding: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 0;}
-        :-webkit-full-screen #bracket-fullscreen-wrapper { padding: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 0;}
+        
+        /* HANYA KURSOR GRAB & GRABBING KETIKA FULLSCREEN */
+        :fullscreen #bracket-fullscreen-wrapper { padding: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 0; cursor: grab;}
+        :-webkit-full-screen #bracket-fullscreen-wrapper { padding: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 0; cursor: grab;}
+        :fullscreen #bracket-fullscreen-wrapper:active { cursor: grabbing; }
+        :-webkit-full-screen #bracket-fullscreen-wrapper:active { cursor: grabbing; }
+        
         :fullscreen .bracket-card-header { display: none !important; }
         :-webkit-full-screen .bracket-card-header { display: none !important; }
         :fullscreen .score-btn { display: none !important; }
         :-webkit-full-screen .score-btn { display: none !important; }
 
-        /* TOMBOL ARAH (DPAD) */
+        /* TOMBOL ARAH (DPAD) - HANYA MUNCUL SAAT FULLSCREEN */
         .dpad-container {
             position: absolute; bottom: 20px; right: 20px;
-            display: grid; grid-template-columns: repeat(3, 46px); grid-template-rows: repeat(3, 46px);
+            display: none; /* Disembunyikan saat mode normal */
+            grid-template-columns: repeat(3, 46px); grid-template-rows: repeat(3, 46px);
             gap: 6px; z-index: 1000; transition: opacity 0.5s ease;
         }
+        :fullscreen .dpad-container { display: grid; opacity: 1; }
+        :-webkit-full-screen .dpad-container { display: grid; opacity: 1; }
+
         .dpad-btn {
             background: rgba(13, 21, 39, 0.8); color: var(--text-main);
             border: 1px solid var(--accent-cyan); border-radius: 8px; font-size: 1.2rem;
@@ -229,7 +239,7 @@
 </head>
 <body>
 
-    <!-- MODAL AKSES / LOGIN (HANYA MUNCUL JIKA KLIK ADMIN) -->
+    <!-- MODAL AKSES / LOGIN -->
     <div id="login-modal">
         <div class="modal-box">
             <h2 style="color: var(--accent-cyan); font-size:1.3rem;">LOGIN PANITIA</h2>
@@ -271,7 +281,7 @@
             </div>
 
             <div class="card" style="padding: 12px;">
-                <div id="bracket-fullscreen-wrapper" title="Gunakan kursor atau scroll untuk geser dan zoom bagan">
+                <div id="bracket-fullscreen-wrapper" title="Masuk ke Layar Penuh untuk menggeser bagan">
                     <div class="bracket-card-header">
                         <div class="bracket-title-area">
                             <h2 id="header-cat-title">KATEGORI PELAJAR</h2>
@@ -288,7 +298,7 @@
                         <!-- Dynamic Bracket -->
                     </div>
                     
-                    <!-- TOMBOL ARAH (GESER BAGAN) -->
+                    <!-- TOMBOL ARAH (GESER BAGAN) HANYA DI FULLSCREEN -->
                     <div id="dpad-controls" class="dpad-container">
                         <button class="dpad-btn dpad-up" onmousedown="startPan(0, -15)" onmouseup="stopPan()" onmouseleave="stopPan()" ontouchstart="event.preventDefault(); startPan(0, -15);" ontouchend="stopPan()">⬆️</button>
                         <button class="dpad-btn dpad-left" onmousedown="startPan(-15, 0)" onmouseup="stopPan()" onmouseleave="stopPan()" ontouchstart="event.preventDefault(); startPan(-15, 0);" ontouchend="stopPan()">⬅️</button>
@@ -766,10 +776,15 @@
             if(confirm(`⚠️ YAKIN MERESET SKOR KATEGORI ${cat.toUpperCase()}?`)) { appState[cat].matches = createEmptyMatches(); saveState(); alert("Skor direset!"); }
         }
 
+        // --- Cek Status Fullscreen ---
+        function isBracketFullscreen() {
+            return document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement;
+        }
+
         // --- DRAG, ZOOM & FULLSCREEN (D-PAD AUTOHIDE) ---
         function toggleBracketFullscreen() {
             const wrap = document.getElementById('bracket-fullscreen-wrapper');
-            if (!document.fullscreenElement) { if (wrap.requestFullscreen) wrap.requestFullscreen(); else if (wrap.webkitRequestFullscreen) wrap.webkitRequestFullscreen(); } 
+            if (!isBracketFullscreen()) { if (wrap.requestFullscreen) wrap.requestFullscreen(); else if (wrap.webkitRequestFullscreen) wrap.webkitRequestFullscreen(); } 
             else { if (document.exitFullscreen) document.exitFullscreen(); else if (document.webkitExitFullscreen) document.webkitExitFullscreen(); }
         }
 
@@ -778,6 +793,7 @@
         
         // Fungsi geser untuk tombol D-Pad
         function startPan(dx, dy) {
+            if (!isBracketFullscreen()) return; // HANYA BISA GESER JIKA FULLSCREEN
             if(panInterval) clearInterval(panInterval);
             panInterval = setInterval(() => { panX += dx; panY += dy; applyBracketTransform(); }, 30);
             resetDpadIdle();
@@ -798,8 +814,7 @@
             dpad.style.opacity = '1';
             clearTimeout(dpadIdleTimer);
             
-            // Jika dalam mode fullscreen, hilangkan tombol setelah 2 detik tidak disentuh
-            if (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
+            if (isBracketFullscreen()) {
                 dpadIdleTimer = setTimeout(() => {
                     dpad.style.opacity = '0';
                 }, 2000); 
@@ -808,13 +823,26 @@
 
         function initDraggableBracket() {
             const wrapper = document.getElementById('bracket-fullscreen-wrapper');
+            
             const startDrag = (clientX, clientY, target) => {
+                if (!isBracketFullscreen()) return; // HANYA BISA GESER JIKA FULLSCREEN
                 if (target.tagName.toLowerCase() === 'button' || target.classList.contains('score-number') || target.classList.contains('vt-btn')) return;
+                
                 isDraggingBracket = true; startDragX = clientX - panX; startDragY = clientY - panY; wrapper.style.cursor = 'grabbing';
             };
-            const endDrag = () => { isDraggingBracket = false; wrapper.style.cursor = 'grab'; };
+            
+            const endDrag = () => { 
+                isDraggingBracket = false; 
+                if (isBracketFullscreen()) {
+                    wrapper.style.cursor = 'grab'; 
+                } else {
+                    wrapper.style.cursor = 'default';
+                }
+            };
+            
             const moveDrag = (clientX, clientY, e) => {
-                if (!isDraggingBracket) return; e.preventDefault(); panX = clientX - startDragX; panY = clientY - startDragY; applyBracketTransform();
+                if (!isDraggingBracket || !isBracketFullscreen()) return; 
+                e.preventDefault(); panX = clientX - startDragX; panY = clientY - startDragY; applyBracketTransform();
             };
 
             // Event Dragging kursor
@@ -822,19 +850,28 @@
             window.addEventListener('mouseup', endDrag);
             window.addEventListener('mousemove', (e) => {
                 moveDrag(e.clientX, e.clientY, e);
-                resetDpadIdle(); // Munculkan D-Pad saat kursor gerak
+                resetDpadIdle();
             });
             wrapper.addEventListener('touchstart', (e) => { 
-                resetDpadIdle(); // Munculkan D-Pad saat layar disentuh
+                resetDpadIdle();
                 if (e.touches.length === 1) startDrag(e.touches[0].clientX, e.touches[0].clientY, e.target); 
             }, { passive: false });
             window.addEventListener('touchend', endDrag);
             window.addEventListener('touchmove', (e) => { if (isDraggingBracket && e.touches.length === 1) moveDrag(e.touches[0].clientX, e.touches[0].clientY, e); }, { passive: false });
             wrapper.addEventListener('wheel', (e) => { e.preventDefault(); if (e.deltaY < 0) zoomBracket(0.05); else zoomBracket(-0.05); }, { passive: false });
             
-            // Reset state saat keluar/masuk fullscreen
-            document.addEventListener('fullscreenchange', resetDpadIdle);
-            document.addEventListener('webkitfullscreenchange', resetDpadIdle);
+            // Logika saat berganti mode fullscreen (reset posisi & kursor)
+            function handleFullscreenChange() {
+                if (isBracketFullscreen()) {
+                    resetDpadIdle();
+                    wrapper.style.cursor = 'grab';
+                } else {
+                    resetBracketPan(); // Kembalikan ke tengah otomatis saat keluar fullscreen
+                    wrapper.style.cursor = 'default';
+                }
+            }
+            document.addEventListener('fullscreenchange', handleFullscreenChange);
+            document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
         }
 
         window.onload = function() { loadSavedState(); initDraggableBracket(); };
