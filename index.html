@@ -129,6 +129,9 @@
         .bracket-title-area h2 { color: var(--accent-gold); font-size: 1.2rem; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; }
         .controls-row { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
         
+        /* TOMBOL ZOOM / PERBERSAR - DEFAULT DISEMBUNYIKAN DI LAYAR BIASA */
+        .zoom-control-item { display: none; } 
+
         .vt-btn { background: rgba(56, 189, 248, 0.1); color: var(--accent-cyan); border: 1px solid rgba(56, 189, 248, 0.3); padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; cursor: pointer; }
         .btn-acak-bagan { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #080312; border: none; padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; cursor: pointer; }
 
@@ -183,7 +186,7 @@
         
         .riwayat-item { background: rgba(0,0,0,0.2); padding: 12px 16px; border-left: 3px solid var(--accent-pink); border-radius: 8px; margin-bottom: 10px; font-size: 0.85rem; font-weight: 500; display: flex; justify-content: space-between; }
         
-        /* CSS KHUSUS MODE FULLSCREEN VIDEOTRON & DRAG FITUR */
+        /* CSS KHUSUS MODE FULLSCREEN & HILANG KETIKA TIDAK DIGUNAKAN */
         #bracket-fullscreen-wrapper {
             background-color: var(--bg-dark);
             background-image: linear-gradient(180deg, #09101f 0%, #04070d 100%), var(--bg-utama-url);
@@ -194,13 +197,24 @@
             padding-bottom: 10px;
         }
         
+        /* SAAT FULLSCREEN */
         :fullscreen #bracket-fullscreen-wrapper { padding: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 0; cursor: grab; overflow: hidden;}
         :-webkit-full-screen #bracket-fullscreen-wrapper { padding: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 0; cursor: grab; overflow: hidden;}
+        
+        /* KELAS UNTUK MENYEMBUNYIKAN KURSOR & KONTROL SAAT IDLE DI FULLSCREEN */
+        :fullscreen.idle-mode, :-webkit-full-screen.idle-mode { cursor: none !important; }
+        :fullscreen.idle-mode .bracket-card-header, :-webkit-full-screen.idle-mode .bracket-card-header { opacity: 0; pointer-events: none; transition: opacity 0.5s ease; }
+        :fullscreen.idle-mode .dpad-container, :-webkit-full-screen.idle-mode .dpad-container { opacity: 0; pointer-events: none; transition: opacity 0.5s ease; }
+
         :fullscreen #bracket-fullscreen-wrapper:active { cursor: grabbing; }
         :-webkit-full-screen #bracket-fullscreen-wrapper:active { cursor: grabbing; }
         
-        :fullscreen .bracket-card-header { display: none !important; }
-        :-webkit-full-screen .bracket-card-header { display: none !important; }
+        :fullscreen .bracket-card-header { display: flex !important; opacity: 1; transition: opacity 0.5s ease; }
+        :-webkit-full-screen .bracket-card-header { display: flex !important; opacity: 1; transition: opacity 0.5s ease; }
+        
+        /* MUNCULKAN TOMBOL ZOOM / PERBESAR HANYA SAAT FULLSCREEN */
+        :fullscreen .zoom-control-item, :-webkit-full-screen .zoom-control-item { display: inline-block !important; }
+
         :fullscreen .score-btn { display: none !important; }
         :-webkit-full-screen .score-btn { display: none !important; }
 
@@ -285,9 +299,11 @@
                         <div class="bracket-title-area">
                             <h2 id="header-cat-title">KATEGORI PELAJAR</h2>
                             <div class="controls-row">
-                                <button class="vt-btn" onclick="zoomBracket(-0.1)" title="Perkecil Ukuran">➖</button>
-                                <button class="vt-btn" onclick="zoomBracket(0.1)" title="Perbesar Ukuran">➕</button>
-                                <button class="vt-btn" onclick="resetBracketPan()" title="Kembalikan posisi & ukuran bagan ke tengah">🔄 Reset</button>
+                                <!-- TOMBOL ZOOM HANYA MUNCUL DI FULLSCREEN -->
+                                <button class="vt-btn zoom-control-item" onclick="zoomBracket(-0.1)" title="Perkecil Ukuran">➖</button>
+                                <button class="vt-btn zoom-control-item" onclick="zoomBracket(0.1)" title="Perbesar Ukuran">➕</button>
+                                <button class="vt-btn zoom-control-item" onclick="resetBracketPan()" title="Kembalikan posisi & ukuran bagan ke tengah">🔄 Reset</button>
+                                
                                 <button class="vt-btn" onclick="toggleBracketFullscreen()">📺 Layar Penuh</button>
                                 <button class="btn-acak-bagan admin-nav" onclick="randomizeCurrentBracket()" style="display:none;">🎲 ACAK BAGAN</button>
                             </div>
@@ -496,7 +512,6 @@
                 try { 
                     let parsed = JSON.parse(saved); 
                     appState = { ...appState, ...parsed }; 
-                    // Validasi pengaman jika array teams pelajar/umum terhapus atau kosong
                     if (!appState.pelajar || !appState.pelajar.teams || appState.pelajar.teams.length === 0) {
                         appState.pelajar = { teams: Array.from({length: 16}, (_, i) => `Tim ${i+1}`), matches: createEmptyMatches() };
                     }
@@ -795,7 +810,7 @@
             return document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement;
         }
 
-        // --- DRAG, ZOOM & FULLSCREEN (D-PAD AUTOHIDE) ---
+        // --- DRAG, ZOOM & FULLSCREEN (D-PAD & KURSOR AUTO HIDE) ---
         function toggleBracketFullscreen() {
             const wrap = document.getElementById('bracket-fullscreen-wrapper');
             if (!isBracketFullscreen()) { if (wrap.requestFullscreen) wrap.requestFullscreen(); else if (wrap.webkitRequestFullscreen) wrap.webkitRequestFullscreen(); } 
@@ -825,14 +840,14 @@
 
         let dpadIdleTimer;
         function resetDpadIdle() {
-            const dpad = document.getElementById('dpad-controls');
-            dpad.style.opacity = '1';
+            const wrapper = document.getElementById('bracket-fullscreen-wrapper');
+            wrapper.classList.remove('idle-mode');
             clearTimeout(dpadIdleTimer);
             
             if (isBracketFullscreen()) {
                 dpadIdleTimer = setTimeout(() => {
-                    dpad.style.opacity = '0';
-                }, 2000); 
+                    wrapper.classList.add('idle-mode');
+                }, 2000); // Kursor dan tombol menghilang setelah 2 detik tidak ada aktivitas
             }
         }
 
@@ -860,7 +875,10 @@
                 e.preventDefault(); panX = clientX - startDragX; panY = clientY - startDragY; applyBracketTransform();
             };
 
-            wrapper.addEventListener('mousedown', (e) => startDrag(e.clientX, e.clientY, e.target));
+            wrapper.addEventListener('mousedown', (e) => {
+                startDrag(e.clientX, e.clientY, e.target);
+                resetDpadIdle();
+            });
             window.addEventListener('mouseup', endDrag);
             window.addEventListener('mousemove', (e) => {
                 moveDrag(e.clientX, e.clientY, e);
@@ -871,7 +889,10 @@
                 if (e.touches.length === 1) startDrag(e.touches[0].clientX, e.touches[0].clientY, e.target); 
             }, { passive: false });
             window.addEventListener('touchend', endDrag);
-            window.addEventListener('touchmove', (e) => { if (isDraggingBracket && e.touches.length === 1) moveDrag(e.touches[0].clientX, e.touches[0].clientY, e); }, { passive: false });
+            window.addEventListener('touchmove', (e) => { 
+                resetDpadIdle();
+                if (isDraggingBracket && e.touches.length === 1) moveDrag(e.touches[0].clientX, e.touches[0].clientY, e); 
+            }, { passive: false });
             
             wrapper.addEventListener('wheel', (e) => { 
                 if (!isBracketFullscreen()) return;
@@ -883,6 +904,7 @@
                     resetDpadIdle();
                     wrapper.style.cursor = 'grab';
                 } else {
+                    wrapper.classList.remove('idle-mode');
                     resetBracketPan(); 
                     wrapper.style.cursor = 'default';
                 }
