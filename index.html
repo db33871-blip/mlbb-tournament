@@ -46,14 +46,6 @@
             transition: background-image 0.5s ease;
         }
 
-        /* KETIKA HALAMAN DALAM MODE FULLSCREEN, BACKGROUND HTML BERUBAH TOTAL JADI HIJAU */
-        html:fullscreen, html:-webkit-full-screen {
-            background: #22c55e !important;
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden;
-        }
-
         /* MODAL LOGIN */
         #login-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -132,7 +124,7 @@
         .sub-btn.active { background: var(--accent-cyan); color: #000; border-color: var(--accent-cyan); font-weight: 700;}
 
         /* HEADER DALAM BRACKET */
-        .bracket-card-header { display: flex; justify-content: center; align-items: center; padding: 12px; background: rgba(0, 0, 0, 0.2); border-radius: 12px; margin-bottom: 16px; }
+        .bracket-card-header { display: flex; justify-content: center; align-items: center; padding: 12px; background: rgba(0, 0, 0, 0.2); border-radius: 12px; margin-bottom: 16px; transition: opacity 0.5s ease; }
         .bracket-title-area { text-align: center; }
         .bracket-title-area h2 { color: var(--accent-gold); font-size: 1.2rem; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; }
         .controls-row { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
@@ -197,64 +189,49 @@
         
         .riwayat-item { background: rgba(0,0,0,0.2); padding: 12px 16px; border-left: 3px solid var(--accent-pink); border-radius: 8px; margin-bottom: 10px; font-size: 0.85rem; font-weight: 500; display: flex; justify-content: space-between; }
         
-        /* CSS KHUSUS MODE FULLSCREEN - FULL HIJAU SATU LAYAR */
+        /* CSS KHUSUS MODE FULLSCREEN - FULL HIJAU SATU LAYAR & IDLE HIDE */
+        :fullscreen, :-webkit-full-screen {
+            background: #22c55e !important;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* KELAS IDLE MODE UNTUK MENYEMBUNYIKAN KURSOR & KONTROL DI FULLSCREEN */
+        :fullscreen.idle-mode, :-webkit-full-screen.idle-mode { cursor: none !important; }
+        :fullscreen.idle-mode .bracket-card-header, :-webkit-full-screen.idle-mode .bracket-card-header { opacity: 0; pointer-events: none; }
+        :fullscreen.idle-mode .dpad-container, :-webkit-full-screen.idle-mode .dpad-container { opacity: 0; pointer-events: none; }
+
         #bracket-fullscreen-wrapper {
+            position: relative; 
             background-color: var(--bg-dark);
             background-image: linear-gradient(180deg, #09101f 0%, #04070d 100%), var(--bg-utama-url);
             background-repeat: no-repeat; background-position: center top; background-size: cover;
-            position: relative; 
             overflow: auto; 
             border-radius: 12px;
             padding-bottom: 10px;
         }
-        
-        :fullscreen #bracket-fullscreen-wrapper { 
-            width: 100vw !important;
-            height: 100vh !important;
-            max-width: none !important;
-            max-height: none !important;
-            background: #22c55e !important; /* HIJAU FULL SATU LAYAR */
-            padding: 20px; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: center; 
-            align-items: center; 
-            border-radius: 0; 
-            cursor: grab; 
-            overflow: hidden;
-        }
-        :-webkit-full-screen #bracket-fullscreen-wrapper { 
-            width: 100vw !important;
-            height: 100vh !important;
-            max-width: none !important;
-            max-height: none !important;
-            background: #22c55e !important; /* HIJAU FULL SATU LAYAR */
-            padding: 20px; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: center; 
-            align-items: center; 
-            border-radius: 0; 
-            cursor: grab; 
-            overflow: hidden;
-        }
-        
-        /* KELAS IDLE MODE UNTUK MENYEMBUNYIKAN KURSOR & KONTROL DI FULLSCREEN */
-        :fullscreen.idle-mode, :-webkit-full-screen.idle-mode { cursor: none !important; }
-        :fullscreen.idle-mode .bracket-card-header, :-webkit-full-screen.idle-mode .bracket-card-header { opacity: 0; pointer-events: none; transition: opacity 0.5s ease; }
-        :fullscreen.idle-mode .dpad-container, :-webkit-full-screen.idle-mode .dpad-container { opacity: 0; pointer-events: none; transition: opacity 0.5s ease; }
 
-        :fullscreen #bracket-fullscreen-wrapper:active { cursor: grabbing; }
-        :-webkit-full-screen #bracket-fullscreen-wrapper:active { cursor: grabbing; }
-        
-        :fullscreen .bracket-card-header { display: flex !important; opacity: 1; transition: opacity 0.5s ease; }
-        :-webkit-full-screen .bracket-card-header { display: flex !important; opacity: 1; transition: opacity 0.5s ease; }
+        :fullscreen #bracket-fullscreen-wrapper, :-webkit-full-screen #bracket-fullscreen-wrapper {
+            width: 100% !important;
+            height: 100% !important;
+            background: transparent !important;
+            padding: 20px; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            border-radius: 0; 
+            cursor: grab; 
+            overflow: hidden;
+        }
+
+        :fullscreen #bracket-fullscreen-wrapper:active, :-webkit-full-screen #bracket-fullscreen-wrapper:active { cursor: grabbing; }
         
         /* TAMPILKAN TOMBOL EDIT HANYA DI FULLSCREEN */
         :fullscreen .fullscreen-only-item, :-webkit-full-screen .fullscreen-only-item { display: inline-block !important; }
 
-        :fullscreen .score-btn { display: none !important; }
-        :-webkit-full-screen .score-btn { display: none !important; }
+        :fullscreen .score-btn, :-webkit-full-screen .score-btn { display: none !important; }
 
         /* TOMBOL ARAH (DPAD) - MUNCUL HANYA DI FULLSCREEN DAN SAAT EDIT AKTIF */
         .dpad-container {
@@ -879,7 +856,7 @@
 
         // --- DRAG, ZOOM & FULLSCREEN (D-PAD & KURSOR AUTO HIDE) ---
         function toggleBracketFullscreen() {
-            const wrap = document.documentElement; // MENGGUNAKAN ROOT HTML AGAR FULL SATU LAYAR MONITOR
+            const wrap = document.documentElement; 
             if (!isBracketFullscreen()) { if (wrap.requestFullscreen) wrap.requestFullscreen(); else if (wrap.webkitRequestFullscreen) wrap.webkitRequestFullscreen(); } 
             else { if (document.exitFullscreen) document.exitFullscreen(); else if (document.webkitExitFullscreen) document.webkitExitFullscreen(); }
         }
@@ -907,14 +884,14 @@
 
         let dpadIdleTimer;
         function resetDpadIdle() {
-            const wrapper = document.getElementById('bracket-fullscreen-wrapper');
-            wrapper.classList.remove('idle-mode');
+            const htmlTag = document.documentElement;
+            htmlTag.classList.remove('idle-mode');
             clearTimeout(dpadIdleTimer);
             
             if (isBracketFullscreen()) {
                 dpadIdleTimer = setTimeout(() => {
-                    wrapper.classList.add('idle-mode');
-                }, 2000); 
+                    htmlTag.classList.add('idle-mode');
+                }, 2000); // 2 detik tidak ada gerakan mouse, kursor & header otomatis hilang
             }
         }
 
@@ -967,6 +944,7 @@
             }, { passive: false });
             
             function handleFullscreenChange() {
+                const htmlTag = document.documentElement;
                 if (isBracketFullscreen()) {
                     resetDpadIdle();
                     wrapper.style.cursor = isEditModeActive ? 'grab' : 'default';
@@ -975,7 +953,7 @@
                     wrapper.classList.remove('edit-active');
                     document.getElementById('btn-edit-toggle').classList.remove('active-edit');
                     document.getElementById('edit-panel').style.display = 'none';
-                    wrapper.classList.remove('idle-mode');
+                    htmlTag.classList.remove('idle-mode');
                     resetBracketPan(); 
                     wrapper.style.cursor = 'default';
                 }
