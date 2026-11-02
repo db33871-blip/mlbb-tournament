@@ -24,7 +24,7 @@
             
             --bg-utama-url: none;
             --bg-bracket-url: none;
-            --bg-fullscreen-custom: #22c55e; /* Default hijau layar penuh */
+            --bg-fullscreen-custom: #22c55e; 
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', system-ui, -apple-system, sans-serif; }
@@ -208,7 +208,7 @@
             height: 100vh !important;
             max-width: none !important;
             max-height: none !important;
-            background: var(--bg-fullscreen-custom) !important; /* MENDUKUNG BACKGROUND Kustom (Warna/Gambar) */
+            background: var(--bg-fullscreen-custom) !important; /* MENGGUNAKAN VARIABEL BACKGROUND CUSTOM (WARNA/GAMBAR) */
             background-repeat: no-repeat !important;
             background-position: center !important;
             background-size: cover !important;
@@ -477,12 +477,11 @@
                     <label>Background Kotak Bagan (Bracket)</label>
                     <input type="file" id="upload-bg-bracket" accept="image/*" onchange="prosesUploadGambar(event, 'bracket')" />
                 </div>
-                <!-- FITUR BARU: BACKGROUND KHUSUS LAYAR PENUH -->
                 <div class="form-group">
                     <label>Background / Warna Layar Penuh (Fullscreen)</label>
                     <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px;">
                         <input type="color" id="picker-bg-fullscreen" value="#22c55e" style="width: 50px; height: 40px; border: none; border-radius: 8px; cursor: pointer; background: transparent;" onchange="pilihWarnaFullscreen(this.value)" />
-                        <span style="font-size: 0.8rem; color: var(--text-muted);">Pilih warna solid (cth: hijau untuk greenscreen) atau upload gambar di bawah:</span>
+                        <span style="font-size: 0.8rem; color: var(--text-muted);">Pilih warna solid atau upload gambar di bawah:</span>
                     </div>
                     <input type="file" id="upload-bg-fullscreen" accept="image/*" onchange="prosesUploadGambar(event, 'fullscreen')" />
                 </div>
@@ -553,6 +552,10 @@
                 } catch(e) { console.error(e); }
             }
             terapkanBackground();
+            if(appState.settings.bgFullscreen && !appState.settings.bgFullscreen.startsWith('url')) {
+                const picker = document.getElementById('picker-bg-fullscreen');
+                if(picker) picker.value = appState.settings.bgFullscreen;
+            }
         }
 
         function saveState() {
@@ -927,7 +930,7 @@
             if (isBracketFullscreen()) {
                 dpadIdleTimer = setTimeout(() => {
                     wrapper.classList.add('idle-mode');
-                }, 2000); // 2 detik tidak ada aktivitas, kursor & header otomatis hilang
+                }, 2000); 
             }
         }
 
