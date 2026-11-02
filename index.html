@@ -132,7 +132,7 @@
         .vt-btn { background: rgba(56, 189, 248, 0.1); color: var(--accent-cyan); border: 1px solid rgba(56, 189, 248, 0.3); padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; cursor: pointer; }
         .btn-acak-bagan { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #080312; border: none; padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; cursor: pointer; }
 
-        /* BRACKET DESIGN - Kembali ke asal tanpa warna hijau */
+        /* BRACKET DESIGN */
         .bracket-wrapper { 
             position: relative; 
             background-color: transparent; 
@@ -189,12 +189,11 @@
             background-image: linear-gradient(180deg, #09101f 0%, #04070d 100%), var(--bg-utama-url);
             background-repeat: no-repeat; background-position: center top; background-size: cover;
             position: relative; 
-            overflow: auto; /* Memungkinkan scroll normal di layar biasa */
+            overflow: auto; 
             border-radius: 12px;
             padding-bottom: 10px;
         }
         
-        /* SAAT FULLSCREEN, DIKUNCI DAN AKTIFKAN DRAG & ZOOM */
         :fullscreen #bracket-fullscreen-wrapper { padding: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 0; cursor: grab; overflow: hidden;}
         :-webkit-full-screen #bracket-fullscreen-wrapper { padding: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 0; cursor: grab; overflow: hidden;}
         :fullscreen #bracket-fullscreen-wrapper:active { cursor: grabbing; }
@@ -494,7 +493,17 @@
         function loadSavedState() {
             const saved = localStorage.getItem('infly_mlbb_state_v2');
             if (saved) {
-                try { let parsed = JSON.parse(saved); appState = { ...appState, ...parsed }; } catch(e) { console.error(e); }
+                try { 
+                    let parsed = JSON.parse(saved); 
+                    appState = { ...appState, ...parsed }; 
+                    // Validasi pengaman jika array teams pelajar/umum terhapus atau kosong
+                    if (!appState.pelajar || !appState.pelajar.teams || appState.pelajar.teams.length === 0) {
+                        appState.pelajar = { teams: Array.from({length: 16}, (_, i) => `Tim ${i+1}`), matches: createEmptyMatches() };
+                    }
+                    if (!appState.umum || !appState.umum.teams || appState.umum.teams.length === 0) {
+                        appState.umum = { teams: Array.from({length: 16}, (_, i) => `Tim ${i+1}`), matches: createEmptyMatches() };
+                    }
+                } catch(e) { console.error(e); }
             }
             terapkanBackground();
         }
@@ -675,7 +684,9 @@
         // --- BRACKET ENGINE ---
         function renderBracket() {
             const container = document.getElementById('bracket-container');
-            const data = appState[currentCategory]; const teams = data.teams; const matches = data.matches;
+            const data = appState[currentCategory]; 
+            if (!data || !data.teams) return;
+            const teams = data.teams; const matches = data.matches;
             const qfTeams = [
                 getWinner(teams[0], teams[1], matches.r16[0]), getWinner(teams[2], teams[3], matches.r16[1]),
                 getWinner(teams[4], teams[5], matches.r16[2]), getWinner(teams[6], teams[7], matches.r16[3]),
@@ -742,7 +753,9 @@
         }
 
         function renderPodium() {
-            const data = appState[currentCategory]; const f = data.matches.f, t3 = data.matches.t3;
+            const data = appState[currentCategory]; 
+            if (!data) return;
+            const f = data.matches.f, t3 = data.matches.t3;
             let juara1 = "-", juara2 = "-", juara3 = "-";
             if(f.w !== null) { 
                 const qf = (i1, i2, mr) => getWinner(data.teams[i1], data.teams[i2], data.matches.r16[mr]);
@@ -805,7 +818,7 @@
 
         function applyBracketTransform() { document.getElementById('bracket-container').style.transform = `translate(${panX}px, ${panY}px) scale(${currentScale})`; }
         function zoomBracket(delta) { 
-            if (!isBracketFullscreen()) return; // Zoom hanya aktif saat fullscreen sesuai permintaan
+            if (!isBracketFullscreen()) return; 
             currentScale += delta; if (currentScale < 0.3) currentScale = 0.3; if (currentScale > 3.0) currentScale = 3.0; applyBracketTransform(); 
         }
         function resetBracketPan() { panX = 0; panY = 0; currentScale = 1; applyBracketTransform(); }
@@ -860,7 +873,6 @@
             window.addEventListener('touchend', endDrag);
             window.addEventListener('touchmove', (e) => { if (isDraggingBracket && e.touches.length === 1) moveDrag(e.touches[0].clientX, e.touches[0].clientY, e); }, { passive: false });
             
-            // Scroll wheel zoom hanya saat fullscreen
             wrapper.addEventListener('wheel', (e) => { 
                 if (!isBracketFullscreen()) return;
                 e.preventDefault(); if (e.deltaY < 0) zoomBracket(0.05); else zoomBracket(-0.05); 
@@ -879,7 +891,7 @@
             document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
         }
 
-        window.onload = function() { loadSavedState(); initDraggableBracket(); };
+        window.onload = function() { loadSavedState(); renderBracket(); renderPodium(); initDraggableBracket(); };
     </script>
 </body>
 </html>
