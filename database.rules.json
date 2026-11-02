@@ -8,8 +8,30 @@
 
     "tournament": {
       ".write": "auth != null && root.child('admins/' + auth.uid).exists()",
-      "pelajar": { ".read": true },
-      "umum": { ".read": true },
+      "pelajar": {
+        ".read": true,
+        "locked": { ".validate": "newData.isBoolean()" },
+        "matches": {
+          "$id": {
+            ".validate": "$id.matches(/^(r16_[0-7]|qf_[0-3]|sf_[01]|final_0|third_0)$/)"
+          }
+        }
+      },
+      "umum": {
+        ".read": true,
+        "locked": { ".validate": "newData.isBoolean()" },
+        "matches": {
+          "$id": {
+            ".validate": "$id.matches(/^(r16_[0-7]|qf_[0-3]|sf_[01]|final_0|third_0)$/)"
+          }
+        }
+      },
+      "info": {
+        ".read": true,
+        "$field": {
+          ".validate": "($field === 'tanggal' || $field === 'lokasi' || $field === 'hadiah' || $field === 'kontak' || $field === 'aturan') && newData.isString() && newData.val().length <= 8000"
+        }
+      },
       "settings": {
         ".read": true,
         "$bg": {
@@ -43,8 +65,23 @@
             ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 16 && (newData.parent().parent().parent().parent().child('slot_claims/' + $kat + '/' + newData.val()).val() === $key || (auth != null && root.child('admins/' + auth.uid).exists()))"
           },
           "status": {
-            ".validate": "newData.val() === 'pending' || (newData.val() === 'approved' && auth != null && root.child('admins/' + auth.uid).exists())"
+            ".validate": "newData.val() === 'pending' || ((newData.val() === 'approved' || newData.val() === 'rejected') && auth != null && root.child('admins/' + auth.uid).exists())"
           },
+          "alasanTolak": {
+            ".validate": "newData.isString() && newData.val().length <= 300 && auth != null && root.child('admins/' + auth.uid).exists()"
+          },
+          "sekolah": { ".validate": "$kat === 'pelajar' && newData.isString() && newData.val().length >= 2 && newData.val().length <= 80" },
+          "jenjang": { ".validate": "$kat === 'pelajar' && (newData.val() === 'SMP/MTs' || newData.val() === 'SMA/MA' || newData.val() === 'SMK')" },
+          "roster": {
+            "$i": {
+              ".validate": "$i.matches(/^[0-5]$/) && newData.hasChildren(['nick', 'id', 'server'])",
+              "nick":   { ".validate": "newData.isString() && newData.val().length <= 30" },
+              "id":     { ".validate": "newData.isString() && newData.val().matches(/^[0-9]{5,12}$/)" },
+              "server": { ".validate": "newData.isString() && newData.val().matches(/^[0-9]{0,6}$/)" },
+              "$other": { ".validate": false }
+            }
+          },
+          "createdAt": { ".validate": "newData.isNumber() && newData.val() <= now" },
           "wa": {
             ".validate": "auth != null && root.child('admins/' + auth.uid).exists()"
           },
@@ -72,6 +109,14 @@
           ".write": "(!data.exists() && newData.exists()) || (auth != null && root.child('admins/' + auth.uid).exists())",
           ".validate": "$slot.matches(/^([1-9]|1[0-6])$/) && newData.isString() && newData.parent().parent().parent().child('registered_teams/' + $kat + '/' + newData.val()).exists()"
         }
+      }
+    },
+
+    "player_ids": {
+      ".read": true,
+      "$id": {
+        ".write": "(!data.exists() && newData.exists()) || (auth != null && root.child('admins/' + auth.uid).exists())",
+        ".validate": "$id.matches(/^[0-9]{5,12}$/) && newData.isString() && newData.val().matches(/^(pelajar|umum)\\/[-_A-Za-z0-9]+$/) && newData.parent().parent().child('registered_teams/' + newData.val()).exists()"
       }
     }
   }

@@ -1,0 +1,5 @@
+16:47:42.246 [NamespaceSystem-akka.actor.default-dispatcher-5] INFO akka.event.slf4j.Slf4jLogger - Slf4jLogger started
+16:47:42.340 [main] INFO com.firebase.server.forge.App$ - Listening at 127.0.0.1:9400
+16:47:45.799 [NamespaceSystem-akka.actor.default-dispatcher-5] INFO com.firebase.core.namespace.NamespaceActor - tournamen-mlbb-infly-carnival-default-rtdb successfully activated FBKV (SurveyIdle(0)) wait: 72ms, init: 0ms
+16:47:45.935 [NamespaceSystem-blocking-namespace-operation-dispatcher-7] INFO com.firebase.core.namespace.StateManager - Namespace tournamen-mlbb-infly-carnival-default-rtdb status Active to Active
+17:06:51.617 [NamespaceSystem-blocking-namespace-operation-dispatcher-35] INFO com.firebase.core.namespace.StateManager - Namespace tournamen-mlbb-infly-carnival-default-rtdb status Active to Active

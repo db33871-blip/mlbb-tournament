@@ -1,531 +1,1752 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>INFLY CARNIVAL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#070d1b;--panel:#111d32;--blue:#00d9ff;--gold:#ffc857;--green:#36e5a0}
+:root{
+ --night:#0d1666;
+ --night-2:#141f74;
+ --panel:#1a278a;
+ --panel-2:#24349f;
+ --line:#3343b8;
+ --ink:#ffffff;
+ --ink-dim:#c3c9ef;
+ --ink-faint:#8d96d8;
+ --bulb:#ffd45e;
+ --pelajar:#25cbe4;
+ --umum:#ff5fa2;
+ --win:#4ff0b0;
+ --pink:#ec2b7a;--pink-hi:#f83e8f;--pink-lo:#c81e63;--violet:#7c3ad9;
+ --gold:#f7b500;--gold-hi:#ffd45e;--gold-lo:#c98a00;
+ --danger:#ff5a5a;
+ --display:'Poppins',system-ui,-apple-system,'Segoe UI',sans-serif;
+ --body:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+ --r-sm:8px;--r-md:14px;--r-lg:22px;
+}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:#fff;font-family:Arial,sans-serif}
-header{text-align:center;padding:25px;background:linear-gradient(120deg,#07101e,#12345a);border-bottom:2px solid var(--blue)}
-header h1{margin:0;color:var(--blue);letter-spacing:4px;font-size:clamp(25px,5vw,45px)}
-header p{color:var(--gold);margin-bottom:0;letter-spacing:2px}
-nav{display:flex;gap:7px;justify-content:center;flex-wrap:wrap;padding:12px;background:#0d1729;position:sticky;top:0;z-index:5}
-button{background:#1b2c46;color:white;border:1px solid #345071;padding:10px 14px;border-radius:7px;cursor:pointer;font-weight:bold}
-button:hover{border-color:var(--blue);color:var(--blue)}
-.primary{background:#006d89;border-color:var(--blue)}
-.danger{background:#7c2035;border-color:#ff526f}
-.success{background:#155b42;border-color:var(--green)}
-main{max-width:1400px;margin:auto;padding:18px}
-.page{display:none}.page.active{display:block}
-.card{background:var(--panel);border:1px solid #293e5c;border-radius:10px;padding:18px;margin-bottom:15px}
-h2,h3{color:var(--blue)}
-input,select{width:100%;padding:12px;margin:7px 0 14px;background:#081222;color:white;border:1px solid #344963;border-radius:6px}
-label{color:#aebbd0}
+html{scroll-behavior:smooth}
+body{
+ margin:0;min-height:100vh;
+ background:radial-gradient(60% 50% at 8% 0%,rgba(124,58,217,.3),transparent 55%),radial-gradient(60% 50% at 100% 100%,rgba(236,43,122,.2),transparent 55%),linear-gradient(180deg,var(--night-2) 0%,var(--night) 100%);
+ background-attachment:fixed;
+ color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55;
+ -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--bulb);color:var(--night)}
+h1,h2,h3{font-family:var(--display);font-weight:700;letter-spacing:-.01em;line-height:1.25;margin:0}
+h2{font-size:clamp(24px,3vw,30px)}
+h3{font-size:18px}
+p{margin:0}
+a{color:var(--bulb)}
 .hidden{display:none!important}
-.muted{color:#aebbd0}
-.bracket-toolbar{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:15px}
-.bracket-wrap{overflow-x:auto;padding:15px;background:#0b1425;border-radius:12px}
+.muted{color:var(--ink-dim)}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+:focus-visible{outline:3px solid var(--bulb);outline-offset:2px}
+
+.meter{height:6px;margin-top:9px;background:rgba(255,255,255,.08);border-radius:6px;overflow:hidden}
+.meter i{display:block;height:100%;width:0;border-radius:6px;transition:width .6s ease}
+.cat-Pelajar .meter i{background:var(--pelajar)}
+.cat-Umum .meter i{background:var(--umum)}
+
+/* ---------- HEADER: minimalis, satu warna navy yang sama dengan latar logo ---------- */
+.site-head{
+ position:sticky;top:0;z-index:20;
+ background:#0c1667;border-bottom:1px solid rgba(255,255,255,.08);
+}
+.head-inner{max-width:1240px;margin:0 auto;padding:0 18px;display:flex;align-items:center;gap:28px;min-height:68px}
+.brand{display:flex;align-items:center;gap:10px;flex-shrink:0;text-decoration:none}
+/* logo resmi diambil dari og-image inflycarnival.com, dipotong ke area logonya (latar #0c1667) */
+.brand-logo{
+ --s:52px;flex-shrink:0;width:var(--s);height:var(--s);
+ background:#0c1667 url("https://inflycarnival.com/og-image.png") no-repeat;
+ background-size:calc(var(--s)*3.53) auto;background-position:calc(var(--s)*-1.271) calc(var(--s)*-.421);
+}
+.brand-name{font:600 16px/1.25 var(--display);color:#fff;letter-spacing:0}
+.brand small{display:block;margin-top:1px;font-size:12px;font-weight:500;color:rgba(255,255,255,.55)}
+
+.tabs{flex:1;min-width:0;align-self:stretch;display:flex}
+.tabs-inner{flex:1;display:flex;gap:4px;align-items:stretch;justify-content:flex-end;overflow-x:auto;scrollbar-width:none}
+.tabs-inner::-webkit-scrollbar{display:none}
+.tab{
+ position:relative;flex-shrink:0;display:inline-flex;align-items:center;gap:7px;
+ padding:0 12px;border:0;background:transparent;cursor:pointer;
+ color:rgba(255,255,255,.62);font:500 14px var(--body);
+ transition:color .2s;
+}
+.tab:hover{color:#fff}
+/* tab aktif: teks putih dengan garis tipis emas di bawah */
+.tab::after{
+ content:"";position:absolute;left:12px;right:12px;bottom:-1px;height:2px;border-radius:2px;
+ background:var(--gold-hi);transform:scaleX(0);transition:transform .2s ease;
+}
+.tab[aria-current="page"]{color:#fff}
+.tab[aria-current="page"]::after{transform:scaleX(1)}
+.tab-sep{flex-shrink:0;align-self:center;width:1px;height:18px;margin:0 8px;background:rgba(255,255,255,.14)}
+.tab svg{width:15px;height:15px}
+.badge{min-width:22px;padding:1px 7px;border-radius:999px;background:var(--umum);color:var(--night);font-size:12px;font-weight:800;line-height:18px;text-align:center}
+.badge:empty{display:none}
+
+/* ---------- LAYOUT ---------- */
+main{max-width:1240px;margin:0 auto;padding:30px 18px 40px}
+.page{display:none}
+.page.active{display:block;animation:pageIn .35s ease}
+@keyframes pageIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.page-head{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+.page-head p{color:var(--ink-dim);margin-top:6px;max-width:60ch}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-md);padding:24px}
+.panel+.panel{margin-top:18px}
+.panel h3{margin-bottom:6px}
+.panel>.muted{font-size:14px;margin-bottom:16px}
+
+/* ---------- FORM ---------- */
+label,.label{display:block;font-size:14px;font-weight:600;color:var(--ink-dim);margin-bottom:6px}
+input,select{
+ width:100%;padding:12px 14px;margin:0;
+ background:var(--night);color:var(--ink);font:500 15px var(--body);
+ border:1px solid var(--line);border-radius:var(--r-sm);transition:border-color .2s,box-shadow .2s;
+}
+input::placeholder{color:var(--ink-faint)}
+input:focus,select:focus{outline:none;border-color:var(--bulb);box-shadow:0 0 0 3px rgba(255,212,94,.18)}
+input[type=color]{padding:4px;height:46px;cursor:pointer}
+.field{margin-bottom:18px}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+.btn{
+ display:inline-flex;align-items:center;justify-content:center;gap:8px;
+ padding:11px 18px;border-radius:var(--r-sm);border:1px solid var(--line);
+ background:var(--panel-2);color:var(--ink);font:700 15px var(--body);cursor:pointer;
+ transition:background .2s,border-color .2s,transform .1s;
+}
+.btn:hover{border-color:var(--ink-faint)}
+.btn:active{transform:translateY(1px)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn-primary{background:linear-gradient(135deg,var(--pink-hi),var(--pink-lo));border-color:var(--pink);color:#fff;box-shadow:0 6px 18px rgba(236,43,122,.3)}
+.btn-primary:hover{border-color:var(--pink-hi);filter:brightness(1.08)}
+.btn-win{background:rgba(79,240,176,.12);border-color:rgba(79,240,176,.5);color:var(--win)}
+.btn-danger{background:rgba(255,90,90,.1);border-color:rgba(255,90,90,.45);color:#ff8a8a}
+.btn-ghost{background:transparent}
+.btn-lg{padding:15px 24px;font-size:16px}
+.btn-block{width:100%}
+.btn-sm{padding:7px 12px;font-size:13px}
+
+/* pilihan kategori */
+.cat-pick{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cat-pick>div{position:relative}
+.cat-pick input{position:absolute;inset:0;width:100%;height:100%;opacity:0;pointer-events:none}
+.cat-pick label{
+ margin:0;cursor:pointer;padding:14px 16px;border-radius:var(--r-sm);
+ border:1px solid var(--line);background:var(--night);color:var(--ink);transition:border-color .2s,background .2s;
+}
+.cat-pick label b{display:block;font-family:var(--display);font-size:17px;font-weight:700;line-height:1.3}
+.cat-pick label span{font-size:13px;color:var(--ink-faint);font-weight:500}
+.cat-pick input:checked+label.pelajar{border-color:var(--pelajar);background:rgba(37,203,228,.08)}
+.cat-pick input:checked+label.umum{border-color:var(--umum);background:rgba(255,95,162,.08)}
+.cat-pick input:focus-visible+label{outline:3px solid var(--bulb);outline-offset:2px}
+
+.players{display:grid;gap:10px}
+.player-field{display:grid;grid-template-columns:34px 1fr;align-items:center;gap:10px}
+.player-field span{
+ display:grid;place-items:center;width:34px;height:34px;border-radius:50%;
+ background:var(--panel-2);font:700 14px var(--display);color:var(--ink-dim);
+}
+
+.register-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:22px;align-items:start}
+.steps{list-style:none;padding:0;margin:18px 0 0;display:grid;gap:16px;counter-reset:step}
+.steps li{display:grid;grid-template-columns:38px 1fr;gap:12px;counter-increment:step}
+.steps li::before{
+ content:counter(step);display:grid;place-items:center;width:38px;height:38px;border-radius:50%;
+ border:2px solid var(--bulb);color:var(--bulb);font:700 16px var(--display);
+}
+.steps b{display:block}
+.steps p{font-size:14px;color:var(--ink-dim)}
+.rules{margin-top:22px;padding-top:18px;border-top:1px solid var(--line);font-size:14px;color:var(--ink-dim)}
+.rules ul{margin:8px 0 0;padding-left:18px}
+
+/* ---------- DAFTAR TIM ---------- */
+.chip{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:700;border:1px solid}
+.chip-Pelajar{color:var(--pelajar);border-color:rgba(37,203,228,.4);background:rgba(37,203,228,.08)}
+.chip-Umum{color:var(--umum);border-color:rgba(255,95,162,.4);background:rgba(255,95,162,.08)}
+.chip-wait{color:var(--bulb);border-color:rgba(255,212,94,.4);background:rgba(255,212,94,.08)}
+.chip-ok{color:var(--win);border-color:rgba(79,240,176,.4);background:rgba(79,240,176,.08)}
+
+.team-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.team-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-md);padding:16px;display:grid;gap:12px}
+.team-card-head{display:grid;grid-template-columns:46px 1fr;gap:12px;align-items:center}
+.avatar{
+ width:46px;height:46px;border-radius:12px;display:grid;place-items:center;
+ font:700 16px var(--display);color:var(--night);
+}
+.avatar.Pelajar{background:var(--pelajar)}
+.avatar.Umum{background:var(--umum)}
+.team-card h4{margin:0 0 4px;font-size:17px;font-weight:800;overflow-wrap:anywhere}
+.roster{display:flex;flex-wrap:wrap;gap:6px}
+.roster span{font-size:13px;padding:3px 9px;border-radius:6px;background:var(--night);color:var(--ink-dim)}
+.meta{font-size:13px;color:var(--ink-dim)}
+
+.group{margin-bottom:30px}
+.group-head{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.group-head h3{font-size:20px}
+.group-head .meter{flex:1;max-width:220px;margin:0}
+.group-head small{color:var(--ink-faint);font-weight:600}
+
+.empty{
+ text-align:center;padding:48px 20px;border:1px dashed var(--line);border-radius:var(--r-md);color:var(--ink-dim);
+}
+.empty b{display:block;color:var(--ink);font-size:18px;margin-bottom:6px}
+.empty .btn{margin-top:16px}
+
+/* ---------- SEGMENTED ---------- */
+.seg{display:inline-flex;padding:4px;gap:4px;background:var(--night);border:1px solid var(--line);border-radius:999px}
+.seg button{border:0;background:transparent;color:var(--ink-dim);padding:8px 18px;border-radius:999px;font:700 14px var(--body);cursor:pointer}
+.seg button[aria-pressed="true"].Pelajar{background:var(--pelajar);color:var(--night)}
+.seg button[aria-pressed="true"].Umum{background:var(--umum);color:var(--night)}
+
+/* ---------- BRACKET ---------- */
+.bracket-toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.scroll-hint{display:none;font-size:13px;color:var(--ink-faint);margin:0 0 10px}
+.bracket-wrap{
+ overflow-x:auto;padding:26px 18px;border-radius:var(--r-lg);border:1px solid var(--line);
+ background-color:var(--night-2);
+}
+.bracket-logo{display:flex;justify-content:center;margin-bottom:10px}
+/* logo header dipakai ulang di bagan, di atas pelat navy agar terbaca di latar apa pun */
+.bracket-logo .brand{padding:10px 24px 10px 14px;border-radius:14px;background:#0c1667}
+.bracket-logo .brand-logo{--s:84px}
+.bracket-logo .brand-name{font-size:22px}
+.bracket-cat{display:block;width:max-content;margin:0 auto 20px}
 .bracket-image-layout{
- display:grid;
- grid-template-columns:minmax(0,1fr) 250px minmax(0,1fr);
- gap:16px;
- align-items:center;
- min-width:1100px;
- padding:20px 10px;
+ display:grid;grid-template-columns:minmax(0,1fr) 260px minmax(0,1fr);
+ gap:18px;align-items:center;min-width:1120px;padding:6px 4px;
 }
-.bracket-side{
- display:grid;
- grid-template-columns:1fr 1fr 1fr;
- gap:10px;
- align-items:center;
+.bracket-side{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;align-items:stretch}
+.round-column{display:flex;flex-direction:column;gap:14px;min-width:0}
+.round-matches{flex:1;display:flex;flex-direction:column;justify-content:space-around;gap:22px}
+.round-title{
+ align-self:center;margin-bottom:4px;padding:4px 12px;border-radius:999px;
+ background:rgba(13,22,102,.85);color:var(--bulb);font:700 12px var(--display);letter-spacing:0;
 }
-.round-column{display:flex;flex-direction:column;justify-content:space-around;gap:28px;min-width:0}
-.round-title{text-align:center;color:var(--gold);font-size:12px;font-weight:bold;margin:8px 0 15px}
-.match{background:#14233b;border:1px solid #345071;border-radius:7px;overflow:hidden;min-width:0}
-.match-title{font-size:10px;color:#8da4c3;padding:5px 7px;background:#0d192c}
-.team{display:flex;justify-content:space-between;gap:5px;padding:8px;border-top:1px solid #2b3c57;min-height:34px;font-size:12px}
-.team.winner{color:var(--green);font-weight:bold}
+.match{background:rgba(22,33,128,.94);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0;box-shadow:0 6px 18px rgba(0,0,0,.3)}
+.match-title{font-size:11px;font-weight:600;color:var(--ink-faint);padding:5px 10px;background:rgba(0,0,0,.25)}
+.team{
+ display:flex;justify-content:space-between;align-items:center;gap:6px;
+ padding:7px 10px;min-height:34px;font-size:13px;font-weight:600;border-top:1px solid rgba(255,255,255,.06);
+ border-left:3px solid transparent;
+}
 .team span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
-.score{color:var(--gold);flex-shrink:0}
-.bracket-center{display:flex;flex-direction:column;justify-content:center;gap:30px}
-.finalbox,.thirdbox{background:#17243a;border:2px solid var(--gold);border-radius:10px;padding:12px}
-.thirdbox{border-color:#aebbd0}
-.finalbox h3,.thirdbox h3{text-align:center;margin:5px 0 12px}
-.thirdbox h3{color:#cbd5e1}
-.champion{text-align:center;padding:10px 3px;color:var(--gold);font-weight:bold;font-size:13px}
+.team.tbd span:first-child{color:var(--ink-faint);font-style:italic;font-weight:500}
+.team.winner{border-left-color:var(--win);background:rgba(79,240,176,.1);color:var(--win)}
+.team.loser{opacity:.55}
+.score{flex-shrink:0;min-width:24px;text-align:center;font:700 15px var(--display);color:var(--bulb)}
+.bracket-center{display:flex;flex-direction:column;justify-content:center;gap:26px}
+.finalbox,.thirdbox{border-radius:var(--r-md);padding:14px;background:rgba(13,22,102,.88)}
+.finalbox{border:2px solid var(--bulb);box-shadow:0 0 36px rgba(255,212,94,.25)}
+.thirdbox{border:1px solid var(--line)}
+.finalbox h3,.thirdbox h3{text-align:center;margin:2px 0 12px;font-size:18px}
+.finalbox h3{color:var(--bulb)}
+.thirdbox h3{color:var(--ink-dim);font-size:15px}
+.champ{text-align:center;margin-top:12px;font-size:13px;color:var(--ink-dim)}
+.champ b{display:block;font:800 20px var(--display);color:var(--bulb);overflow-wrap:anywhere}
 
-/* HILANGKAN TULISAN JUARA 1, 2, 3, 4 DI BAGAN */
-.bracket-center .champion{
- display:none!important;
+/* ---------- SKOR ---------- */
+.round-block{margin-bottom:26px}
+.round-block h3{margin-bottom:12px;font-size:18px}
+.score-list{display:grid;gap:10px}
+.score-row{
+ display:grid;grid-template-columns:150px minmax(0,1fr) 64px 20px 64px minmax(0,1fr) 160px;
+ gap:12px;align-items:center;padding:12px 14px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r-sm);
 }
+.score-row.done{border-color:rgba(79,240,176,.35)}
+.score-row .m-label{font-size:13px;font-weight:700;color:var(--ink-dim)}
+.score-row .m-label .chip{margin-top:4px}
+.score-row .t{font-weight:700;overflow-wrap:anywhere}
+.score-row .t.right{text-align:right}
+.score-row .t.tbd{color:var(--ink-faint);font-style:italic;font-weight:500}
+.score-row .t.win{color:var(--win)}
+.score-row input{text-align:center;font:700 17px var(--display);padding:8px 4px}
+.score-row .vs{text-align:center;color:var(--ink-faint);font-weight:700;font-size:13px}
 
-.admin-match{padding:12px;background:#101e34;margin:10px 0;border-radius:8px}
-.score-row{display:grid;grid-template-columns:minmax(0,1fr) 60px 60px minmax(0,1fr);gap:7px;align-items:center;margin:8px 0;padding:10px;background:#101e34;border-radius:7px}
-.score-row input{margin:0;text-align:center;min-width:0}
-.score-row span{font-size:12px;overflow-wrap:anywhere}
-#fullscreen{display:none;position:fixed;inset:0;z-index:50;background:var(--bg);overflow:auto;padding:15px}
+/* ---------- PANITIA ---------- */
+.login-wrap{max-width:420px;margin:10px auto}
+.admin-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:22px}
+.admin-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:18px}
+.admin-grid .panel{margin:0}
+.approval{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:center;padding:16px;background:var(--night-2);border:1px solid var(--line);border-radius:var(--r-sm)}
+.approval+.approval{margin-top:10px}
+.approval h4{margin:0 0 4px;font-size:17px}
+.approval .actions{display:flex;gap:8px}
+.user-list{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:6px}
+.user-list li{display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--night);border-radius:6px;font-weight:600;font-size:14px}
+.user-list li::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--win)}
+.bg-preview{height:56px;border-radius:var(--r-sm);border:1px solid var(--line);margin-bottom:16px;background-size:cover;background-position:center}
+
+/* ---------- FULLSCREEN VIDEOTRON ---------- */
+#fullscreen{display:none;position:fixed;inset:0;z-index:50;background:var(--night);overflow:hidden}
 #fullscreen.show{display:block}
-#fullscreen .bracket-wrap{min-height:90vh}
-/* Area luar/pembungkus bagan menjadi hijau saat fullscreen */
 #fullscreen .bracket-wrap{
-  background:#01ff06 !important;
-  background-image:none !important;
+ height:100vh;padding:0;border:0;border-radius:0;overflow:hidden;
+ display:flex;align-items:center;justify-content:center;
+}
+#fullscreen .bracket-stage{flex-shrink:0;transform-origin:center center}
+/* Area luar/pembungkus bagan menjadi hijau saat fullscreen (chroma key) */
+#fullscreen .bracket-wrap{background:#01ff06!important;background-image:none!important}
+#fullscreen .bracket-cat{display:none}
+.fs-tools{position:fixed;right:16px;top:16px;z-index:55;display:flex;gap:8px}
+#fullscreen:fullscreen .fs-tools{display:none!important}
+
+/* ---------- TOAST ---------- */
+#toasts{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:100;display:grid;gap:8px;width:min(440px,calc(100% - 32px))}
+.toast{
+ padding:13px 16px;border-radius:var(--r-sm);background:#24349f;border:1px solid var(--line);border-left:4px solid var(--win);
+ box-shadow:0 12px 30px rgba(0,0,0,.45);font-size:15px;font-weight:600;animation:toastIn .25s ease;
+}
+.toast.error{border-left-color:var(--danger)}
+@keyframes toastIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+footer{text-align:center;padding:28px 18px 40px;color:var(--ink-faint);font-size:14px}
+
+/* ---------- RESPONSIF ---------- */
+@media(max-width:1020px){
+ .register-grid{grid-template-columns:1fr}
+ .admin-grid{grid-template-columns:1fr 1fr}
+ .score-row{grid-template-columns:minmax(0,1fr) 56px 16px 56px minmax(0,1fr);row-gap:10px}
+ .score-row .m-label{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center}
+ .score-row .m-label .chip{margin:0}
+ .score-row .btn{grid-column:1/-1}
+}
+@media(max-width:720px){
+ main{padding:22px 16px 30px}
+ .head-inner{flex-wrap:wrap;gap:0;padding:0;min-height:0}
+ .brand{padding:12px 16px 4px}
+ .brand-logo{--s:44px}
+ .brand-name{font-size:16px}
+ .tabs{flex-basis:100%}
+ .tabs-inner{justify-content:flex-start;padding:0 6px}
+ .tab{padding:14px 12px;font-size:14px}
+ .panel{padding:18px}
+ .field-row,.admin-grid{grid-template-columns:1fr}
+ .approval{grid-template-columns:1fr}
+ .scroll-hint{display:block}
+ .score-row .t{font-size:14px}
+}
+@media(prefers-reduced-motion:reduce){
+ *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
 }
 
-.closefs{position:fixed;right:12px;top:12px;z-index:55}
-#fullscreen:fullscreen .closefs{display:none!important}
-footer{text-align:center;padding:25px;color:#7788a5}
-@media(max-width:600px){main{padding:10px}.score-row{grid-template-columns:minmax(0,1fr) 48px 48px minmax(0,1fr)}.score-row span{font-size:10px}}
+/* ---------- TAMBAHAN: roster, status, info, panel panitia ---------- */
+textarea{
+ width:100%;padding:12px 14px;margin:0;resize:vertical;min-height:90px;
+ background:var(--night);color:var(--ink);font:500 15px/1.5 var(--body);
+ border:1px solid var(--line);border-radius:var(--r-sm);
+}
+textarea:focus{outline:none;border-color:var(--bulb);box-shadow:0 0 0 3px rgba(255,212,94,.18)}
+.hint{font-size:13px;color:var(--ink-faint);margin-top:8px}
+.notice{padding:12px 14px;margin-bottom:18px;border-radius:var(--r-sm);border:1px solid rgba(255,212,94,.4);background:rgba(255,212,94,.08);font-size:14px}
+.check{display:flex;gap:10px;align-items:flex-start;margin:4px 0 20px;font-size:14px;font-weight:500;color:var(--ink-dim);cursor:pointer}
+.check input{width:18px;height:18px;flex-shrink:0;margin-top:2px;accent-color:var(--pink)}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap}
+.span-2{grid-column:span 2}
+.loading-line{color:var(--ink-faint);padding:20px 0}
+.chip-no{color:#ff8a8a;border-color:rgba(255,90,90,.45);background:rgba(255,90,90,.1)}
+.warn{margin-top:8px;font-size:13px;color:#ffb0b0}
+
+.roster-table{display:grid;gap:8px}
+.roster-row{display:grid;grid-template-columns:110px minmax(0,1.4fr) minmax(0,1fr) 90px;gap:8px;align-items:center}
+.roster-head span{font-size:12px;font-weight:600;color:var(--ink-faint)}
+.roster-row .role{font-size:14px;font-weight:600;color:var(--ink-dim)}
+.roster-row .role small{display:block;font-weight:500;color:var(--ink-faint)}
+.roster i{font-style:normal;color:var(--ink-faint)}
+
+.status-box{margin-bottom:26px}
+.inline-input{display:flex;gap:10px}
+.inline-input input{flex:1}
+.status-result:not(:empty){margin-top:14px}
+.status-card{padding:14px;border-radius:var(--r-sm);background:var(--night-2);border:1px solid var(--line)}
+.status-card+.status-card{margin-top:8px}
+.status-card p{margin-top:6px;font-size:14px;color:var(--ink-dim)}
+.list-title{margin-bottom:14px}
+
+.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:18px}
+.info-item{padding:16px;border-radius:var(--r-md);background:var(--panel);border:1px solid var(--line)}
+.info-item span{display:block;font-size:13px;color:var(--ink-faint);margin-bottom:4px}
+.info-item b{font-size:16px;overflow-wrap:anywhere}
+.rules-text{max-width:820px}
+.rules-text h3{margin:22px 0 8px}
+.rules-text h3:first-child{margin-top:0}
+.rules-text ul{margin:0;padding-left:20px;color:var(--ink-dim)}
+.rules-text li{margin:4px 0}
+.rules-text p{margin:8px 0;color:var(--ink-dim)}
+
+.roster-view{margin-top:10px;border-collapse:collapse;font-size:13px}
+.roster-view td{padding:3px 14px 3px 0;color:var(--ink-dim)}
+.roster-view td:first-child{color:var(--ink-faint)}
+.reject-form{margin-top:12px;display:grid;gap:8px}
+.reject-form label{margin:0}
+.reason-chips{display:flex;flex-wrap:wrap;gap:6px}
+.reason-chips button{padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:var(--night);color:var(--ink-dim);font:500 12px var(--body);cursor:pointer}
+.reason-chips button:hover{color:var(--ink);border-color:var(--ink-faint)}
+.draw-row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:14px;border-radius:var(--r-sm);background:var(--night-2);border:1px solid var(--line)}
+.draw-row+.draw-row{margin-top:10px}
+.draw-row .meta{margin-top:4px}
+.user-list.rejected li{align-items:flex-start}
+.user-list.rejected li::before{background:var(--danger);margin-top:7px}
+.manage-list{display:grid;gap:6px;max-height:460px;overflow:auto}
+.manage-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:12px;align-items:center;padding:10px 12px;border-radius:var(--r-sm);background:var(--night-2);border:1px solid var(--line)}
+.dialog{width:min(760px,calc(100% - 24px));max-height:calc(100vh - 24px);padding:0;border:0;background:transparent;color:var(--ink)}
+.dialog::backdrop{background:rgba(5,9,40,.7);backdrop-filter:blur(4px)}
+.dialog .panel{margin:0}
+.dialog h3{margin-bottom:4px}
+.dialog .muted{font-size:14px;margin-bottom:16px}
+.log-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.log-head input{max-width:260px}
+.log-list{list-style:none;padding:0;margin:0;max-height:420px;overflow:auto;display:grid;gap:4px}
+.log-list li{display:grid;grid-template-columns:120px 110px minmax(0,1fr);gap:10px;padding:8px 10px;border-radius:6px;background:var(--night);font-size:13px}
+.log-list li.muted{display:block}
+.score-row .actions{display:grid;gap:6px}
+.wo-select{padding:7px 8px;font-size:13px}
+.team.bye span:first-child{color:var(--ink-faint);font-style:italic}
+@media(max-width:1020px){
+ .span-2{grid-column:auto}
+ .score-row .actions{grid-column:1/-1;grid-template-columns:1fr 1fr}
+}
+@media(max-width:720px){
+ .roster-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr) 72px}
+ .roster-row .role{grid-column:1/-1;margin-top:6px}
+ .roster-head span:first-child{display:none}
+ .inline-input{flex-direction:column}
+ .log-list li{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
 
-<header>
-<h1>INFLY CARNIVAL</h1>
-<p>MOBILE LEGENDS TOURNAMENT</p>
+<header class="site-head">
+<div class="head-inner">
+<a class="brand" href="#register">
+ <span class="brand-logo" role="img" aria-label="Logo Infly Carnival"></span>
+ <span><h1 class="brand-name"><span class="sr-only">Infly Carnival </span>MLBB Tournament</h1><small>Infly Carnival 2026</small></span>
+</a>
+<nav class="tabs" aria-label="Menu utama">
+ <div class="tabs-inner">
+  <button class="tab" data-page="register">Pendaftaran</button>
+  <button class="tab" data-page="waiting">Status tim <span class="badge" id="waitBadge"></span></button>
+  <button class="tab" data-page="teams">Tim resmi</button>
+  <button class="tab" data-page="bracketPage">Bracket</button>
+  <button class="tab" data-page="info">Info &amp; aturan</button>
+  <span class="tab-sep" aria-hidden="true"></span>
+  <button class="tab" data-page="scores"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Input skor</button>
+  <button class="tab" data-page="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Panitia</button>
+ </div>
+</nav>
+</div>
 </header>
 
-<nav>
-<button onclick="page('register')">Pendaftaran</button>
-<button onclick="page('waiting')">Tim Terdaftar</button>
-<button onclick="page('teams')">Daftar Tim</button>
-<button onclick="page('scores')">Daftar Skor</button>
-<button onclick="page('bracketPage')">Bracket</button>
-<button onclick="page('settings')">Pengaturan</button>
-</nav>
-
 <main>
+<!-- PENDAFTARAN -->
 <section id="register" class="page active">
-<div class="card">
-<h2>Pendaftaran Tim</h2>
-<form id="regForm">
-<label>Nama Tim</label><input id="teamName" required maxlength="40">
-<label>Kategori</label>
-<select id="category"><option>Pelajar</option><option>Umum</option></select>
-<label>Nama Kapten</label><input id="captain" required>
-<label>Nomor WhatsApp</label><input id="phone" required>
-<label>Nama 5 Pemain</label>
-<input class="player" placeholder="Pemain 1" required>
-<input class="player" placeholder="Pemain 2" required>
-<input class="player" placeholder="Pemain 3" required>
-<input class="player" placeholder="Pemain 4" required>
-<input class="player" placeholder="Pemain 5" required>
-<button class="primary">KIRIM PENDAFTARAN</button>
-</form>
-</div>
+ <div class="page-head">
+  <div>
+   <h2>Daftarkan tim kamu</h2>
+   <p>Isi data tim di bawah. Panitia akan memeriksa pendaftaran sebelum tim masuk ke bracket.</p>
+  </div>
+ </div>
+ <div class="register-grid">
+  <form id="regForm" class="panel" novalidate>
+   <div class="notice hidden" id="regNotice"></div>
+   <div class="field">
+    <span class="label">Kategori</span>
+    <div class="cat-pick" id="catPick">
+     <div><input type="radio" name="category" id="catPelajar" value="Pelajar" checked><label for="catPelajar" class="pelajar"><b>Pelajar</b><span id="slotPelajar">Memuat slot…</span></label></div>
+     <div><input type="radio" name="category" id="catUmum" value="Umum"><label for="catUmum" class="umum"><b>Umum</b><span id="slotUmum">Memuat slot…</span></label></div>
+    </div>
+   </div>
+   <div class="field">
+    <label for="teamName">Nama tim</label>
+    <input id="teamName" required maxlength="40" placeholder="Contoh: Garuda Esports" autocomplete="off">
+   </div>
+   <div class="field-row" id="pelajarFields">
+    <div class="field">
+     <label for="sekolah">Asal sekolah</label>
+     <input id="sekolah" maxlength="80" placeholder="Contoh: SMAN 1 Probolinggo">
+    </div>
+    <div class="field">
+     <label for="jenjang">Jenjang</label>
+     <select id="jenjang">
+      <option value="">Pilih jenjang</option>
+      <option>SMP/MTs</option>
+      <option>SMA/MA</option>
+      <option>SMK</option>
+     </select>
+    </div>
+   </div>
+   <div class="field-row">
+    <div class="field">
+     <label for="captain">Nama lengkap kapten</label>
+     <input id="captain" required maxlength="40" placeholder="Sesuai kartu identitas">
+    </div>
+    <div class="field">
+     <label for="phone">Nomor WhatsApp kapten</label>
+     <input id="phone" type="tel" inputmode="tel" required placeholder="08xxxxxxxxxx">
+    </div>
+   </div>
+   <div class="field">
+    <span class="label">Pemain: 5 inti dan 1 cadangan</span>
+    <div class="roster-table" id="rosterInputs"></div>
+    <p class="hint">ID dan Server ada di profil MLBB, misalnya <b>123456789 (1234)</b>. Satu ID hanya boleh terdaftar di satu tim.</p>
+   </div>
+   <label class="check"><input type="checkbox" id="agree"> <span>Saya sudah membaca <a href="#info">info dan aturan turnamen</a> dan semua pemain setuju mengikutinya.</span></label>
+   <button class="btn btn-primary btn-lg btn-block" type="submit" id="regSubmit">Kirim pendaftaran</button>
+  </form>
+
+  <aside class="panel">
+   <h3>Alur pendaftaran</h3>
+   <ol class="steps">
+    <li><div><b>Kirim formulir</b><p>Isi data tim, 5 pemain inti, dan 1 cadangan jika ada.</p></div></li>
+    <li><div><b>Tunggu persetujuan</b><p>Cek hasilnya di halaman Status tim dengan nama tim kamu.</p></div></li>
+    <li><div><b>Masuk bracket</b><p>Setelah semua tim diperiksa, panitia mengundi posisi bracket.</p></div></li>
+   </ol>
+   <div class="rules">
+    <b style="color:var(--ink)">Ketentuan singkat</b>
+    <ul>
+     <li>Maksimal 16 tim untuk setiap kategori.</li>
+     <li>Nama tim dan ID pemain tidak boleh sama dengan tim lain.</li>
+     <li>Kategori Pelajar wajib mengisi asal sekolah.</li>
+     <li>Panitia menghubungi kapten lewat WhatsApp.</li>
+    </ul>
+   </div>
+  </aside>
+ </div>
 </section>
 
+<!-- STATUS TIM -->
 <section id="waiting" class="page">
-<div class="card"><h2>Tim Menunggu Persetujuan</h2><div id="waitingList"></div></div>
+ <div class="page-head">
+  <div>
+   <h2>Status tim</h2>
+   <p>Cari nama tim untuk melihat hasil pemeriksaan panitia.</p>
+  </div>
+ </div>
+ <form class="panel status-box" id="statusForm">
+  <label for="statusQuery">Nama tim</label>
+  <div class="inline-input">
+   <input id="statusQuery" placeholder="Ketik nama tim" autocomplete="off">
+   <button class="btn btn-primary" type="submit">Cek status</button>
+  </div>
+  <div id="statusResult" class="status-result"></div>
+ </form>
+ <h3 class="list-title">Menunggu persetujuan</h3>
+ <div id="waitingList"><p class="loading-line">Memuat data…</p></div>
 </section>
 
+<!-- TIM RESMI -->
 <section id="teams" class="page">
-<div class="card"><h2>Daftar Tim Resmi</h2><div id="teamList"></div></div>
+ <div class="page-head">
+  <div>
+   <h2>Tim resmi</h2>
+   <p>Tim yang sudah disetujui panitia.</p>
+  </div>
+ </div>
+ <div id="teamList"><p class="loading-line">Memuat data…</p></div>
 </section>
 
+<!-- INFO & ATURAN -->
+<section id="info" class="page">
+ <div class="page-head">
+  <div>
+   <h2>Info &amp; aturan</h2>
+   <p>Jadwal, lokasi, hadiah, dan peraturan turnamen.</p>
+  </div>
+ </div>
+ <div id="infoContent"><p class="loading-line">Memuat data…</p></div>
+</section>
+
+<!-- INPUT SKOR -->
 <section id="scores" class="page">
-<div class="card"><h2>Input Skor Pertandingan</h2><div id="scorePanel"></div></div>
+ <div class="page-head">
+  <div>
+   <h2>Input skor</h2>
+   <p>Pemenang setiap pertandingan otomatis maju ke babak berikutnya.</p>
+  </div>
+  <div class="seg" id="scoreSeg" role="group" aria-label="Kategori skor"></div>
+ </div>
+ <div id="scorePanel"></div>
 </section>
 
+<!-- BRACKET -->
 <section id="bracketPage" class="page">
-<div class="bracket-toolbar">
-<select id="bracketCat" onchange="renderBracket()">
-<option>Pelajar</option><option>Umum</option>
-</select>
-<button class="primary" onclick="openFS()">FULLSCREEN VIDEOTRON</button>
-</div>
-<div id="bracketContent"></div>
+ <div class="page-head">
+  <div>
+   <h2>Bracket</h2>
+   <p>Bagan sistem gugur 16 tim. Hasil diperbarui otomatis.</p>
+  </div>
+  <div class="bracket-toolbar">
+   <div class="seg" id="bracketSeg" role="group" aria-label="Kategori bracket"></div>
+   <button class="btn btn-primary" onclick="openFS(true)">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+    Tampilkan di videotron
+   </button>
+  </div>
+ </div>
+ <p class="scroll-hint">Geser ke samping untuk melihat seluruh bagan.</p>
+ <div id="bracketContent"></div>
+ <p class="hint" id="videotronLink"></p>
 </section>
 
+<!-- PANITIA -->
 <section id="settings" class="page">
-<div class="card" id="loginBox">
-<h2>Login Panitia</h2>
-<label>Username</label><input id="loginUser" value="admin">
-<label>Password</label><input id="loginPass" type="password">
-<button class="primary" onclick="login()">LOGIN</button>
-<p class="muted">Login panitia hanya tersedia di menu Pengaturan.</p>
-</div>
+ <div id="loginBox" class="login-wrap">
+  <form class="panel" id="loginForm">
+   <h2 style="margin-bottom:6px">Masuk panitia</h2>
+   <p class="muted" style="margin-bottom:22px">Khusus panitia untuk menyetujui tim, mengisi skor, dan mengatur turnamen.</p>
+   <div class="field">
+    <label for="loginUser">Username atau email</label>
+    <input id="loginUser" autocomplete="username" required>
+   </div>
+   <div class="field">
+    <label for="loginPass">Password</label>
+    <input id="loginPass" type="password" autocomplete="current-password" required>
+   </div>
+   <button class="btn btn-primary btn-lg btn-block" type="submit" id="loginBtn">Masuk</button>
+  </form>
+ </div>
 
-<div id="adminPanel" class="hidden">
-<div class="card">
-<h2>Persetujuan Pendaftaran</h2><div id="approvalList"></div>
-</div>
-<div class="card">
-<h2>Tambah Akun Panitia</h2>
-<input id="newUser" placeholder="Username">
-<input id="newPass" type="password" placeholder="Password minimal 6 karakter">
-<button onclick="addUser()">Tambah Akun</button>
-<div id="usersList"></div>
-</div>
-<div class="card">
-<h2>Ganti Password</h2>
-<input id="oldPass" type="password" placeholder="Password lama">
-<input id="changePass" type="password" placeholder="Password baru">
-<button onclick="changePassword()">Simpan Password</button>
-</div>
-<div class="card">
-<h2>Pengaturan Background Bracket</h2>
-<label>Warna background</label><input id="bgColor" type="color">
-<label>URL gambar background</label><input id="bgImage" placeholder="https://...">
-<button onclick="saveBackground()">Simpan Background</button>
-</div>
-<button class="danger" onclick="logout()">LOGOUT</button>
-</div>
+ <div id="adminPanel" class="hidden">
+  <div class="admin-head">
+   <div>
+    <h2>Panel panitia</h2>
+    <p class="muted">Masuk sebagai <b id="whoami" style="color:var(--ink)"></b></p>
+   </div>
+   <button class="btn btn-danger" onclick="logout()">Keluar</button>
+  </div>
+
+  <div class="panel">
+   <h3>Persetujuan pendaftaran</h3>
+   <p class="muted">Periksa data tim, lalu setujui atau tolak dengan alasan.</p>
+   <div id="approvalList"></div>
+  </div>
+
+  <div class="panel">
+   <div class="log-head">
+    <div><h3>Kelola tim</h3><p class="muted">Ubah nama tim, kapten, kontak, atau pemain. Nama baru langsung tampil di bracket.</p></div>
+    <input id="teamFilter" placeholder="Cari nama tim" aria-label="Cari nama tim">
+   </div>
+   <div id="manageList"></div>
+  </div>
+
+  <div class="panel">
+   <h3>Undian bracket</h3>
+   <p class="muted">Posisi tim diacak setelah semua pendaftaran diperiksa. Slot kosong menjadi bye, jadi lawannya lolos otomatis.</p>
+   <div id="drawPanel"></div>
+  </div>
+
+  <div class="admin-grid">
+   <form class="panel span-2" id="infoForm">
+    <h3>Info &amp; aturan</h3>
+    <p class="muted">Tampil di halaman Info &amp; aturan.</p>
+    <div class="field-row">
+     <div class="field"><label for="infoTanggal">Tanggal dan jam</label><input id="infoTanggal" maxlength="200" placeholder="Contoh: Sabtu, 31 Oktober 2026, 09.00 WIB"></div>
+     <div class="field"><label for="infoLokasi">Lokasi</label><input id="infoLokasi" maxlength="200" placeholder="Contoh: Stadion Bayuangga, Probolinggo"></div>
+    </div>
+    <div class="field-row">
+     <div class="field"><label for="infoHadiah">Hadiah</label><input id="infoHadiah" maxlength="300" placeholder="Contoh: Total hadiah Rp5.000.000"></div>
+     <div class="field"><label for="infoKontak">Kontak panitia</label><input id="infoKontak" maxlength="200" placeholder="Contoh: 0812xxxx (Admin)"></div>
+    </div>
+    <div class="field">
+     <label for="infoAturan">Aturan turnamen</label>
+     <textarea id="infoAturan" rows="14"></textarea>
+     <p class="hint">Baris yang diawali <b>#</b> menjadi judul, baris yang diawali <b>-</b> menjadi poin.</p>
+    </div>
+    <button class="btn btn-primary" type="submit">Simpan info</button>
+   </form>
+
+   <div>
+    <form class="panel" id="bgForm">
+     <h3>Latar bracket</h3>
+     <p class="muted">Warna atau gambar di belakang bagan.</p>
+     <div class="seg" id="bgSeg" role="group" aria-label="Kategori latar" style="margin-bottom:14px"></div>
+     <div class="bg-preview" id="bgPreview"></div>
+     <div class="field-row" style="grid-template-columns:72px 1fr;gap:10px">
+      <div class="field"><input id="bgColor" type="color" value="#141f74" aria-label="Warna latar"></div>
+      <div class="field"><input id="bgImage" placeholder="URL gambar (opsional)" aria-label="URL gambar latar"></div>
+     </div>
+     <div class="field"><label for="bgFile">Atau unggah gambar</label><input id="bgFile" type="file" accept="image/*"></div>
+     <div class="btn-row">
+      <button class="btn btn-primary" type="submit">Simpan latar</button>
+      <button class="btn btn-ghost" type="button" onclick="clearBackground()">Hapus latar</button>
+     </div>
+    </form>
+
+    <form class="panel" id="passForm">
+     <h3>Ganti password</h3>
+     <p class="muted">Untuk akun yang sedang dipakai.</p>
+     <div class="field"><input id="oldPass" type="password" placeholder="Password lama" autocomplete="current-password" aria-label="Password lama"></div>
+     <div class="field"><input id="changePass" type="password" placeholder="Password baru, minimal 6 karakter" autocomplete="new-password" aria-label="Password baru"></div>
+     <button class="btn btn-block" type="submit">Simpan password</button>
+     <p class="hint">Akun panitia baru dibuat lewat Firebase Console, lalu UID-nya ditambahkan ke data <b>admins</b>.</p>
+    </form>
+   </div>
+  </div>
+
+  <div class="panel">
+   <h3>Tim ditolak</h3>
+   <p class="muted">Data tetap disimpan beserta alasannya. Kapten bisa melihatnya di halaman Status tim.</p>
+   <div id="rejectedList"></div>
+  </div>
+
+  <div class="panel">
+   <div class="log-head">
+    <div><h3>Log aktivitas</h3><p class="muted">100 aktivitas panitia terakhir.</p></div>
+    <input id="logFilter" placeholder="Cari di log" aria-label="Cari di log">
+   </div>
+   <ul class="log-list" id="logList"></ul>
+  </div>
+ </div>
 </section>
 </main>
 
 <div id="fullscreen">
-
-<div id="fsContent"></div>
+ <div class="fs-tools">
+  <button class="btn" id="fsFull" onclick="enterNativeFS()">Layar penuh</button>
+  <button class="btn" onclick="closeFS()">Tutup</button>
+ </div>
+ <div id="fsContent"></div>
 </div>
 
-<footer>INFLY CARNIVAL • OFFICIAL TOURNAMENT</footer>
+<dialog id="editDialog" class="dialog" aria-labelledby="editTitle">
+ <form id="editForm" class="panel" novalidate>
+  <h3 id="editTitle">Edit tim</h3>
+  <p class="muted" id="editMeta"></p>
+  <div class="field-row">
+   <div class="field"><label for="e-name">Nama tim</label><input id="e-name" maxlength="40" required></div>
+   <div class="field"><label for="e-captain">Nama lengkap kapten</label><input id="e-captain" maxlength="40" required></div>
+  </div>
+  <div class="field-row">
+   <div class="field"><label for="e-phone">WhatsApp kapten</label><input id="e-phone" type="tel" inputmode="tel" placeholder="08xxxxxxxxxx"></div>
+   <div class="field" id="e-pelajar1"><label for="e-sekolah">Asal sekolah</label><input id="e-sekolah" maxlength="80"></div>
+  </div>
+  <div class="field" id="e-pelajar2"><label for="e-jenjang">Jenjang</label>
+   <select id="e-jenjang"><option value="">Pilih jenjang</option><option>SMP/MTs</option><option>SMA/MA</option><option>SMK</option></select>
+  </div>
+  <div class="field">
+   <span class="label">Pemain</span>
+   <div class="roster-table" id="e-roster"></div>
+   <p class="hint">Untuk data lama, nickname dan server boleh dikosongkan bila belum diketahui.</p>
+  </div>
+  <div class="btn-row">
+   <button class="btn btn-primary" type="submit" id="e-save">Simpan perubahan</button>
+   <button class="btn btn-ghost" type="button" onclick="document.getElementById('editDialog').close()">Batal</button>
+  </div>
+ </form>
+</dialog>
 
-<script>
-const get=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}};
-const put=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+<div id="toasts" aria-live="polite"></div>
 
-let registrations=get("ic_reg",[]);
-let teams=get("ic_teams",[]);
-let users=get("ic_users",[{username:"admin",password:"admin123"}]);
-let results=get("ic_results",{Pelajar:{},Umum:{}});
-let backgrounds=get("ic_bg",{color:"#070d1b",image:""});
-let logged=null;
+<footer>Infly Carnival, turnamen resmi Mobile Legends</footer>
 
-function esc(s){
- return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, connectAuthEmulator, signInWithEmailAndPassword, signOut, onAuthStateChanged, EmailAuthProvider, reauthenticateWithCredential, updatePassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getDatabase, connectDatabaseEmulator, ref, onValue, get, set, update, push, query, limitToLast, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const firebaseConfig = {
+ apiKey: "AIzaSyA093jfB0I5cZhy0-BfAWUaEPUIobBxQXA",
+ authDomain: "tournamen-mlbb-infly-carnival.firebaseapp.com",
+ databaseURL: "https://tournamen-mlbb-infly-carnival-default-rtdb.firebaseio.com",
+ projectId: "tournamen-mlbb-infly-carnival",
+ storageBucket: "tournamen-mlbb-infly-carnival.firebasestorage.app"
+};
+/* Username panitia dipetakan ke email di domain ini (sama seperti versi sebelumnya) */
+const PANITIA_EMAIL_DOMAIN = "mlbb.inflycarnival.com";
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+/* ?emu di URL: pakai emulator lokal untuk pengujian, data asli tidak tersentuh */
+if (new URLSearchParams(location.search).has("emu")) {
+ connectAuthEmulator(auth, "http://127.0.0.1:9099", { disableWarnings: true });
+ connectDatabaseEmulator(db, "127.0.0.1", 9400);
 }
-function page(id){
- document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
- document.getElementById(id).classList.add("active");
- if(id==="waiting")renderWaiting();
- if(id==="teams")renderTeams();
- if(id==="scores")renderScores();
- if(id==="settings")renderSettings();
- if(id==="bracketPage")renderBracket();
+
+const $ = id => document.getElementById(id);
+const BRAND_LOGO = `<div class="brand">${document.querySelector(".site-head .brand").innerHTML.replace(/<(\/?)h1/g, "<$1div")}</div>`;
+const CATS = ["Pelajar", "Umum"];
+const K = c => c.toLowerCase();
+const MAX_TEAMS = 16;
+const ROLES = ["Kapten", "Pemain 2", "Pemain 3", "Pemain 4", "Pemain 5", "Cadangan"];
+const LEGACY_IDS = ["idKapten", "idP2", "idP3", "idP4", "idP5", "idCadangan"];
+const MATCH_IDS = [...Array(8)].map((_, i) => "r16_" + i).concat([0, 1, 2, 3].map(i => "qf_" + i), ["sf_0", "sf_1", "final_0", "third_0"]);
+const ATURAN_TEMPLATE = `# Format
+- Sistem gugur, 16 tim per kategori.
+- Mode Draft Pick (mode turnamen bila tersedia).
+- 16 besar Bo1, perempat final dan semifinal Bo3, final dan perebutan juara 3 Bo3.
+
+# Pemain
+- Setiap tim terdiri dari 5 pemain inti dan maksimal 1 cadangan yang sudah didaftarkan.
+- Akun yang didaftarkan wajib dipakai sampai turnamen selesai.
+- Satu pemain hanya boleh terdaftar di satu tim.
+- Kategori Pelajar wajib membawa kartu pelajar saat registrasi ulang.
+
+# Pertandingan
+- Tim wajib hadir 15 menit sebelum jadwal. Terlambat lebih dari 10 menit dinyatakan kalah WO.
+- Sisi biru atau merah ditentukan lewat lempar koin.
+- Jika ada pemain terputus, permainan tetap berjalan. Jeda teknis maksimal 2 kali per tim, masing-masing 3 menit.
+- Pertandingan diulang hanya jika ada masalah server atau bug, atas keputusan panitia.
+
+# Sportivitas
+- Dilarang memakai cheat, joki, atau akun milik orang lain.
+- Keputusan panitia bersifat final.`;
+
+let reg = { pelajar: {}, umum: {} };
+let claims = { pelajar: {}, umum: {} };
+let tour = { pelajar: {}, umum: {} };
+let contacts = { pelajar: {}, umum: {} };
+let playerIdx = {};
+let info = null;
+let settings = {};
+let logs = [];
+let admin = null;
+let adminUnsubs = [];
+let current = "register";
+let bracketCat = "Pelajar", scoreCat = "Pelajar", bgCat = "Pelajar";
+let fsCat = null;
+let rosterLoaded = false;
+
+/* ---------- UTIL ---------- */
+function esc(s) {
+ return String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+function initials(name) {
+ return esc(String(name).trim().split(/\s+/).slice(0, 2).map(w => w[0]).join("").toUpperCase() || "?");
+}
+function toast(msg, type) {
+ const t = document.createElement("div");
+ t.className = "toast" + (type === "error" ? " error" : "");
+ t.textContent = msg;
+ $("toasts").appendChild(t);
+ setTimeout(() => t.remove(), 4200);
+}
+const fail = msg => toast(msg, "error");
+function waLink(wa) {
+ let n = String(wa || "").replace(/[^0-9]/g, "");
+ if (n.startsWith("0")) n = "62" + n.slice(1);
+ return n ? "https://wa.me/" + n : "";
+}
+function fmtTime(t) {
+ if (typeof t !== "number") return esc(t);
+ return new Date(t).toLocaleString("id-ID", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
 }
 
-/* PENDAFTARAN PUBLIK */
-document.getElementById("regForm").addEventListener("submit",e=>{
- e.preventDefault();
- const name=document.getElementById("teamName").value.trim();
- if([...registrations,...teams].some(t=>t.name.toLowerCase()===name.toLowerCase())){
-  alert("Nama tim sudah terdaftar.");return;
+/* ---------- DATA TIM ---------- */
+function teamsOf(cat, status) {
+ return Object.entries(reg[K(cat)] || {})
+  .map(([key, t]) => ({ ...t, key, cat }))
+  .filter(t => !status || t.status === status)
+  .sort((a, b) => (a.slot || 99) - (b.slot || 99) || String(a.key).localeCompare(b.key));
+}
+function allTeams() { return CATS.flatMap(c => teamsOf(c)); }
+function rosterOf(t) {
+ if (t.roster) {
+  const r = Array.isArray(t.roster) ? t.roster : Object.keys(t.roster).sort().map(k => t.roster[k]);
+  return r.filter(Boolean).map((p, i) => ({ ...p, role: ROLES[i] }));
  }
- registrations.push({
-  id:Date.now(),name,
-  category:document.getElementById("category").value,
-  captain:document.getElementById("captain").value.trim(),
-  phone:document.getElementById("phone").value.trim(),
-  players:[...document.querySelectorAll(".player")].map(x=>x.value.trim()),
-  status:"Menunggu"
+ /* Data lama: satu kolom bisa berisi "ID (server)", bahkan beberapa ID sekaligus */
+ return LEGACY_IDS.flatMap((k, i) => {
+  const raw = String(t[k] ?? "").trim();
+  if (!raw || raw === "-") return [];
+  const found = [...raw.matchAll(/(\d{5,12})\s*(?:\(\s*(\d{1,6})\s*\))?/g)].map(m => ({ id: m[1], server: m[2] || "", role: ROLES[i] }));
+  return found.length ? found : [{ id: raw, server: "", role: ROLES[i] }];
  });
- put("ic_reg",registrations);
- e.target.reset();
- alert("Pendaftaran berhasil dikirim. Tunggu persetujuan panitia.");
-});
-
-/* DAFTAR PUBLIK */
-function renderWaiting(){
- waitingList.innerHTML=registrations.length?registrations.map(t=>
- `<div class="card"><b>${esc(t.name)}</b> — ${esc(t.category)} <span class="muted">MENUNGGU PERSETUJUAN</span></div>`
- ).join(""):"Belum ada pendaftaran.";
 }
-function renderTeams(){
- teamList.innerHTML=teams.length?teams.map(t=>
- `<div class="card"><b>${esc(t.name)}</b> — ${esc(t.category)} <span style="color:var(--green)">RESMI</span></div>`
- ).join(""):"Belum ada tim disetujui.";
-}
-
-/* LOGIN PANITIA */
-function login(){
- const u=document.getElementById("loginUser").value.trim();
- const p=document.getElementById("loginPass").value;
- if(!users.some(x=>x.username===u&&x.password===p)){
-  alert("Username atau password salah.");return;
- }
- logged=u;
- loginBox.classList.add("hidden");
- adminPanel.classList.remove("hidden");
- renderSettings();
-}
-function logout(){
- logged=null;
- loginBox.classList.remove("hidden");
- adminPanel.classList.add("hidden");
- document.getElementById("loginPass").value="";
-}
-function renderSettings(){
- if(!logged)return;
- approvalList.innerHTML=registrations.length?registrations.map(t=>`
- <div class="card">
- <b>${esc(t.name)}</b> — ${esc(t.category)}<br>
- Kapten: ${esc(t.captain)}<br>
- WhatsApp: ${esc(t.phone)}<br>
- Pemain: ${t.players.map(esc).join(", ")}<br><br>
- <button class="success" onclick="approve(${t.id})">SETUJUI</button>
- <button class="danger" onclick="reject(${t.id})">TOLAK</button>
- </div>`).join(""):"Tidak ada pendaftaran.";
- usersList.innerHTML=users.map(u=>`<p>${esc(u.username)}</p>`).join("");
- bgColor.value=backgrounds.color;
- bgImage.value=backgrounds.image;
-}
-function approve(id){
- if(!logged)return;
- const t=registrations.find(x=>x.id===id);
- if(!t)return;
- if(teams.filter(x=>x.category===t.category).length>=16){
-  alert("Kategori "+t.category+" sudah penuh 16 tim.");return;
- }
- teams.push({...t,status:"Disetujui"});
- registrations=registrations.filter(x=>x.id!==id);
- put("ic_reg",registrations);put("ic_teams",teams);
- renderSettings();renderTeams();renderBracket();
-}
-function reject(id){
- if(!logged)return;
- registrations=registrations.filter(x=>x.id!==id);
- put("ic_reg",registrations);renderSettings();
-}
-
-/* AKUN PANITIA */
-function addUser(){
- if(!logged)return;
- const u=newUser.value.trim(),p=newPass.value;
- if(!u||p.length<6)return alert("Isi username dan password minimal 6 karakter.");
- if(users.some(x=>x.username===u))return alert("Username sudah digunakan.");
- users.push({username:u,password:p});
- put("ic_users",users);
- newUser.value="";newPass.value="";
- renderSettings();
-}
-function changePassword(){
- if(!logged)return;
- const u=users.find(x=>x.username===logged);
- if(!u||u.password!==oldPass.value)return alert("Password lama salah.");
- if(changePass.value.length<6)return alert("Password minimal 6 karakter.");
- u.password=changePass.value;
- put("ic_users",users);
- oldPass.value="";changePass.value="";
- alert("Password berhasil diganti.");
-}
-function saveBackground(){
- if(!logged)return;
- backgrounds={
-  color:bgColor.value,
-  image:bgImage.value.trim()
- };
- put("ic_bg",backgrounds);
- renderBracket();
- alert("Background bracket berhasil disimpan.");
-}
-
-/* MESIN PERTANDINGAN */
-function seedTeams(cat){
- const list=teams.filter(t=>t.category===cat).slice(0,16);
- return Array.from({length:16},(_,i)=>list[i]?.name||null);
-}
-function matchId(round,i){return round+"_"+i}
-function getMatch(cat,id){return results[cat][id]||{}}
-function setMatch(cat,id,data){
- results[cat][id]={...getMatch(cat,id),...data};
- put("ic_results",results);
-}
-function winner(cat,id){
- const m=getMatch(cat,id);
- if(!m.a||!m.b||m.sa==null||m.sb==null||m.sa===m.sb)return null;
- return m.sa>m.sb?m.a:m.b;
-}
-function loser(cat,id){
- const m=getMatch(cat,id),w=winner(cat,id);
- if(!w)return null;
- return w===m.a?m.b:m.a;
-}
-function participants(cat,round,i){
- if(round==="r16"){
-  const seeds=seedTeams(cat);
-  const pairs=[[0,2],[4,6],[8,10],[12,14],[1,3],[5,7],[9,11],[13,15]];
-  return pairs[i].map(n=>seeds[n]||"Menunggu");
- }
- if(round==="qf"){
-  return [winner(cat,"r16_"+(i*2)),winner(cat,"r16_"+(i*2+1))].map(x=>x||"Menunggu");
- }
- if(round==="sf"){
-  return [winner(cat,"qf_"+(i*2)),winner(cat,"qf_"+(i*2+1))].map(x=>x||"Menunggu");
- }
- if(round==="final")return [winner(cat,"sf_0"),winner(cat,"sf_1")].map(x=>x||"Menunggu");
- if(round==="third")return [loser(cat,"sf_0"),loser(cat,"sf_1")].map(x=>x||"Menunggu");
- return ["Menunggu","Menunggu"];
-}
-
-/* KOSONGKAN SKOR LANJUTAN JIKA PESERTA BERUBAH */
-function syncParticipants(cat){
- const order=[
-  ["qf",4],["sf",2],["final",1],["third",1]
- ];
- order.forEach(([round,count])=>{
-  for(let i=0;i<count;i++){
-   const id=matchId(round,i);
-   const p=participants(cat,round,i);
-   const m=getMatch(cat,id);
-   if(m.a!==p[0]||m.b!==p[1]){
-    delete results[cat][id];
-   }
-  }
+function playerIdsOf(t) { return rosterOf(t).map(p => String(p.id)); }
+function slotsUsed(cat) { return Object.values(claims[K(cat)] || {}).filter(Boolean).length; }
+function findDuplicates(t) {
+ const mine = new Set(playerIdsOf(t));
+ const out = [];
+ allTeams().forEach(o => {
+  if (o.key === t.key || o.status === "rejected") return;
+  playerIdsOf(o).forEach(id => { if (mine.has(id)) out.push({ id, team: o.namaTim }); });
  });
- put("ic_results",results);
+ return out;
 }
 
-/* KARTU PERTANDINGAN */
-function matchCard(cat,round,i,title){
- const id=matchId(round,i);
- const m=getMatch(cat,id);
- const p=participants(cat,round,i);
- const w=winner(cat,id);
- return `<div class="match">
- <div class="match-title">${title}</div>
- <div class="team ${w===p[0]?"winner":""}">
- <span>${esc(p[0])}</span><span class="score">${m.sa??"—"}</span>
- </div>
- <div class="team ${w===p[1]?"winner":""}">
- <span>${esc(p[1])}</span><span class="score">${m.sb??"—"}</span>
- </div>
- </div>`;
+/* ---------- MESIN BRACKET ---------- */
+function seeds(cat) {
+ const s = Array(16).fill(null);
+ teamsOf(cat, "approved").forEach(t => { if (t.slot >= 1 && t.slot <= 16 && !s[t.slot - 1]) s[t.slot - 1] = t.namaTim; });
+ return s;
+}
+function participants(cat, round, i) {
+ if (round === "r16") {
+  const s = seeds(cat), empty = tour[K(cat)].locked ? "BYE" : "Menunggu";
+  return [s[i * 2] || empty, s[i * 2 + 1] || empty];
+ }
+ if (round === "qf") return [winner(cat, "r16_" + i * 2), winner(cat, "r16_" + (i * 2 + 1))].map(x => x || "Menunggu");
+ if (round === "sf") return [winner(cat, "qf_" + i * 2), winner(cat, "qf_" + (i * 2 + 1))].map(x => x || "Menunggu");
+ if (round === "final") return [winner(cat, "sf_0"), winner(cat, "sf_1")].map(x => x || "Menunggu");
+ if (round === "third") return [loser(cat, "sf_0"), loser(cat, "sf_1")].map(x => x || "Menunggu");
+ return ["Menunggu", "Menunggu"];
+}
+const parts = id => { const [r, i] = id.split("_"); return [r, Number(i)]; };
+/* Skor lama diabaikan bila peserta pertandingan sudah berubah */
+function getMatch(cat, id) {
+ const m = (tour[K(cat)].matches || {})[id];
+ const p = participants(cat, ...parts(id));
+ return m && m.a === p[0] && m.b === p[1] ? m : {};
+}
+function winner(cat, id) {
+ const [a, b] = participants(cat, ...parts(id));
+ if (a === "Menunggu" || b === "Menunggu") return null;
+ if (a === "BYE" && b === "BYE") return "BYE";
+ if (a === "BYE") return b;
+ if (b === "BYE") return a;
+ const m = getMatch(cat, id);
+ if (m.wo) return m.wo === "a" ? a : b;
+ if (m.sa == null || m.sb == null || m.sa === m.sb) return null;
+ return m.sa > m.sb ? a : b;
+}
+function loser(cat, id) {
+ const w = winner(cat, id);
+ if (!w) return null;
+ if (w === "BYE") return "BYE";
+ const [a, b] = participants(cat, ...parts(id));
+ return w === a ? b : a;
 }
 
-/* BAGAN SIMETRIS SEPERTI GAMBAR */
-function renderBracket(){
- const cat=bracketCat.value;
- syncParticipants(cat);
-
- const match=(r,i,t)=>matchCard(cat,r,i,t);
-
- const left16=[0,1,2,3].map(i=>match("r16",i,"PERTANDINGAN "+(i+1))).join("");
- const leftQF=[0,1].map(i=>match("qf",i,"PEREMPAT FINAL "+(i+1))).join("");
- const leftSF=match("sf",0,"SEMIFINAL 1");
-
- const right16=[4,5,6,7].map(i=>match("r16",i,"PERTANDINGAN "+(i+1))).join("");
- const rightQF=[2,3].map(i=>match("qf",i,"PEREMPAT FINAL "+(i+1))).join("");
- const rightSF=match("sf",1,"SEMIFINAL 2");
-
- const html=`
- <div class="bracket-wrap" style="
- background-color:${backgrounds.color};
- ${backgrounds.image?'background-image:url('+JSON.stringify(backgrounds.image)+');background-size:cover;background-position:center;':''}
- ">
- <h2 style="display:flex;align-items:center;justify-content:center;width:100%;text-align:center;margin:10px auto 20px">TOURNAMENT MLBB INFLY CARNIVAL</h2>
- <div class="bracket-image-layout">
-
-  <div class="bracket-side">
-   <div class="round-column">
-    <div class="round-title">BABAK 16 BESAR</div>${left16}
-   </div>
-   <div class="round-column">
-    <div class="round-title">PEREMPAT FINAL</div>${leftQF}
-   </div>
-   <div class="round-column">
-    <div class="round-title">SEMIFINAL</div>${leftSF}
-   </div>
-  </div>
-
-  <div class="bracket-center">
-   <div class="finalbox">
-    <h3>🏆 GRAND FINAL</h3>
-    ${match("final",0,"GRAND FINAL")}
-    <div class="champion">JUARA 1<br>${esc(winner(cat,"final")||"BELUM DITENTUKAN")}</div>
-    <div class="champion">JUARA 2<br>${esc(loser(cat,"final")||"BELUM DITENTUKAN")}</div>
-   </div>
-   <div class="thirdbox">
-    <h3>🥉 PENENTUAN JUARA 3 &amp; 4</h3>
-    ${match("third",0,"PERTANDINGAN")}
-    <div class="champion">JUARA 3<br>${esc(winner(cat,"third")||"BELUM DITENTUKAN")}</div>
-   </div>
-  </div>
-
-  <div class="bracket-side">
-   <div class="round-column">
-    <div class="round-title">SEMIFINAL</div>${rightSF}
-   </div>
-   <div class="round-column">
-    <div class="round-title">PEREMPAT FINAL</div>${rightQF}
-   </div>
-   <div class="round-column">
-    <div class="round-title">BABAK 16 BESAR</div>${right16}
-   </div>
-  </div>
-
- </div>
- </div>`;
- bracketContent.innerHTML=html;
-}
-
-/* INPUT SKOR KHUSUS PANITIA */
-function renderScores(){
- if(!logged){
-  scorePanel.innerHTML='<p class="muted">Input skor hanya untuk panitia. Silakan login melalui Pengaturan.</p><button onclick="page(\'settings\')">KE PENGATURAN</button>';
+/* ---------- NAVIGASI ---------- */
+const PAGES = ["register", "waiting", "teams", "info", "scores", "bracketPage", "settings"];
+function page(id) {
+ if (String(id).startsWith("videotron")) {
+  const c = String(id).split("/")[1] === "umum" ? "Umum" : "Pelajar";
+  bracketCat = c;
+  page("bracketPage");
+  openFS(false);
   return;
  }
- let html="";
- ["Pelajar","Umum"].forEach(cat=>{
-  html+=`<h3>KATEGORI ${cat.toUpperCase()}</h3>`;
-  const matches=[];
-  for(let i=0;i<8;i++)matches.push(["r16",i,"Babak 16 Besar"]);
-  for(let i=0;i<4;i++)matches.push(["qf",i,"Perempat Final"]);
-  for(let i=0;i<2;i++)matches.push(["sf",i,"Semifinal"]);
-  matches.push(["final",0,"Final Juara 1 & 2"]);
-  matches.push(["third",0,"Perebutan Juara 3"]);
-  matches.forEach(([round,i,label])=>{
-   const id=matchId(round,i),p=participants(cat,round,i),m=getMatch(cat,id);
-   html+=`<div class="admin-match">
-    <b>${label} ${round==="r16"?i+1:round==="qf"?i+1:round==="sf"?i+1:""}</b>
-    <div class="score-row">
-     <span>${esc(p[0])}</span>
-     <input type="number" min="0" id="${cat}_${id}_a" value="${m.sa??""}" placeholder="0">
-     <input type="number" min="0" id="${cat}_${id}_b" value="${m.sb??""}" placeholder="0">
-     <span>${esc(p[1])}</span>
-    </div>
-    <button onclick="saveResult('${cat}','${id}')">SIMPAN SKOR</button>
-   </div>`;
-  });
+ if (!PAGES.includes(id)) id = "register";
+ current = id;
+ document.querySelectorAll(".page").forEach(x => x.classList.toggle("active", x.id === id));
+ document.querySelectorAll(".tab").forEach(t => {
+  if (t.dataset.page === id) {
+   t.setAttribute("aria-current", "page");
+   const bar = t.parentElement;
+   bar.scrollLeft = t.offsetLeft - (bar.clientWidth - t.offsetWidth) / 2;
+  } else t.removeAttribute("aria-current");
  });
- scorePanel.innerHTML=html;
+ try { if (location.hash !== "#" + id) history.replaceState(null, "", location.pathname + location.search + "#" + id); } catch {}
+ renderPage();
 }
-function saveResult(cat,id){
- if(!logged)return alert("Login panitia terlebih dahulu.");
- const parts=id.split("_");
- const round=parts[0],i=Number(parts[1]);
- const p=participants(cat,round,i);
- if(!p[0]||!p[1]||p.includes("Menunggu"))return alert("Peserta pertandingan belum lengkap.");
- const a=document.getElementById(cat+"_"+id+"_a").value;
- const b=document.getElementById(cat+"_"+id+"_b").value;
- if(a===""||b==="")return alert("Masukkan kedua skor.");
- if(Number(a)===Number(b))return alert("Skor tidak boleh seri.");
- setMatch(cat,id,{a:p[0],b:p[1],sa:Number(a),sb:Number(b)});
- syncParticipants(cat);
- renderScores();
- renderBracket();
- alert("Skor tersimpan. Pemenang diteruskan ke babak berikutnya.");
+document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => {
+ page(t.dataset.page);
+ if (window.scrollY > 0) window.scrollTo({ top: 0 });
+}));
+function renderPage() {
+ if (current === "waiting") renderWaiting();
+ if (current === "teams") renderTeams();
+ if (current === "info") renderInfo();
+ if (current === "scores") renderScores();
+ if (current === "settings") renderSettings();
+ if (current === "bracketPage") renderBracket();
+}
+function renderAll() {
+ renderStats();
+ renderPage();
+ if ($("fullscreen").classList.contains("show")) renderBracket();
+}
+function segButtons(el, cur, onPick) {
+ el.innerHTML = CATS.map(c => `<button type="button" class="${c}" aria-pressed="${c === cur}">${c}</button>`).join("");
+ el.querySelectorAll("button").forEach(b => b.onclick = () => onPick(b.textContent));
 }
 
-/* FULLSCREEN VIDEOTRON */
-function openFS(){
+/* ---------- STATISTIK SLOT ---------- */
+function renderStats() {
+ CATS.forEach(c => {
+  const left = MAX_TEAMS - slotsUsed(c);
+  $("slot" + c).textContent = tour[K(c)].locked ? "Pendaftaran ditutup" : left > 0 ? `Sisa ${left} slot` : "Slot penuh";
+ });
+ $("waitBadge").textContent = allTeams().filter(t => t.status === "pending").length || "";
+ const cat = document.querySelector("input[name=category]:checked").value;
+ const full = slotsUsed(cat) >= MAX_TEAMS, closed = !!tour[K(cat)].locked;
+ $("regNotice").classList.toggle("hidden", !full && !closed);
+ $("regNotice").textContent = closed ? `Pendaftaran kategori ${cat} sudah ditutup karena bracket sudah diundi.`
+  : full ? `Slot kategori ${cat} sudah penuh. Slot bisa terbuka lagi jika ada pendaftaran yang ditolak.` : "";
+ $("regSubmit").disabled = full || closed;
+}
+
+/* ---------- PENDAFTARAN ---------- */
+const rosterRows = () => `<div class="roster-row roster-head" aria-hidden="true"><span></span><span>Nickname</span><span>ID</span><span>Server</span></div>` +
+ ROLES.map((r, i) => `<div class="roster-row">
+  <span class="role">${r}${i === 5 ? ' <small>(opsional)</small>' : ""}</span>
+  <input class="r-nick" maxlength="30" placeholder="Nickname" aria-label="Nickname ${r}">
+  <input class="r-id" inputmode="numeric" maxlength="12" placeholder="ID" aria-label="ID ${r}">
+  <input class="r-server" inputmode="numeric" maxlength="6" placeholder="Server" aria-label="Server ${r}">
+ </div>`).join("");
+$("rosterInputs").innerHTML = rosterRows();
+$("e-roster").innerHTML = rosterRows();
+function syncCategoryFields() {
+ const pel = document.querySelector("input[name=category]:checked").value === "Pelajar";
+ $("pelajarFields").classList.toggle("hidden", !pel);
+ renderStats();
+}
+document.querySelectorAll("input[name=category]").forEach(r => r.addEventListener("change", syncCategoryFields));
+
+function readRoster(container = "#rosterInputs") {
+ const rows = [...document.querySelectorAll(`${container} .roster-row:not(.roster-head)`)];
+ return rows.map((row, i) => ({
+  i,
+  nick: row.querySelector(".r-nick").value.trim(),
+  id: row.querySelector(".r-id").value.trim(),
+  server: row.querySelector(".r-server").value.trim(),
+  el: row
+ }));
+}
+$("regForm").addEventListener("submit", async e => {
+ e.preventDefault();
+ const cat = document.querySelector("input[name=category]:checked").value, k = K(cat);
+ const name = $("teamName").value.trim();
+ const captain = $("captain").value.trim();
+ const phone = $("phone").value.trim();
+ const sekolah = $("sekolah").value.trim(), jenjang = $("jenjang").value;
+ const focusFail = (el, msg) => { el.focus(); fail(msg); };
+
+ if (!name) return focusFail($("teamName"), "Isi nama tim.");
+ if (name.toUpperCase() === "BYE" || name === "Menunggu") return focusFail($("teamName"), "Gunakan nama tim lain.");
+ if (cat === "Pelajar" && sekolah.length < 2) return focusFail($("sekolah"), "Isi asal sekolah.");
+ if (cat === "Pelajar" && !jenjang) return focusFail($("jenjang"), "Pilih jenjang sekolah.");
+ if (!captain) return focusFail($("captain"), "Isi nama lengkap kapten.");
+ if (!/^[0-9+ -]{8,20}$/.test(phone)) return focusFail($("phone"), "Nomor WhatsApp harus 8 sampai 20 angka.");
+
+ const rows = readRoster();
+ for (const r of rows) {
+  const optional = r.i === 5 && !r.nick && !r.id && !r.server;
+  if (optional) continue;
+  if (!r.nick) return focusFail(r.el.querySelector(".r-nick"), `Isi nickname ${ROLES[r.i]}.`);
+  if (!/^[0-9]{5,12}$/.test(r.id)) return focusFail(r.el.querySelector(".r-id"), `ID ${ROLES[r.i]} harus 5 sampai 12 angka.`);
+  if (!/^[0-9]{1,6}$/.test(r.server)) return focusFail(r.el.querySelector(".r-server"), `Server ${ROLES[r.i]} harus 1 sampai 6 angka.`);
+ }
+ const roster = rows.filter(r => r.id).map(({ nick, id, server }) => ({ nick, id, server }));
+ const ids = roster.map(p => p.id);
+ if (new Set(ids).size !== ids.length) return fail("Ada ID pemain yang sama di dalam tim ini.");
+ if (!$("agree").checked) return focusFail($("agree"), "Centang persetujuan aturan terlebih dahulu.");
+
+ const active = allTeams().filter(t => t.status !== "rejected");
+ if (active.some(t => String(t.namaTim).toLowerCase() === name.toLowerCase())) return focusFail($("teamName"), "Nama tim sudah dipakai. Gunakan nama lain.");
+ for (const id of ids) {
+  const other = active.find(t => playerIdsOf(t).includes(id));
+  if (other) return fail(`ID ${id} sudah terdaftar di tim ${other.namaTim}. Satu pemain hanya boleh di satu tim.`);
+  if (playerIdx[id]) return fail(`ID ${id} sudah terdaftar di tim lain.`);
+ }
+
+ $("regSubmit").disabled = true;
+ $("regSubmit").textContent = "Mengirim…";
+ try {
+  const key = push(ref(db, `registered_teams/${k}`)).key;
+  const team = {
+   namaTim: name, kapten: captain, status: "pending",
+   idKapten: ids[0], idP2: ids[1], idP3: ids[2], idP4: ids[3], idP5: ids[4], idCadangan: ids[5] || "-",
+   roster, createdAt: serverTimestamp()
+  };
+  if (cat === "Pelajar") Object.assign(team, { sekolah, jenjang });
+  /* Ambil slot kosong terkecil. Bila keduluan tim lain, coba slot berikutnya. */
+  let done = false;
+  for (let attempt = 0; attempt < 4 && !done; attempt++) {
+   const snap = await get(ref(db, `slot_claims/${k}`));
+   const taken = snap.val() || {};
+   const slot = [...Array(16)].map((_, i) => i + 1).find(n => !taken[n]);
+   if (!slot) throw new Error("full");
+   const updates = {
+    [`registered_teams/${k}/${key}`]: { ...team, slot },
+    [`slot_claims/${k}/${slot}`]: key,
+    [`registered_contacts/${k}/${key}`]: { wa: phone }
+   };
+   ids.forEach(id => updates[`player_ids/${id}`] = `${k}/${key}`);
+   try { await update(ref(db), updates); done = true; }
+   catch (err) { if (attempt === 3) throw err; }
+  }
+  e.target.reset();
+  syncCategoryFields();
+  toast(`Pendaftaran ${name} terkirim. Cek hasilnya di halaman Status tim.`);
+ } catch (err) {
+  console.error(err);
+  fail(err.message === "full" ? `Slot kategori ${cat} sudah penuh.` : "Pendaftaran gagal dikirim. Periksa data lalu coba lagi. Jika masih gagal, hubungi panitia.");
+ } finally {
+  $("regSubmit").textContent = "Kirim pendaftaran";
+  renderStats();
+ }
+});
+
+/* ---------- KARTU TIM ---------- */
+function rosterChips(t) {
+ return rosterOf(t).map(p => `<span title="${esc(p.role)}">${p.nick ? esc(p.nick) : "ID " + esc(p.id)}${p.role === "Cadangan" ? " <i>(cad.)</i>" : ""}</span>`).join("");
+}
+function teamCard(t, status) {
+ return `<article class="team-card">
+  <div class="team-card-head">
+   <div class="avatar ${esc(t.cat)}">${initials(t.namaTim)}</div>
+   <div><h4>${esc(t.namaTim)}</h4><span class="chip chip-${esc(t.cat)}">${esc(t.cat)}</span> ${status}</div>
+  </div>
+  <div class="meta">Kapten: <b style="color:var(--ink)">${esc(t.kapten)}</b>${t.sekolah ? `<br>${esc(t.sekolah)} (${esc(t.jenjang)})` : ""}</div>
+  <div class="roster">${rosterChips(t)}</div>
+ </article>`;
+}
+function emptyState(title, text, btnPage, btnText) {
+ return `<div class="empty"><b>${title}</b>${text}${btnPage ? `<br><button class="btn btn-primary" onclick="page('${btnPage}')">${btnText}</button>` : ""}</div>`;
+}
+function renderWaiting() {
+ const list = allTeams().filter(t => t.status === "pending");
+ $("waitingList").innerHTML = list.length
+  ? `<div class="team-grid">${list.map(t => teamCard(t, '<span class="chip chip-wait">Diperiksa</span>')).join("")}</div>`
+  : emptyState("Tidak ada tim yang menunggu", "Semua pendaftaran sudah diperiksa panitia.", "register", "Daftarkan tim");
+ if ($("statusQuery").value.trim()) checkStatus();
+}
+function checkStatus() {
+ const q = $("statusQuery").value.trim().toLowerCase();
+ if (!q) { $("statusResult").innerHTML = ""; return; }
+ const found = allTeams().filter(t => String(t.namaTim).toLowerCase() === q);
+ if (!found.length) {
+  $("statusResult").innerHTML = `<p class="muted">Tim dengan nama itu tidak ditemukan. Periksa ejaan nama tim.</p>`;
+  return;
+ }
+ $("statusResult").innerHTML = found.map(t => {
+  const label = t.status === "approved" ? '<span class="chip chip-ok">Disetujui</span>' : t.status === "rejected" ? '<span class="chip chip-no">Ditolak</span>' : '<span class="chip chip-wait">Sedang diperiksa</span>';
+  const note = t.status === "approved" ? "Tim sudah masuk daftar tim resmi."
+   : t.status === "rejected" ? `Alasan: ${esc(t.alasanTolak || "tidak disebutkan")}. Hubungi panitia jika ada pertanyaan.`
+   : "Panitia sedang memeriksa data tim kamu.";
+  return `<div class="status-card"><b>${esc(t.namaTim)}</b> <span class="chip chip-${t.cat}">${t.cat}</span> ${label}<p>${note}</p></div>`;
+ }).join("");
+}
+$("statusForm").addEventListener("submit", e => { e.preventDefault(); checkStatus(); });
+
+function renderTeams() {
+ const total = allTeams().filter(t => t.status === "approved").length;
+ if (!total) {
+  $("teamList").innerHTML = emptyState("Belum ada tim resmi", "Tim akan muncul di sini setelah disetujui panitia.", "register", "Daftarkan tim");
+  return;
+ }
+ $("teamList").innerHTML = CATS.map(c => {
+  const list = teamsOf(c, "approved");
+  return `<div class="group cat-${c}">
+   <div class="group-head"><h3>${c}</h3><div class="meter"><i style="width:${list.length / MAX_TEAMS * 100}%"></i></div><small>${list.length} / ${MAX_TEAMS}</small></div>
+   ${list.length ? `<div class="team-grid">${list.map(t => teamCard(t, "")).join("")}</div>` : emptyState("Belum ada tim " + c, "Belum ada tim yang disetujui di kategori ini.")}
+  </div>`;
+ }).join("");
+}
+
+/* ---------- INFO & ATURAN ---------- */
+function formatRules(text) {
+ const out = [];
+ let list = [];
+ const flush = () => { if (list.length) { out.push(`<ul>${list.join("")}</ul>`); list = []; } };
+ String(text || "").split(/\r?\n/).forEach(line => {
+  const l = line.trim();
+  if (!l) { flush(); return; }
+  if (l.startsWith("#")) { flush(); out.push(`<h3>${esc(l.replace(/^#+\s*/, ""))}</h3>`); return; }
+  if (/^[-•]\s*/.test(l)) { list.push(`<li>${esc(l.replace(/^[-•]\s*/, ""))}</li>`); return; }
+  flush(); out.push(`<p>${esc(l)}</p>`);
+ });
+ flush();
+ return out.join("");
+}
+function renderInfo() {
+ if (info === null) return;
+ const items = [["Tanggal", info.tanggal], ["Lokasi", info.lokasi], ["Hadiah", info.hadiah], ["Kontak panitia", info.kontak]];
+ const filled = items.filter(([, v]) => v);
+ $("infoContent").innerHTML = `
+  ${filled.length ? `<div class="info-grid">${filled.map(([l, v]) => `<div class="info-item"><span>${l}</span><b>${esc(v)}</b></div>`).join("")}</div>` : ""}
+  <div class="panel rules-text">${info.aturan ? formatRules(info.aturan) : `<div class="empty" style="border:0;padding:20px"><b>Aturan belum diumumkan</b>Panitia akan mengumumkan aturan lengkap di halaman ini.</div>`}</div>`;
+}
+
+/* ---------- LOGIN PANITIA ---------- */
+$("loginForm").addEventListener("submit", async e => {
+ e.preventDefault();
+ const u = $("loginUser").value.trim(), p = $("loginPass").value;
+ if (!u || !p) return fail("Isi username dan password.");
+ const email = u.includes("@") ? u : `${u}@${PANITIA_EMAIL_DOMAIN}`;
+ $("loginBtn").disabled = true;
+ try {
+  await signInWithEmailAndPassword(auth, email, p);
+  $("loginPass").value = "";
+ } catch (err) {
+  const code = err.code || "";
+  fail(code.includes("too-many") ? "Terlalu banyak percobaan. Coba lagi beberapa menit lagi."
+   : code.includes("network") ? "Tidak ada koneksi internet."
+   : "Username atau password salah.");
+ } finally { $("loginBtn").disabled = false; }
+});
+async function logout() {
+ await signOut(auth);
+ toast("Kamu sudah keluar.");
+}
+onAuthStateChanged(auth, async user => {
+ adminUnsubs.forEach(u => u());
+ adminUnsubs = [];
+ contacts = { pelajar: {}, umum: {} };
+ logs = [];
+ if (!user) {
+  admin = null;
+ } else {
+  try {
+   const snap = await get(ref(db, `admins/${user.uid}`));
+   if (!snap.exists()) {
+    await signOut(auth);
+    fail("Akun ini belum terdaftar sebagai panitia.");
+    return;
+   }
+   const v = snap.val();
+   admin = { uid: user.uid, name: typeof v === "string" ? v : user.email.split("@")[0] };
+   CATS.forEach(c => adminUnsubs.push(onValue(ref(db, `registered_contacts/${K(c)}`), s => { contacts[K(c)] = s.val() || {}; renderAll(); })));
+   adminUnsubs.push(onValue(query(ref(db, "tournament/logs"), limitToLast(100)), s => {
+    const v = s.val() || {};
+    logs = Object.keys(v).sort().reverse().map(k => v[k]);
+    if (current === "settings") renderLogs();
+   }));
+   toast("Berhasil masuk sebagai " + admin.name + ".");
+  } catch (err) {
+   console.error(err);
+   fail("Gagal memeriksa akun panitia.");
+  }
+ }
+ $("loginBox").classList.toggle("hidden", !!admin);
+ $("adminPanel").classList.toggle("hidden", !admin);
+ renderAll();
+});
+function log(action) {
+ if (!admin) return;
+ push(ref(db, "tournament/logs"), { user: admin.name, action, time: Date.now() }).catch(console.error);
+}
+
+/* ---------- PANEL PANITIA ---------- */
+const REASONS = ["Data pemain tidak lengkap atau tidak valid", "ID pemain terdaftar di tim lain", "Bukan pelajar", "Nama tim tidak pantas", "Kuota sudah penuh"];
+function renderSettings() {
+ if (!admin) return;
+ $("whoami").textContent = admin.name;
+ const pending = allTeams().filter(t => t.status === "pending");
+ /* Jangan render ulang saat panitia sedang menulis alasan penolakan */
+ if (!document.querySelector("#approvalList .reject-form:not(.hidden)")) $("approvalList").innerHTML = pending.length ? pending.map(t => {
+  const wa = contacts[K(t.cat)][t.key]?.wa || t.wa || "";
+  const dup = findDuplicates(t);
+  return `<div class="approval" id="ap-${t.key}">
+   <div>
+    <h4>${esc(t.namaTim)} <span class="chip chip-${t.cat}">${t.cat}</span> <span class="chip" style="color:var(--ink-faint)">Slot ${esc(t.slot)}</span></h4>
+    <div class="meta">Kapten ${esc(t.kapten)}${wa ? `, WhatsApp <a href="${waLink(wa)}" target="_blank" rel="noopener">${esc(wa)}</a>` : ""}${t.sekolah ? `<br>${esc(t.sekolah)} (${esc(t.jenjang)})` : ""}</div>
+    <table class="roster-view">${rosterOf(t).map(p => `<tr><td>${esc(p.role)}</td><td>${esc(p.nick || "–")}</td><td>${esc(p.id)}${p.server ? ` (${esc(p.server)})` : ""}</td></tr>`).join("")}</table>
+    ${dup.map(d => `<p class="warn">ID ${esc(d.id)} juga terdaftar di tim ${esc(d.team)}.</p>`).join("")}
+    <form class="reject-form hidden" onsubmit="event.preventDefault();reject('${t.cat}','${t.key}')">
+     <label for="rs-${t.key}">Alasan penolakan</label>
+     <div class="reason-chips">${REASONS.map(r => `<button type="button" onclick="this.form.querySelector('textarea').value=this.textContent">${r}</button>`).join("")}</div>
+     <textarea id="rs-${t.key}" rows="2" maxlength="300" placeholder="Tulis alasan, akan terlihat oleh kapten"></textarea>
+     <div class="btn-row"><button class="btn btn-danger" type="submit">Kirim penolakan</button><button class="btn btn-ghost" type="button" onclick="this.closest('.reject-form').classList.add('hidden')">Batal</button></div>
+    </form>
+   </div>
+   <div class="actions">
+    <button class="btn btn-win" onclick="approve('${t.cat}','${t.key}')">Setujui</button>
+    <button class="btn" onclick="openEdit('${t.cat}','${t.key}')">Edit</button>
+    <button class="btn btn-danger" onclick="document.querySelector('#ap-${t.key} .reject-form').classList.remove('hidden')">Tolak</button>
+   </div>
+  </div>`;
+ }).join("") : emptyState("Tidak ada pendaftaran baru", "Pendaftaran yang masuk akan muncul di sini.");
+
+ $("drawPanel").innerHTML = CATS.map(c => {
+  const approved = teamsOf(c, "approved").length, pend = teamsOf(c, "pending").length, locked = !!tour[K(c)].locked;
+  return `<div class="draw-row">
+   <div><b>${c}</b> <span class="chip ${locked ? "chip-ok" : "chip-wait"}">${locked ? "Sudah diundi" : "Belum diundi"}</span>
+    <p class="meta">${approved} tim disetujui, ${pend} menunggu, ${MAX_TEAMS - approved} bye.</p></div>
+   <div class="btn-row">
+    <button class="btn btn-primary" onclick="drawBracket('${c}')">${locked ? "Acak ulang" : "Acak bracket"}</button>
+    ${locked ? `<button class="btn btn-ghost" onclick="unlockBracket('${c}')">Batalkan undian</button>` : ""}
+   </div>
+  </div>`;
+ }).join("");
+
+ const rejected = allTeams().filter(t => t.status === "rejected");
+ $("rejectedList").innerHTML = rejected.length ? `<ul class="user-list rejected">${rejected.map(t => `<li><span><b>${esc(t.namaTim)}</b> <span class="chip chip-${t.cat}">${t.cat}</span><br><span class="muted">${esc(t.alasanTolak || "Tanpa alasan")}</span></span></li>`).join("")}</ul>` : `<p class="muted">Belum ada tim yang ditolak.</p>`;
+
+ if (document.activeElement?.closest?.("#infoForm") == null && info !== null) {
+  $("infoTanggal").value = info.tanggal || "";
+  $("infoLokasi").value = info.lokasi || "";
+  $("infoHadiah").value = info.hadiah || "";
+  $("infoKontak").value = info.kontak || "";
+  $("infoAturan").value = info.aturan || ATURAN_TEMPLATE;
+ }
+ segButtons($("bgSeg"), bgCat, c => { bgCat = c; loadBgForm(); renderSettings(); });
+ if (document.activeElement?.closest?.("#bgForm") == null) loadBgForm();
+ renderManage();
+ renderLogs();
+}
+
+/* ---------- KELOLA & EDIT TIM ---------- */
+function renderManage() {
+ const q = $("teamFilter").value.trim().toLowerCase();
+ const list = allTeams().filter(t => t.status !== "rejected" && (!q || String(t.namaTim).toLowerCase().includes(q)));
+ $("manageList").innerHTML = list.length ? `<div class="manage-list">${list.map(t => `<div class="manage-row">
+   <span><b>${esc(t.namaTim)}</b> <span class="chip chip-${t.cat}">${t.cat}</span> ${t.status === "approved" ? '<span class="chip chip-ok">Disetujui</span>' : '<span class="chip chip-wait">Menunggu</span>'}</span>
+   <span class="muted">Slot ${esc(t.slot)}</span>
+   <button class="btn btn-sm" onclick="openEdit('${t.cat}','${t.key}')">Edit</button>
+  </div>`).join("")}</div>` : `<p class="muted">Tidak ada tim yang cocok.</p>`;
+}
+$("teamFilter").addEventListener("input", renderManage);
+
+let editing = null;
+function openEdit(cat, key) {
+ const k = K(cat), t = reg[k][key];
+ if (!admin || !t) return;
+ editing = { cat, key };
+ $("editTitle").textContent = "Edit " + t.namaTim;
+ $("editMeta").textContent = `Kategori ${cat}, slot ${t.slot}, ${t.status === "approved" ? "sudah disetujui" : "menunggu persetujuan"}.`;
+ $("e-name").value = t.namaTim || "";
+ $("e-captain").value = t.kapten || "";
+ $("e-phone").value = contacts[k][key]?.wa || t.wa || "";
+ const pel = cat === "Pelajar";
+ $("e-pelajar1").classList.toggle("hidden", !pel);
+ $("e-pelajar2").classList.toggle("hidden", !pel);
+ $("e-sekolah").value = t.sekolah || "";
+ $("e-jenjang").value = t.jenjang || "";
+ /* Isi baris pemain sesuai peran; data lama bisa punya lebih dari satu ID di kolom cadangan */
+ const players = rosterOf(t);
+ const rows = readRoster("#e-roster");
+ rows.forEach(r => { r.el.querySelector(".r-nick").value = ""; r.el.querySelector(".r-id").value = ""; r.el.querySelector(".r-server").value = ""; });
+ const byRole = {};
+ players.forEach(p => { (byRole[p.role] ||= []).push(p); });
+ rows.forEach((r, i) => {
+  const p = (byRole[ROLES[i]] || []).shift();
+  if (!p) return;
+  r.el.querySelector(".r-nick").value = p.nick || "";
+  r.el.querySelector(".r-id").value = p.id || "";
+  r.el.querySelector(".r-server").value = p.server || "";
+ });
+ const extra = Object.values(byRole).flat();
+ $("editMeta").textContent += extra.length ? ` Data lama punya ID tambahan (${extra.map(p => p.id).join(", ")}) yang tidak muat di form; ID itu akan dihapus saat disimpan.` : "";
+ $("editDialog").showModal();
+ $("e-name").focus();
+}
+$("editForm").addEventListener("submit", async e => {
+ e.preventDefault();
+ if (!admin || !editing) return;
+ const { cat, key } = editing, k = K(cat), t = reg[k][key];
+ if (!t) return;
+ const name = $("e-name").value.trim(), captain = $("e-captain").value.trim(), phone = $("e-phone").value.trim();
+ const sekolah = $("e-sekolah").value.trim(), jenjang = $("e-jenjang").value;
+ const focusFail = (el, msg) => { el.focus(); fail(msg); };
+ if (!name) return focusFail($("e-name"), "Isi nama tim.");
+ if (name.toUpperCase() === "BYE" || name === "Menunggu") return focusFail($("e-name"), "Gunakan nama tim lain.");
+ if (!captain) return focusFail($("e-captain"), "Isi nama kapten.");
+ if (phone && !/^[0-9+ -]{8,20}$/.test(phone)) return focusFail($("e-phone"), "Nomor WhatsApp harus 8 sampai 20 angka.");
+ if (cat === "Pelajar" && sekolah && sekolah.length < 2) return focusFail($("e-sekolah"), "Asal sekolah terlalu pendek.");
+
+ const rows = readRoster("#e-roster");
+ for (const r of rows) {
+  if (r.i === 5 && !r.nick && !r.id && !r.server) continue;
+  if (!/^[0-9]{5,12}$/.test(r.id)) return focusFail(r.el.querySelector(".r-id"), `ID ${ROLES[r.i]} harus 5 sampai 12 angka.`);
+  if (r.server && !/^[0-9]{1,6}$/.test(r.server)) return focusFail(r.el.querySelector(".r-server"), `Server ${ROLES[r.i]} harus angka.`);
+ }
+ const roster = rows.filter(r => r.id).map(({ nick, id, server }) => ({ nick, id, server }));
+ const ids = roster.map(p => p.id);
+ if (new Set(ids).size !== ids.length) return fail("Ada ID pemain yang sama di dalam tim ini.");
+ const others = allTeams().filter(o => o.status !== "rejected" && !(o.cat === cat && o.key === key));
+ if (others.some(o => String(o.namaTim).toLowerCase() === name.toLowerCase())) return focusFail($("e-name"), "Nama tim sudah dipakai tim lain.");
+ for (const id of ids) {
+  const o = others.find(x => playerIdsOf(x).includes(id));
+  if (o) return fail(`ID ${id} sudah terdaftar di tim ${o.namaTim}.`);
+  if (playerIdx[id] && playerIdx[id] !== `${k}/${key}`) return fail(`ID ${id} sudah terdaftar di tim lain.`);
+ }
+
+ const base = `registered_teams/${k}/${key}`;
+ const updates = {
+  [`${base}/namaTim`]: name, [`${base}/kapten`]: captain, [`${base}/roster`]: roster,
+  [`${base}/idKapten`]: ids[0], [`${base}/idP2`]: ids[1], [`${base}/idP3`]: ids[2],
+  [`${base}/idP4`]: ids[3], [`${base}/idP5`]: ids[4], [`${base}/idCadangan`]: ids[5] || "-"
+ };
+ if (cat === "Pelajar") {
+  updates[`${base}/sekolah`] = sekolah || null;
+  updates[`${base}/jenjang`] = jenjang || null;
+ }
+ if (phone) {
+  updates[`registered_contacts/${k}/${key}`] = { wa: phone };
+  if (t.wa) updates[`${base}/wa`] = null;
+ }
+ Object.entries(playerIdx).forEach(([id, path]) => { if (path === `${k}/${key}` && !ids.includes(id)) updates[`player_ids/${id}`] = null; });
+ ids.forEach(id => updates[`player_ids/${id}`] = `${k}/${key}`);
+ /* Skor disimpan bersama nama tim, jadi ganti juga nama di pertandingan yang sudah tercatat */
+ const old = t.namaTim;
+ if (name !== old) {
+  Object.entries(tour[k].matches || {}).forEach(([id, m]) => {
+   if (m.a === old) updates[`tournament/${k}/matches/${id}/a`] = name;
+   if (m.b === old) updates[`tournament/${k}/matches/${id}/b`] = name;
+  });
+ }
+ $("e-save").disabled = true;
+ try {
+  await update(ref(db), updates);
+  $("editDialog").close();
+  log(name !== old ? `Mengubah data Tim "${old}" menjadi "${name}" (${cat.toUpperCase()})` : `Mengubah data Tim "${name}" (${cat.toUpperCase()})`);
+  toast(`Data ${name} disimpan.`);
+ } catch (err) {
+  console.error(err);
+  fail("Gagal menyimpan perubahan tim.");
+ } finally { $("e-save").disabled = false; }
+});
+
+async function approve(cat, key) {
+ if (!admin) return;
+ const t = reg[K(cat)][key];
+ if (!t) return;
+ if (teamsOf(cat, "approved").length >= MAX_TEAMS) return fail(`Kategori ${cat} sudah penuh 16 tim.`);
+ try {
+  await update(ref(db, `registered_teams/${K(cat)}/${key}`), { status: "approved" });
+  log(`Menyetujui Tim "${t.namaTim}" (${cat.toUpperCase()})`);
+  toast(`${t.namaTim} disetujui.`);
+ } catch (err) { console.error(err); fail("Gagal menyetujui tim."); }
+}
+async function reject(cat, key) {
+ if (!admin) return;
+ const k = K(cat), t = reg[k][key];
+ const reason = $("rs-" + key).value.trim();
+ if (!t) return;
+ if (reason.length < 3) return fail("Tulis alasan penolakan.");
+ const updates = {
+  [`registered_teams/${k}/${key}/status`]: "rejected",
+  [`registered_teams/${k}/${key}/alasanTolak`]: reason
+ };
+ if (claims[k][t.slot] === key) updates[`slot_claims/${k}/${t.slot}`] = null;
+ Object.entries(playerIdx).forEach(([id, path]) => { if (path === `${k}/${key}`) updates[`player_ids/${id}`] = null; });
+ try {
+  await update(ref(db), updates);
+  document.querySelector(`#ap-${key} .reject-form`)?.classList.add("hidden");
+  renderSettings();
+  log(`Menolak Tim "${t.namaTim}" (${cat.toUpperCase()}): ${reason}`);
+  toast(`Pendaftaran ${t.namaTim} ditolak.`);
+ } catch (err) { console.error(err); fail("Gagal menolak tim."); }
+}
+
+/* Undian: slot diacak dan disebar supaya bye terbagi rata ke kedua sisi bagan */
+const SPREAD = [0, 8, 4, 12, 2, 10, 6, 14, 1, 9, 5, 13, 3, 11, 7, 15];
+async function drawBracket(cat) {
+ if (!admin) return;
+ const k = K(cat);
+ const pend = teamsOf(cat, "pending").length;
+ if (pend) return fail(`Masih ada ${pend} tim ${cat} yang menunggu persetujuan.`);
+ const teams = teamsOf(cat, "approved");
+ if (teams.length < 2) return fail("Butuh minimal 2 tim yang disetujui.");
+ const msg = tour[k].locked
+  ? `Acak ulang bracket ${cat}? Semua skor ${cat} akan dihapus.`
+  : `Acak posisi ${teams.length} tim ${cat}? Setelah diundi, slot kosong menjadi bye.`;
+ if (!confirm(msg)) return;
+ const order = [...teams];
+ for (let i = order.length - 1; i > 0; i--) {
+  const j = crypto.getRandomValues(new Uint32Array(1))[0] % (i + 1);
+  [order[i], order[j]] = [order[j], order[i]];
+ }
+ const updates = {};
+ for (let s = 1; s <= 16; s++) updates[`slot_claims/${k}/${s}`] = null;
+ order.forEach((t, i) => {
+  const slot = SPREAD[i] + 1;
+  updates[`registered_teams/${k}/${t.key}/slot`] = slot;
+  updates[`slot_claims/${k}/${slot}`] = t.key;
+ });
+ updates[`tournament/${k}/locked`] = true;
+ updates[`tournament/${k}/matches`] = null;
+ try {
+  await update(ref(db), updates);
+  log(`Mengacak bracket ${cat.toUpperCase()} (${teams.length} tim)`);
+  toast(`Bracket ${cat} sudah diacak.`);
+ } catch (err) { console.error(err); fail("Gagal mengacak bracket."); }
+}
+async function unlockBracket(cat) {
+ if (!admin || !confirm(`Batalkan undian ${cat}? Posisi tim tetap, tetapi bye dan semua skor ${cat} dihapus.`)) return;
+ try {
+  await update(ref(db, `tournament/${K(cat)}`), { locked: false, matches: null });
+  log(`Membatalkan undian bracket ${cat.toUpperCase()}`);
+  toast(`Undian ${cat} dibatalkan.`);
+ } catch (err) { console.error(err); fail("Gagal membatalkan undian."); }
+}
+
+/* Info & aturan */
+$("infoForm").addEventListener("submit", async e => {
+ e.preventDefault();
+ if (!admin) return;
+ const data = {
+  tanggal: $("infoTanggal").value.trim(), lokasi: $("infoLokasi").value.trim(),
+  hadiah: $("infoHadiah").value.trim(), kontak: $("infoKontak").value.trim(),
+  aturan: $("infoAturan").value.trim()
+ };
+ try {
+  await set(ref(db, "tournament/info"), data);
+  log("Memperbarui info dan aturan turnamen");
+  toast("Info dan aturan disimpan.");
+ } catch (err) { console.error(err); fail("Gagal menyimpan info."); }
+});
+
+/* Ganti password */
+$("passForm").addEventListener("submit", async e => {
+ e.preventDefault();
+ const user = auth.currentUser;
+ if (!user) return;
+ if ($("changePass").value.length < 6) return fail("Password baru minimal 6 karakter.");
+ try {
+  await reauthenticateWithCredential(user, EmailAuthProvider.credential(user.email, $("oldPass").value));
+  await updatePassword(user, $("changePass").value);
+  $("oldPass").value = ""; $("changePass").value = "";
+  log("Mengganti password akun");
+  toast("Password berhasil diganti.");
+ } catch (err) {
+  fail(String(err.code || "").includes("weak") ? "Password baru terlalu lemah." : "Password lama salah.");
+ }
+});
+
+/* Latar bracket: nilai berupa warna (#xxxxxx), URL, atau gambar data URL */
+function bgValue(cat) { return settings["bg_" + K(cat)] || ""; }
+function bgStyle(v) {
+ if (!v) return "background-color:#141f74;";
+ if (/^#[0-9a-f]{3,8}$/i.test(v)) return `background-color:${v};`;
+ return `background-color:#141f74;background-image:url(${JSON.stringify(v)});background-size:cover;background-position:center;`;
+}
+let bgFileData = "";
+function loadBgForm() {
+ const v = bgValue(bgCat);
+ $("bgColor").value = /^#[0-9a-f]{6}$/i.test(v) ? v : "#141f74";
+ $("bgImage").value = v && !v.startsWith("#") && !v.startsWith("data:") ? v : "";
+ $("bgFile").value = ""; bgFileData = "";
+ $("bgPreview").style.cssText = bgStyle(v);
+}
+function bgFromForm() {
+ return bgFileData || $("bgImage").value.trim() || $("bgColor").value;
+}
+["input", "change"].forEach(ev => {
+ $("bgColor").addEventListener(ev, () => { $("bgImage").value = ""; bgFileData = ""; $("bgPreview").style.cssText = bgStyle(bgFromForm()); });
+ $("bgImage").addEventListener(ev, () => { $("bgPreview").style.cssText = bgStyle(bgFromForm()); });
+});
+$("bgFile").addEventListener("change", () => {
+ const f = $("bgFile").files[0];
+ if (!f) return;
+ const img = new Image();
+ img.onload = () => {
+  const scale = Math.min(1, 1920 / img.width);
+  const c = document.createElement("canvas");
+  c.width = Math.round(img.width * scale); c.height = Math.round(img.height * scale);
+  c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+  bgFileData = c.toDataURL("image/jpeg", 0.8);
+  URL.revokeObjectURL(img.src);
+  $("bgPreview").style.cssText = bgStyle(bgFileData);
+ };
+ img.src = URL.createObjectURL(f);
+});
+$("bgForm").addEventListener("submit", async e => {
+ e.preventDefault();
+ if (!admin) return;
+ const v = bgFromForm();
+ if (v.length >= 2000000) return fail("Gambar terlalu besar. Pakai gambar yang lebih kecil.");
+ try {
+  await set(ref(db, `tournament/settings/bg_${K(bgCat)}`), v);
+  log(`Mengubah latar bracket ${bgCat.toUpperCase()}`);
+  toast(`Latar bracket ${bgCat} disimpan.`);
+ } catch (err) { console.error(err); fail("Gagal menyimpan latar."); }
+});
+async function clearBackground() {
+ if (!admin) return;
+ try {
+  await set(ref(db, `tournament/settings/bg_${K(bgCat)}`), null);
+  log(`Menghapus latar bracket ${bgCat.toUpperCase()}`);
+  toast(`Latar bracket ${bgCat} dihapus.`);
+ } catch (err) { console.error(err); fail("Gagal menghapus latar."); }
+}
+
+/* Log aktivitas */
+function renderLogs() {
+ const q = $("logFilter").value.trim().toLowerCase();
+ const list = logs.filter(l => !q || `${l.user} ${l.action}`.toLowerCase().includes(q));
+ $("logList").innerHTML = list.length
+  ? list.map(l => `<li><span class="muted">${fmtTime(l.time)}</span><b>${esc(l.user)}</b><span>${esc(l.action)}</span></li>`).join("")
+  : `<li class="muted">Belum ada aktivitas.</li>`;
+}
+$("logFilter").addEventListener("input", renderLogs);
+
+/* ---------- KARTU PERTANDINGAN ---------- */
+function matchCard(cat, round, i, title) {
+ const id = round + "_" + i;
+ const m = getMatch(cat, id), p = participants(cat, round, i), w = winner(cat, id);
+ const row = (name, score) => {
+  const cls = name === "Menunggu" ? "tbd" : name === "BYE" ? "tbd bye" : w ? (w === name ? "winner" : "loser") : "";
+  const label = name === "BYE" ? "Bye" : name;
+  const sc = m.wo ? (w === name ? "WO" : "–") : score ?? "–";
+  return `<div class="team ${cls}"><span>${esc(label)}</span><span class="score">${sc}</span></div>`;
+ };
+ return `<div class="match"><div class="match-title">${title}</div>${row(p[0], m.sa)}${row(p[1], m.sb)}</div>`;
+}
+
+/* ---------- BAGAN SIMETRIS ---------- */
+function renderBracket() {
+ const cat = bracketCat;
+ segButtons($("bracketSeg"), cat, c => { bracketCat = c; renderBracket(); });
+ const match = (r, i, t) => matchCard(cat, r, i, t);
+ const col = (title, html) => `<div class="round-column"><div class="round-title">${title}</div><div class="round-matches">${html}</div></div>`;
+ const left16 = [0, 1, 2, 3].map(i => match("r16", i, "Pertandingan " + (i + 1))).join("");
+ const leftQF = [0, 1].map(i => match("qf", i, "Perempat final " + (i + 1))).join("");
+ const right16 = [4, 5, 6, 7].map(i => match("r16", i, "Pertandingan " + (i + 1))).join("");
+ const rightQF = [2, 3].map(i => match("qf", i, "Perempat final " + (i + 1))).join("");
+ const champ = winner(cat, "final_0");
+
+ $("bracketContent").innerHTML = `
+ <div class="bracket-wrap" style="${esc(bgStyle(bgValue(cat)))}">
+ <div class="bracket-stage">
+  <div class="bracket-logo">${BRAND_LOGO}</div>
+  <span class="chip chip-${cat} bracket-cat">Kategori ${cat}</span>
+  <div class="bracket-image-layout">
+   <div class="bracket-side">
+    ${col("16 besar", left16)}${col("Perempat final", leftQF)}${col("Semifinal", match("sf", 0, "Semifinal 1"))}
+   </div>
+   <div class="bracket-center">
+    <div class="finalbox">
+     <h3>Grand final</h3>
+     ${match("final", 0, "Juara 1 dan 2")}
+     ${champ && champ !== "BYE" ? `<div class="champ">Juara ${cat}<b>${esc(champ)}</b></div>` : ""}
+    </div>
+    <div class="thirdbox">
+     <h3>Perebutan juara 3</h3>
+     ${match("third", 0, "Juara 3 dan 4")}
+    </div>
+   </div>
+   <div class="bracket-side">
+    ${col("Semifinal", match("sf", 1, "Semifinal 2"))}${col("Perempat final", rightQF)}${col("16 besar", right16)}
+   </div>
+  </div>
+ </div>
+ </div>`;
+ const url = location.origin + location.pathname + location.search + "#videotron/" + K(cat);
+ $("videotronLink").innerHTML = `Untuk komputer videotron, buka <a href="${esc(url)}" target="_blank" rel="noopener">${esc(url)}</a>. Bagan ikut berubah otomatis saat skor diisi.`;
+ if ($("fullscreen").classList.contains("show")) {
+  $("fsContent").innerHTML = $("bracketContent").innerHTML;
+  fitFS();
+ }
+}
+
+/* ---------- INPUT SKOR KHUSUS PANITIA ---------- */
+const ROUNDS = [
+ ["r16", 8, "16 besar", "Pertandingan"],
+ ["qf", 4, "Perempat final", "Perempat final"],
+ ["sf", 2, "Semifinal", "Semifinal"],
+ ["final", 1, "Grand final", "Juara 1 dan 2"],
+ ["third", 1, "Perebutan juara 3", "Juara 3 dan 4"]
+];
+function renderScores() {
+ if (!admin) {
+  $("scoreSeg").innerHTML = "";
+  $("scorePanel").innerHTML = emptyState("Khusus panitia", "Masuk lewat menu Panitia untuk mengisi skor pertandingan.", "settings", "Masuk panitia");
+  return;
+ }
+ const cat = scoreCat;
+ segButtons($("scoreSeg"), cat, c => { scoreCat = c; renderScores(); });
+ const focused = document.activeElement?.id;
+ const notice = tour[K(cat)].locked ? "" : `<div class="notice">Bracket ${cat} belum diundi. Tim yang tidak punya lawan baru dianggap bye setelah diundi di menu Panitia.</div>`;
+ $("scorePanel").innerHTML = notice + ROUNDS.map(([round, count, title, label]) => {
+  let rows = "";
+  for (let i = 0; i < count; i++) {
+   const id = round + "_" + i, p = participants(cat, round, i), m = getMatch(cat, id), w = winner(cat, id);
+   const bye = p.includes("BYE");
+   const ready = !p.includes("Menunggu") && !bye;
+   const status = bye ? '<span class="chip chip-ok">Bye</span>' : w ? `<span class="chip chip-ok">${m.wo ? "Menang WO" : "Selesai"}</span>` : ready ? '<span class="chip chip-wait">Siap main</span>' : '<span class="chip" style="color:var(--ink-faint)">Menunggu tim</span>';
+   const tcls = n => n === "Menunggu" || n === "BYE" ? "tbd" : w === n ? "win" : "";
+   const nm = n => esc(n === "BYE" ? "Bye" : n);
+   rows += `<div class="score-row ${w ? "done" : ""}">
+    <div class="m-label">${label}${count > 1 ? " " + (i + 1) : ""}<br>${status}</div>
+    <span class="t right ${tcls(p[0])}">${nm(p[0])}</span>
+    <input type="number" min="0" inputmode="numeric" id="${cat}_${id}_a" value="${m.sa ?? ""}" placeholder="0" ${ready ? "" : "disabled"} aria-label="Skor ${esc(p[0])}">
+    <span class="vs">vs</span>
+    <input type="number" min="0" inputmode="numeric" id="${cat}_${id}_b" value="${m.sb ?? ""}" placeholder="0" ${ready ? "" : "disabled"} aria-label="Skor ${esc(p[1])}">
+    <span class="t ${tcls(p[1])}">${nm(p[1])}</span>
+    <div class="actions">
+     <button class="btn ${w ? "" : "btn-primary"}" onclick="saveResult('${cat}','${id}')" ${ready ? "" : "disabled"}>${w && !m.wo ? "Perbarui skor" : "Simpan skor"}</button>
+     <select class="wo-select" onchange="setWO('${cat}','${id}',this.value)" ${ready ? "" : "disabled"} aria-label="Menang WO">
+      <option value="">Menang WO…</option>
+      <option value="a">${nm(p[0])}</option>
+      <option value="b">${nm(p[1])}</option>
+     </select>
+    </div>
+   </div>`;
+  }
+  return `<div class="round-block"><h3>${title}</h3><div class="score-list">${rows}</div></div>`;
+ }).join("");
+ if (focused && $(focused)) $(focused).focus();
+}
+async function saveResult(cat, id) {
+ if (!admin) return fail("Masuk sebagai panitia terlebih dahulu.");
+ const p = participants(cat, ...parts(id));
+ if (p.includes("Menunggu") || p.includes("BYE")) return fail("Peserta pertandingan belum lengkap.");
+ const a = $(cat + "_" + id + "_a").value, b = $(cat + "_" + id + "_b").value;
+ if (a === "" || b === "") return fail("Masukkan skor kedua tim.");
+ if (Number(a) < 0 || Number(b) < 0) return fail("Skor tidak boleh negatif.");
+ if (Number(a) === Number(b)) return fail("Skor tidak boleh seri.");
+ try {
+  await set(ref(db, `tournament/${K(cat)}/matches/${id}`), { a: p[0], b: p[1], sa: Number(a), sb: Number(b) });
+  log(`Skor ${cat.toUpperCase()} ${id}: ${p[0]} ${a} - ${b} ${p[1]}`);
+  toast(`Skor tersimpan. ${Number(a) > Number(b) ? p[0] : p[1]} maju ke babak berikutnya.`);
+ } catch (err) { console.error(err); fail("Gagal menyimpan skor."); }
+}
+async function setWO(cat, id, side) {
+ if (!admin || !side) return;
+ const p = participants(cat, ...parts(id));
+ const win = side === "a" ? p[0] : p[1];
+ if (!confirm(`${win} menang WO?`)) { renderScores(); return; }
+ try {
+  await set(ref(db, `tournament/${K(cat)}/matches/${id}`), { a: p[0], b: p[1], wo: side });
+  log(`WO ${cat.toUpperCase()} ${id}: ${win} menang WO`);
+  toast(`${win} menang WO.`);
+ } catch (err) { console.error(err); fail("Gagal menyimpan WO."); }
+}
+
+/* ---------- FULLSCREEN VIDEOTRON ---------- */
+function openFS(native) {
  renderBracket();
- fsContent.innerHTML=bracketContent.innerHTML;
- fullscreen.classList.add("show");
- if(fullscreen.requestFullscreen)fullscreen.requestFullscreen().catch(()=>{});
+ $("fsContent").innerHTML = $("bracketContent").innerHTML;
+ $("fullscreen").classList.add("show");
+ document.body.style.overflow = "hidden";
+ fitFS();
+ if (native) enterNativeFS();
 }
-function closeFS(){
- fullscreen.classList.remove("show");
- if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});
+function enterNativeFS() {
+ const fs = $("fullscreen");
+ if (fs.requestFullscreen) fs.requestFullscreen().catch(() => {});
 }
+function closeFS() {
+ $("fullscreen").classList.remove("show");
+ document.body.style.overflow = "";
+ if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+ if (location.hash.startsWith("#videotron")) page("bracketPage");
+}
+/* Perkecil/perbesar bagan agar pas satu layar videotron */
+function fitFS() {
+ const stage = document.querySelector("#fsContent .bracket-stage");
+ if (!stage) return;
+ stage.style.transform = "";
+ const pad = 24;
+ const scale = Math.min((innerWidth - pad * 2) / stage.offsetWidth, (innerHeight - pad * 2) / stage.offsetHeight, 1.8);
+ stage.style.transform = `scale(${scale})`;
+}
+window.addEventListener("resize", () => { if ($("fullscreen").classList.contains("show")) fitFS(); });
+document.addEventListener("keydown", e => {
+ if (e.key === "Escape" && $("fullscreen").classList.contains("show") && !document.fullscreenElement) closeFS();
+});
+
+/* ---------- DATA REALTIME ---------- */
+onValue(ref(db, "registered_teams"), s => { reg = { pelajar: {}, umum: {}, ...(s.val() || {}) }; renderAll(); }, err => { console.error(err); fail("Gagal memuat data tim. Periksa koneksi internet."); });
+onValue(ref(db, "slot_claims"), s => { claims = { pelajar: {}, umum: {}, ...(s.val() || {}) }; renderAll(); });
+onValue(ref(db, "player_ids"), s => { playerIdx = s.val() || {}; });
+CATS.forEach(c => onValue(ref(db, `tournament/${K(c)}`), s => {
+ const v = s.val() || {};
+ tour[K(c)] = { locked: !!v.locked, matches: v.matches || {} };
+ renderAll();
+}));
+onValue(ref(db, "tournament/info"), s => { info = s.val() || {}; renderAll(); });
+onValue(ref(db, "tournament/settings"), s => { settings = s.val() || {}; renderAll(); });
+
+Object.assign(window, { page, logout, approve, reject, openEdit, drawBracket, unlockBracket, saveResult, setWO, openFS, closeFS, enterNativeFS, clearBackground });
 
 /* MULAI */
-renderWaiting();
-renderTeams();
-renderBracket();
+syncCategoryFields();
+page(location.hash.slice(1) || "register");
+window.addEventListener("hashchange", () => page(location.hash.slice(1)));
 </script>
 </body>
 </html>
