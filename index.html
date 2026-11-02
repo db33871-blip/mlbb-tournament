@@ -129,10 +129,12 @@
         .bracket-title-area h2 { color: var(--accent-gold); font-size: 1.2rem; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; }
         .controls-row { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
         
-        /* TOMBOL ZOOM / PERBERSAR - DEFAULT DISEMBUNYIKAN DI LAYAR BIASA */
-        .zoom-control-item { display: none; } 
+        /* TOMBOL EDIT & ZOOM DI FULLSCREEN */
+        .fullscreen-only-item { display: none; } 
+        .edit-controls-panel { display: none; gap: 6px; align-items: center; justify-content: center; width: 100%; margin-top: 8px; flex-wrap: wrap; }
 
         .vt-btn { background: rgba(56, 189, 248, 0.1); color: var(--accent-cyan); border: 1px solid rgba(56, 189, 248, 0.3); padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; cursor: pointer; }
+        .vt-btn.active-edit { background: var(--accent-gold); color: #000; border-color: var(--accent-gold); font-weight: 700; }
         .btn-acak-bagan { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #080312; border: none; padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; cursor: pointer; }
 
         /* BRACKET DESIGN */
@@ -186,7 +188,7 @@
         
         .riwayat-item { background: rgba(0,0,0,0.2); padding: 12px 16px; border-left: 3px solid var(--accent-pink); border-radius: 8px; margin-bottom: 10px; font-size: 0.85rem; font-weight: 500; display: flex; justify-content: space-between; }
         
-        /* CSS KHUSUS MODE FULLSCREEN & HILANG KETIKA TIDAK DIGUNAKAN */
+        /* CSS KHUSUS MODE FULLSCREEN & AUTO HIDE IDLE */
         #bracket-fullscreen-wrapper {
             background-color: var(--bg-dark);
             background-image: linear-gradient(180deg, #09101f 0%, #04070d 100%), var(--bg-utama-url);
@@ -197,11 +199,10 @@
             padding-bottom: 10px;
         }
         
-        /* SAAT FULLSCREEN */
         :fullscreen #bracket-fullscreen-wrapper { padding: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 0; cursor: grab; overflow: hidden;}
         :-webkit-full-screen #bracket-fullscreen-wrapper { padding: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 0; cursor: grab; overflow: hidden;}
         
-        /* KELAS UNTUK MENYEMBUNYIKAN KURSOR & KONTROL SAAT IDLE DI FULLSCREEN */
+        /* KELAS IDLE MODE UNTUK MENYEMBUNYIKAN KURSOR & KONTROL DI FULLSCREEN */
         :fullscreen.idle-mode, :-webkit-full-screen.idle-mode { cursor: none !important; }
         :fullscreen.idle-mode .bracket-card-header, :-webkit-full-screen.idle-mode .bracket-card-header { opacity: 0; pointer-events: none; transition: opacity 0.5s ease; }
         :fullscreen.idle-mode .dpad-container, :-webkit-full-screen.idle-mode .dpad-container { opacity: 0; pointer-events: none; transition: opacity 0.5s ease; }
@@ -212,21 +213,20 @@
         :fullscreen .bracket-card-header { display: flex !important; opacity: 1; transition: opacity 0.5s ease; }
         :-webkit-full-screen .bracket-card-header { display: flex !important; opacity: 1; transition: opacity 0.5s ease; }
         
-        /* MUNCULKAN TOMBOL ZOOM / PERBESAR HANYA SAAT FULLSCREEN */
-        :fullscreen .zoom-control-item, :-webkit-full-screen .zoom-control-item { display: inline-block !important; }
+        /* TAMPILKAN TOMBOL EDIT HANYA DI FULLSCREEN */
+        :fullscreen .fullscreen-only-item, :-webkit-full-screen .fullscreen-only-item { display: inline-block !important; }
 
         :fullscreen .score-btn { display: none !important; }
         :-webkit-full-screen .score-btn { display: none !important; }
 
-        /* TOMBOL ARAH (DPAD) - HANYA MUNCUL SAAT FULLSCREEN */
+        /* TOMBOL ARAH (DPAD) - MUNCUL HANYA DI FULLSCREEN DAN SAAT EDIT AKTIF */
         .dpad-container {
             position: absolute; bottom: 20px; right: 20px;
             display: none; 
             grid-template-columns: repeat(3, 46px); grid-template-rows: repeat(3, 46px);
             gap: 6px; z-index: 1000; transition: opacity 0.5s ease;
         }
-        :fullscreen .dpad-container { display: grid; opacity: 1; }
-        :-webkit-full-screen .dpad-container { display: grid; opacity: 1; }
+        :fullscreen.edit-active .dpad-container, :-webkit-full-screen.edit-active .dpad-container { display: grid; opacity: 1; }
 
         .dpad-btn {
             background: rgba(13, 21, 39, 0.8); color: var(--text-main);
@@ -294,18 +294,22 @@
             </div>
 
             <div class="card" style="padding: 12px;">
-                <div id="bracket-fullscreen-wrapper" title="Masuk ke Layar Penuh untuk menggeser & memperbesar bagan">
+                <div id="bracket-fullscreen-wrapper" title="Masuk ke Layar Penuh untuk menggunakan fitur edit bagan">
                     <div class="bracket-card-header">
                         <div class="bracket-title-area">
                             <h2 id="header-cat-title">KATEGORI PELAJAR</h2>
                             <div class="controls-row">
-                                <!-- TOMBOL ZOOM HANYA MUNCUL DI FULLSCREEN -->
-                                <button class="vt-btn zoom-control-item" onclick="zoomBracket(-0.1)" title="Perkecil Ukuran">➖</button>
-                                <button class="vt-btn zoom-control-item" onclick="zoomBracket(0.1)" title="Perbesar Ukuran">➕</button>
-                                <button class="vt-btn zoom-control-item" onclick="resetBracketPan()" title="Kembalikan posisi & ukuran bagan ke tengah">🔄 Reset</button>
-                                
                                 <button class="vt-btn" onclick="toggleBracketFullscreen()">📺 Layar Penuh</button>
+                                <!-- TOMBOL EDIT HANYA MUNCUL DI FULLSCREEN -->
+                                <button id="btn-edit-toggle" class="vt-btn fullscreen-only-item" onclick="toggleEditMode()">✏️ Edit</button>
                                 <button class="btn-acak-bagan admin-nav" onclick="randomizeCurrentBracket()" style="display:none;">🎲 ACAK BAGAN</button>
+                            </div>
+                            
+                            <!-- PANEL KONTROL TAMBAHAN KETIKA EDIT DIKLIK -->
+                            <div id="edit-panel" class="edit-controls-panel">
+                                <button class="vt-btn" onclick="zoomBracket(-0.1)" title="Perkecil">➖ Perkecil</button>
+                                <button class="vt-btn" onclick="zoomBracket(0.1)" title="Perbesar">➕ Perbesar</button>
+                                <button class="vt-btn" onclick="resetBracketPan()" title="Reset Posisi">🔄 Reset</button>
                             </div>
                         </div>
                     </div>
@@ -314,7 +318,7 @@
                         <!-- Dynamic Bracket -->
                     </div>
                     
-                    <!-- TOMBOL ARAH HANYA MUNCUL DI FULLSCREEN -->
+                    <!-- TOMBOL ARAH (DPAD) UNTUK GESER KETIKA EDIT AKTIF DI FULLSCREEN -->
                     <div id="dpad-controls" class="dpad-container">
                         <button class="dpad-btn dpad-up" onmousedown="startPan(0, -15)" onmouseup="stopPan()" onmouseleave="stopPan()" ontouchstart="event.preventDefault(); startPan(0, -15);" ontouchend="stopPan()">⬆️</button>
                         <button class="dpad-btn dpad-left" onmousedown="startPan(-15, 0)" onmouseup="stopPan()" onmouseleave="stopPan()" ontouchstart="event.preventDefault(); startPan(-15, 0);" ontouchend="stopPan()">⬅️</button>
@@ -489,6 +493,7 @@
         let currentRole = "viewer"; 
         let currentCategory = "pelajar";
         let seedEditCategory = "pelajar";
+        let isEditModeActive = false;
 
         let appState = {
             pelajar: { teams: Array.from({length: 16}, (_, i) => `Tim ${i+1}`), matches: createEmptyMatches() },
@@ -760,8 +765,10 @@
 
         function updateScore(stage, index, teamNum, t1, t2, stageNameFull) {
             let m = stage === 'f' || stage === 't3' ? appState[currentCategory].matches[stage] : appState[currentCategory].matches[stage][index];
-            let targetWin = 2;
-            if (stage === 'r16' || stage === 'qf') targetWin = 1; else if (stage === 'f') targetWin = 3;
+            let targetWin = 1; // Default R16 & QF adalah 1 klik
+            if (stage === 'sf' || stage === 't3') targetWin = 3; // Semi final & juara 3 adalah 3 klik
+            else if (stage === 'f') targetWin = 5; // Final adalah 5 klik
+
             if (teamNum === 1) m.s1++; else m.s2++;
             if (m.s1 >= targetWin || m.s2 >= targetWin) { m.w = m.s1 >= targetWin ? 1 : 2; catatRiwayat(currentCategory, stageNameFull, t1, t2, m.s1, m.s2); }
             saveState();
@@ -810,6 +817,24 @@
             return document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement;
         }
 
+        // --- TOGGLE EDIT MODE DI FULLSCREEN ---
+        function toggleEditMode() {
+            isEditModeActive = !isEditModeActive;
+            const wrapper = document.getElementById('bracket-fullscreen-wrapper');
+            const editBtn = document.getElementById('btn-edit-toggle');
+            const editPanel = document.getElementById('edit-panel');
+
+            if (isEditModeActive) {
+                wrapper.classList.add('edit-active');
+                editBtn.classList.add('active-edit');
+                editPanel.style.display = 'flex';
+            } else {
+                wrapper.classList.remove('edit-active');
+                editBtn.classList.remove('active-edit');
+                editPanel.style.display = 'none';
+            }
+        }
+
         // --- DRAG, ZOOM & FULLSCREEN (D-PAD & KURSOR AUTO HIDE) ---
         function toggleBracketFullscreen() {
             const wrap = document.getElementById('bracket-fullscreen-wrapper');
@@ -821,7 +846,7 @@
         let panInterval;
         
         function startPan(dx, dy) {
-            if (!isBracketFullscreen()) return; 
+            if (!isBracketFullscreen() || !isEditModeActive) return; 
             if(panInterval) clearInterval(panInterval);
             panInterval = setInterval(() => { panX += dx; panY += dy; applyBracketTransform(); }, 30);
             resetDpadIdle();
@@ -833,7 +858,7 @@
 
         function applyBracketTransform() { document.getElementById('bracket-container').style.transform = `translate(${panX}px, ${panY}px) scale(${currentScale})`; }
         function zoomBracket(delta) { 
-            if (!isBracketFullscreen()) return; 
+            if (!isBracketFullscreen() || !isEditModeActive) return; 
             currentScale += delta; if (currentScale < 0.3) currentScale = 0.3; if (currentScale > 3.0) currentScale = 3.0; applyBracketTransform(); 
         }
         function resetBracketPan() { panX = 0; panY = 0; currentScale = 1; applyBracketTransform(); }
@@ -847,7 +872,7 @@
             if (isBracketFullscreen()) {
                 dpadIdleTimer = setTimeout(() => {
                     wrapper.classList.add('idle-mode');
-                }, 2000); // Kursor dan tombol menghilang setelah 2 detik tidak ada aktivitas
+                }, 2000); // Kursor dan kontrol menghilang setelah 2 detik tidak ada aktivitas
             }
         }
 
@@ -855,7 +880,7 @@
             const wrapper = document.getElementById('bracket-fullscreen-wrapper');
             
             const startDrag = (clientX, clientY, target) => {
-                if (!isBracketFullscreen()) return; 
+                if (!isBracketFullscreen() || !isEditModeActive) return; 
                 if (target.tagName.toLowerCase() === 'button' || target.classList.contains('score-number') || target.classList.contains('vt-btn')) return;
                 
                 isDraggingBracket = true; startDragX = clientX - panX; startDragY = clientY - panY; wrapper.style.cursor = 'grabbing';
@@ -863,7 +888,7 @@
             
             const endDrag = () => { 
                 isDraggingBracket = false; 
-                if (isBracketFullscreen()) {
+                if (isBracketFullscreen() && isEditModeActive) {
                     wrapper.style.cursor = 'grab'; 
                 } else {
                     wrapper.style.cursor = 'default';
@@ -871,7 +896,7 @@
             };
             
             const moveDrag = (clientX, clientY, e) => {
-                if (!isDraggingBracket || !isBracketFullscreen()) return; 
+                if (!isDraggingBracket || !isBracketFullscreen() || !isEditModeActive) return; 
                 e.preventDefault(); panX = clientX - startDragX; panY = clientY - startDragY; applyBracketTransform();
             };
 
@@ -895,15 +920,19 @@
             }, { passive: false });
             
             wrapper.addEventListener('wheel', (e) => { 
-                if (!isBracketFullscreen()) return;
+                if (!isBracketFullscreen() || !isEditModeActive) return;
                 e.preventDefault(); if (e.deltaY < 0) zoomBracket(0.05); else zoomBracket(-0.05); 
             }, { passive: false });
             
             function handleFullscreenChange() {
                 if (isBracketFullscreen()) {
                     resetDpadIdle();
-                    wrapper.style.cursor = 'grab';
+                    wrapper.style.cursor = isEditModeActive ? 'grab' : 'default';
                 } else {
+                    isEditModeActive = false;
+                    wrapper.classList.remove('edit-active');
+                    document.getElementById('btn-edit-toggle').classList.remove('active-edit');
+                    document.getElementById('edit-panel').style.display = 'none';
                     wrapper.classList.remove('idle-mode');
                     resetBracketPan(); 
                     wrapper.style.cursor = 'default';
