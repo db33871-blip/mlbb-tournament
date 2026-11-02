@@ -24,6 +24,7 @@
             
             --bg-utama-url: none;
             --bg-bracket-url: none;
+            --bg-fullscreen-custom: #22c55e; /* Default hijau layar penuh */
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', system-ui, -apple-system, sans-serif; }
@@ -189,19 +190,7 @@
         
         .riwayat-item { background: rgba(0,0,0,0.2); padding: 12px 16px; border-left: 3px solid var(--accent-pink); border-radius: 8px; margin-bottom: 10px; font-size: 0.85rem; font-weight: 500; display: flex; justify-content: space-between; }
         
-        /* CSS KHUSUS MODE FULLSCREEN - FULL LAYAR (BACKGROUND HIJAU MENUTUPI SELURUH LAYAR MONITOR) */
-        :fullscreen, :-webkit-full-screen {
-            background: #22c55e !important;
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* KELAS IDLE MODE UNTUK MENYEMBUNYIKAN KURSOR & KONTROL DI FULLSCREEN SAAT DIAM */
-        :fullscreen.idle-mode, :-webkit-full-screen.idle-mode { cursor: none !important; }
-        :fullscreen.idle-mode .bracket-card-header, :-webkit-full-screen.idle-mode .bracket-card-header { opacity: 0; pointer-events: none; }
-        :fullscreen.idle-mode .dpad-container, :-webkit-full-screen.idle-mode .dpad-container { opacity: 0; pointer-events: none; }
-
+        /* CSS KHUSUS MODE FULLSCREEN - HANYA WRAPPER BRACKET YANG FULL SATU LAYAR */
         #bracket-fullscreen-wrapper {
             position: relative; 
             background-color: var(--bg-dark);
@@ -213,21 +202,34 @@
         }
 
         :fullscreen #bracket-fullscreen-wrapper, :-webkit-full-screen #bracket-fullscreen-wrapper {
-            width: 100% !important;
-            height: 100% !important;
-            background: transparent !important;
-            padding: 20px; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: center; 
-            align-items: center; 
-            border-radius: 0; 
+            position: fixed !important;
+            top: 0 !important; left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            max-width: none !important;
+            max-height: none !important;
+            background: var(--bg-fullscreen-custom) !important; /* MENDUKUNG BACKGROUND Kustom (Warna/Gambar) */
+            background-repeat: no-repeat !important;
+            background-position: center !important;
+            background-size: cover !important;
+            padding: 20px !important; 
+            display: flex !important; 
+            flex-direction: column !important; 
+            justify-content: center !important; 
+            align-items: center !important; 
+            border-radius: 0 !important; 
+            z-index: 999999 !important;
             cursor: grab; 
-            overflow: hidden;
+            overflow: hidden !important;
         }
 
         :fullscreen #bracket-fullscreen-wrapper:active, :-webkit-full-screen #bracket-fullscreen-wrapper:active { cursor: grabbing; }
         
+        /* KELAS IDLE MODE UNTUK MENYEMBUNYIKAN KURSOR & KONTROL SAAT DIAM DI FULLSCREEN */
+        :fullscreen.idle-mode, :-webkit-full-screen.idle-mode { cursor: none !important; }
+        :fullscreen.idle-mode .bracket-card-header, :-webkit-full-screen.idle-mode .bracket-card-header { opacity: 0; pointer-events: none; }
+        :fullscreen.idle-mode .dpad-container, :-webkit-full-screen.idle-mode .dpad-container { opacity: 0; pointer-events: none; }
+
         /* TAMPILKAN TOMBOL EDIT HANYA DI FULLSCREEN */
         :fullscreen .fullscreen-only-item, :-webkit-full-screen .fullscreen-only-item { display: inline-block !important; }
 
@@ -475,6 +477,16 @@
                     <label>Background Kotak Bagan (Bracket)</label>
                     <input type="file" id="upload-bg-bracket" accept="image/*" onchange="prosesUploadGambar(event, 'bracket')" />
                 </div>
+                <!-- FITUR BARU: BACKGROUND KHUSUS LAYAR PENUH -->
+                <div class="form-group">
+                    <label>Background / Warna Layar Penuh (Fullscreen)</label>
+                    <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px;">
+                        <input type="color" id="picker-bg-fullscreen" value="#22c55e" style="width: 50px; height: 40px; border: none; border-radius: 8px; cursor: pointer; background: transparent;" onchange="pilihWarnaFullscreen(this.value)" />
+                        <span style="font-size: 0.8rem; color: var(--text-muted);">Pilih warna solid (cth: hijau untuk greenscreen) atau upload gambar di bawah:</span>
+                    </div>
+                    <input type="file" id="upload-bg-fullscreen" accept="image/*" onchange="prosesUploadGambar(event, 'fullscreen')" />
+                </div>
+
                 <div style="display:flex; gap:10px;">
                     <button class="btn-action" style="margin-top:0;" onclick="simpanPengaturanBG()">SIMPAN</button>
                     <button class="btn-action" style="margin-top:0; background:var(--bg-input); border:1px solid var(--border-subtle); color:#fff;" onclick="hapusBackground()">RESET</button>
@@ -512,7 +524,7 @@
         let appState = {
             pelajar: { teams: Array.from({length: 16}, (_, i) => `Tim ${i+1}`), matches: createEmptyMatches() },
             umum: { teams: Array.from({length: 16}, (_, i) => `Tim ${i+1}`), matches: createEmptyMatches() },
-            registrations: [], history: [], settings: { bgUtama: "", bgBracket: "" }
+            registrations: [], history: [], settings: { bgUtama: "", bgBracket: "", bgFullscreen: "#22c55e" }
         };
 
         function createEmptyMatches() {
@@ -531,6 +543,7 @@
                 try { 
                     let parsed = JSON.parse(saved); 
                     appState = { ...appState, ...parsed }; 
+                    if (!appState.settings.bgFullscreen) appState.settings.bgFullscreen = "#22c55e";
                     if (!appState.pelajar || !appState.pelajar.teams || appState.pelajar.teams.length === 0) {
                         appState.pelajar = { teams: Array.from({length: 16}, (_, i) => `Tim ${i+1}`), matches: createEmptyMatches() };
                     }
@@ -606,6 +619,11 @@
         }
 
         // --- BACKGROUND ---
+        function pilihWarnaFullscreen(color) {
+            appState.settings.bgFullscreen = color;
+            terapkanBackground();
+        }
+
         function prosesUploadGambar(event, target) {
             const file = event.target.files[0];
             if (!file) return;
@@ -622,7 +640,8 @@
                     const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height);
                     const base64Gambar = canvas.toDataURL('image/jpeg', 0.6);
                     if (target === 'utama') appState.settings.bgUtama = base64Gambar;
-                    else appState.settings.bgBracket = base64Gambar;
+                    else if (target === 'bracket') appState.settings.bgBracket = base64Gambar;
+                    else if (target === 'fullscreen') appState.settings.bgFullscreen = `url('${base64Gambar}')`;
                     terapkanBackground();
                 }
                 img.src = e.target.result;
@@ -630,19 +649,30 @@
             reader.readAsDataURL(file);
         }
 
-        function simpanPengaturanBG() { saveState(); alert("Background disimpan!"); }
+        function simpanPengaturanBG() { saveState(); alert("Background berhasil disimpan!"); }
         function hapusBackground() {
-            if(confirm("Reset background ke default?")) {
-                appState.settings.bgUtama = ""; appState.settings.bgBracket = "";
-                document.getElementById('upload-bg-utama').value = ""; document.getElementById('upload-bg-bracket').value = "";
+            if(confirm("Reset semua background ke default?")) {
+                appState.settings.bgUtama = ""; 
+                appState.settings.bgBracket = "";
+                appState.settings.bgFullscreen = "#22c55e";
+                document.getElementById('upload-bg-utama').value = ""; 
+                document.getElementById('upload-bg-bracket').value = "";
+                document.getElementById('upload-bg-fullscreen').value = "";
+                document.getElementById('picker-bg-fullscreen').value = "#22c55e";
                 saveState(); terapkanBackground();
             }
         }
         function terapkanBackground() {
             if (appState.settings.bgUtama) document.documentElement.style.setProperty('--bg-utama-url', `url('${appState.settings.bgUtama}')`);
             else document.documentElement.style.setProperty('--bg-utama-url', `none`);
+            
             if (appState.settings.bgBracket) document.documentElement.style.setProperty('--bg-bracket-url', `url('${appState.settings.bgBracket}')`);
             else document.documentElement.style.setProperty('--bg-bracket-url', `none`);
+
+            if (appState.settings.bgFullscreen) {
+                let fsVal = appState.settings.bgFullscreen.startsWith('url') ? appState.settings.bgFullscreen : appState.settings.bgFullscreen;
+                document.documentElement.style.setProperty('--bg-fullscreen-custom', fsVal);
+            }
         }
 
         // --- REGISTRATION ---
@@ -833,7 +863,8 @@
 
         // --- Cek Status Fullscreen ---
         function isBracketFullscreen() {
-            return document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement;
+            const wrap = document.getElementById('bracket-fullscreen-wrapper');
+            return document.fullscreenElement === wrap || document.webkitFullscreenElement === wrap;
         }
 
         // --- TOGGLE EDIT MODE DI FULLSCREEN ---
@@ -854,11 +885,16 @@
             }
         }
 
-        // --- DRAG, ZOOM & FULLSCREEN (D-PAD & KURSOR AUTO HIDE) ---
+        // --- DRAG, ZOOM & FULLSCREEN (KHUSUS WRAPPER BRACKET) ---
         function toggleBracketFullscreen() {
-            const wrap = document.documentElement; 
-            if (!isBracketFullscreen()) { if (wrap.requestFullscreen) wrap.requestFullscreen(); else if (wrap.webkitRequestFullscreen) wrap.webkitRequestFullscreen(); } 
-            else { if (document.exitFullscreen) document.exitFullscreen(); else if (document.webkitExitFullscreen) document.webkitExitFullscreen(); }
+            const wrap = document.getElementById('bracket-fullscreen-wrapper');
+            if (!isBracketFullscreen()) { 
+                if (wrap.requestFullscreen) wrap.requestFullscreen(); 
+                else if (wrap.webkitRequestFullscreen) wrap.webkitRequestFullscreen(); 
+            } else { 
+                if (document.exitFullscreen) document.exitFullscreen(); 
+                else if (document.webkitExitFullscreen) document.webkitExitFullscreen(); 
+            }
         }
 
         let panX = 0, panY = 0, currentScale = 1, isDraggingBracket = false, startDragX = 0, startDragY = 0;
@@ -884,13 +920,13 @@
 
         let dpadIdleTimer;
         function resetDpadIdle() {
-            const htmlTag = document.documentElement;
-            htmlTag.classList.remove('idle-mode');
+            const wrapper = document.getElementById('bracket-fullscreen-wrapper');
+            wrapper.classList.remove('idle-mode');
             clearTimeout(dpadIdleTimer);
             
             if (isBracketFullscreen()) {
                 dpadIdleTimer = setTimeout(() => {
-                    htmlTag.classList.add('idle-mode');
+                    wrapper.classList.add('idle-mode');
                 }, 2000); // 2 detik tidak ada aktivitas, kursor & header otomatis hilang
             }
         }
@@ -944,18 +980,18 @@
             }, { passive: false });
             
             function handleFullscreenChange() {
-                const htmlTag = document.documentElement;
+                const wrapEl = document.getElementById('bracket-fullscreen-wrapper');
                 if (isBracketFullscreen()) {
                     resetDpadIdle();
-                    wrapper.style.cursor = isEditModeActive ? 'grab' : 'default';
+                    wrapEl.style.cursor = isEditModeActive ? 'grab' : 'default';
                 } else {
                     isEditModeActive = false;
-                    wrapper.classList.remove('edit-active');
+                    wrapEl.classList.remove('edit-active');
                     document.getElementById('btn-edit-toggle').classList.remove('active-edit');
                     document.getElementById('edit-panel').style.display = 'none';
-                    htmlTag.classList.remove('idle-mode');
+                    wrapEl.classList.remove('idle-mode');
                     resetBracketPan(); 
-                    wrapper.style.cursor = 'default';
+                    wrapEl.style.cursor = 'default';
                 }
             }
             document.addEventListener('fullscreenchange', handleFullscreenChange);
