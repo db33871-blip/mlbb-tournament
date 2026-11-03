@@ -720,9 +720,11 @@ textarea:focus{outline:none;border-color:var(--bulb);box-shadow:0 0 0 3px rgba(2
  <form id="editForm" class="panel" novalidate>
   <h3 id="editTitle">Edit tim</h3>
   <p class="muted" id="editMeta"></p>
+  <div id="e-notice" class="notice hidden chip-no" style="margin-bottom:16px;border-radius:6px;padding:10px 14px"></div>
   <div class="field-row">
-   <div class="field"><label for="e-name">Nama tim</label><input id="e-name" maxlength="40" required></div>
-   <div class="field"><label for="e-captain">Nama lengkap kapten</label><input id="e-captain" maxlength="40" required></div>
+   <!-- Atribut required sudah dihapus -->
+   <div class="field"><label for="e-name">Nama tim</label><input id="e-name" maxlength="40"></div>
+   <div class="field"><label for="e-captain">Nama lengkap kapten</label><input id="e-captain" maxlength="40"></div>
   </div>
   <div class="field-row">
    <div class="field"><label for="e-phone">WhatsApp kapten</label><input id="e-phone" type="tel" inputmode="tel" placeholder="08xxxxxxxxxx"></div>
@@ -734,7 +736,7 @@ textarea:focus{outline:none;border-color:var(--bulb);box-shadow:0 0 0 3px rgba(2
   <div class="field">
    <span class="label">Pemain</span>
    <div class="roster-table" id="e-roster"></div>
-   <p class="hint">Untuk data lama, nickname dan server boleh dikosongkan bila belum diketahui.</p>
+   <p class="hint">Panitia bisa menyimpan perubahan form meskipun ada data yang kosong.</p>
   </div>
   <div class="btn-row">
    <button class="btn btn-primary" type="submit" id="e-save">Simpan perubahan</button>
@@ -759,13 +761,11 @@ const firebaseConfig = {
  projectId: "tournamen-mlbb-infly-carnival",
  storageBucket: "tournamen-mlbb-infly-carnival.firebasestorage.app"
 };
-/* Username panitia dipetakan ke email di domain ini (sama seperti versi sebelumnya) */
 const PANITIA_EMAIL_DOMAIN = "mlbb.inflycarnival.com";
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
-/* ?emu di URL: pakai emulator lokal untuk pengujian, data asli tidak tersentuh */
 if (new URLSearchParams(location.search).has("emu")) {
  connectAuthEmulator(auth, "http://127.0.0.1:9099", { disableWarnings: true });
  connectDatabaseEmulator(db, "127.0.0.1", 9400);
@@ -826,7 +826,21 @@ function toast(msg, type) {
  const t = document.createElement("div");
  t.className = "toast" + (type === "error" ? " error" : "");
  t.textContent = msg;
- $("toasts").appendChild(t);
+ 
+ const dlg = $("editDialog");
+ if (dlg && dlg.open) {
+  let dt = $("dlg-toasts");
+  if (!dt) {
+   dt = document.createElement("div");
+   dt.id = "dlg-toasts";
+   dt.style.cssText = "position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:100;display:grid;gap:8px;width:min(440px,calc(100% - 32px))";
+   dlg.appendChild(dt);
+  }
+  dt.appendChild(t);
+ } else {
+  $("toasts").appendChild(t);
+ }
+ 
  setTimeout(() => t.remove(), 4200);
 }
 const fail = msg => toast(msg, "error");
@@ -853,7 +867,6 @@ function rosterOf(t) {
   const r = Array.isArray(t.roster) ? t.roster : Object.keys(t.roster).sort().map(k => t.roster[k]);
   return r.filter(Boolean).map((p, i) => ({ ...p, role: ROLES[i] }));
  }
- /* Data lama: satu kolom bisa berisi "ID (server)", bahkan beberapa ID sekaligus */
  return LEGACY_IDS.flatMap((k, i) => {
   const raw = String(t[k] ?? "").trim();
   if (!raw || raw === "-") return [];
@@ -891,7 +904,6 @@ function participants(cat, round, i) {
  return ["Menunggu", "Menunggu"];
 }
 const parts = id => { const [r, i] = id.split("_"); return [r, Number(i)]; };
-/* Skor lama diabaikan bila peserta pertandingan sudah berubah */
 function getMatch(cat, id) {
  const m = (tour[K(cat)].matches || {})[id];
  const p = participants(cat, ...parts(id));
@@ -1050,7 +1062,6 @@ $("regForm").addEventListener("submit", async e => {
    roster, createdAt: serverTimestamp()
   };
   if (cat === "Pelajar") Object.assign(team, { sekolah, jenjang });
-  /* Ambil slot kosong terkecil. Bila keduluan tim lain, coba slot berikutnya. */
   let done = false;
   for (let attempt = 0; attempt < 4 && !done; attempt++) {
    const snap = await get(ref(db, `slot_claims/${k}`));
@@ -1224,7 +1235,6 @@ function renderSettings() {
  if (!admin) return;
  $("whoami").textContent = admin.name;
  const pending = allTeams().filter(t => t.status === "pending");
- /* Jangan render ulang saat panitia sedang menulis alasan penolakan */
  if (!document.querySelector("#approvalList .reject-form:not(.hidden)")) $("approvalList").innerHTML = pending.length ? pending.map(t => {
   const wa = contacts[K(t.cat)][t.key]?.wa || t.wa || "";
   const dup = findDuplicates(t);
@@ -1294,8 +1304,9 @@ function openEdit(cat, key) {
  const k = K(cat), t = reg[k][key];
  if (!admin || !t) return;
  editing = { cat, key };
- $("editTitle").textContent = "Edit " + t.namaTim;
+ $("editTitle").textContent = "Edit " + (t.namaTim || "Data Tim");
  $("editMeta").textContent = `Kategori ${cat}, slot ${t.slot}, ${t.status === "approved" ? "sudah disetujui" : "menunggu persetujuan"}.`;
+ if ($("e-notice")) $("e-notice").classList.add("hidden");
  $("e-name").value = t.namaTim || "";
  $("e-captain").value = t.kapten || "";
  $("e-phone").value = contacts[k][key]?.wa || t.wa || "";
@@ -1304,7 +1315,6 @@ function openEdit(cat, key) {
  $("e-pelajar2").classList.toggle("hidden", !pel);
  $("e-sekolah").value = t.sekolah || "";
  $("e-jenjang").value = t.jenjang || "";
- /* Isi baris pemain sesuai peran; data lama bisa punya lebih dari satu ID di kolom cadangan */
  const players = rosterOf(t);
  const rows = readRoster("#e-roster");
  rows.forEach(r => { r.el.querySelector(".r-nick").value = ""; r.el.querySelector(".r-id").value = ""; r.el.querySelector(".r-server").value = ""; });
@@ -1317,8 +1327,6 @@ function openEdit(cat, key) {
   r.el.querySelector(".r-id").value = p.id || "";
   r.el.querySelector(".r-server").value = p.server || "";
  });
- const extra = Object.values(byRole).flat();
- $("editMeta").textContent += extra.length ? ` Data lama punya ID tambahan (${extra.map(p => p.id).join(", ")}) yang tidak muat di form; ID itu akan dihapus saat disimpan.` : "";
  $("editDialog").showModal();
  $("e-name").focus();
 }
@@ -1329,25 +1337,39 @@ $("editForm").addEventListener("submit", async e => {
  if (!t) return;
  const name = $("e-name").value.trim(), captain = $("e-captain").value.trim(), phone = $("e-phone").value.trim();
  const sekolah = $("e-sekolah").value.trim(), jenjang = $("e-jenjang").value;
- const focusFail = (el, msg) => { el.focus(); fail(msg); };
- if (!name) return focusFail($("e-name"), "Isi nama tim.");
- if (name.toUpperCase() === "BYE" || name === "Menunggu") return focusFail($("e-name"), "Gunakan nama tim lain.");
- if (!captain) return focusFail($("e-captain"), "Isi nama kapten.");
+ 
+ const focusFail = (el, msg) => { 
+  el.focus(); 
+  if ($("e-notice")) {
+   $("e-notice").textContent = msg;
+   $("e-notice").classList.remove("hidden");
+  }
+  fail(msg); 
+ };
+ 
+ if ($("e-notice")) $("e-notice").classList.add("hidden");
+
+ /* VALIDASI DILONGGARKAN: Lewati jika kosong, periksa format hanya jika terisi */
+ if (name && (name.toUpperCase() === "BYE" || name === "Menunggu")) return focusFail($("e-name"), "Gunakan nama tim lain.");
  if (phone && !/^[0-9+ -]{8,20}$/.test(phone)) return focusFail($("e-phone"), "Nomor WhatsApp harus 8 sampai 20 angka.");
  if (cat === "Pelajar" && sekolah && sekolah.length < 2) return focusFail($("e-sekolah"), "Asal sekolah terlalu pendek.");
 
  const rows = readRoster("#e-roster");
  for (const r of rows) {
-  if (r.i === 5 && !r.nick && !r.id && !r.server) continue;
-  if (!/^[0-9]{5,12}$/.test(r.id)) return focusFail(r.el.querySelector(".r-id"), `ID ${ROLES[r.i]} harus 5 sampai 12 angka.`);
+  if (r.id && !/^[0-9]{5,12}$/.test(r.id)) return focusFail(r.el.querySelector(".r-id"), `ID ${ROLES[r.i]} harus 5 sampai 12 angka.`);
   if (r.server && !/^[0-9]{1,6}$/.test(r.server)) return focusFail(r.el.querySelector(".r-server"), `Server ${ROLES[r.i]} harus angka.`);
  }
- const roster = rows.filter(r => r.id).map(({ nick, id, server }) => ({ nick, id, server }));
- const ids = roster.map(p => p.id);
- if (new Set(ids).size !== ids.length) return fail("Ada ID pemain yang sama di dalam tim ini.");
+ 
+ const roster = rows.filter(r => r.nick || r.id || r.server).map(({ nick, id, server }) => ({ nick, id, server }));
+ const ids = [0,1,2,3,4,5].map(i => rows[i] ? rows[i].id : "");
+ const validIds = ids.filter(Boolean);
+ 
+ if (validIds.length > 0 && new Set(validIds).size !== validIds.length) return fail("Ada ID pemain yang sama di dalam tim ini.");
+ 
  const others = allTeams().filter(o => o.status !== "rejected" && !(o.cat === cat && o.key === key));
- if (others.some(o => String(o.namaTim).toLowerCase() === name.toLowerCase())) return focusFail($("e-name"), "Nama tim sudah dipakai tim lain.");
- for (const id of ids) {
+ if (name && others.some(o => o.namaTim && String(o.namaTim).toLowerCase() === name.toLowerCase())) return focusFail($("e-name"), "Nama tim sudah dipakai tim lain.");
+ 
+ for (const id of validIds) {
   const o = others.find(x => playerIdsOf(x).includes(id));
   if (o) return fail(`ID ${id} sudah terdaftar di tim ${o.namaTim}.`);
   if (playerIdx[id] && playerIdx[id] !== `${k}/${key}`) return fail(`ID ${id} sudah terdaftar di tim lain.`);
@@ -1355,10 +1377,17 @@ $("editForm").addEventListener("submit", async e => {
 
  const base = `registered_teams/${k}/${key}`;
  const updates = {
-  [`${base}/namaTim`]: name, [`${base}/kapten`]: captain, [`${base}/roster`]: roster,
-  [`${base}/idKapten`]: ids[0], [`${base}/idP2`]: ids[1], [`${base}/idP3`]: ids[2],
-  [`${base}/idP4`]: ids[3], [`${base}/idP5`]: ids[4], [`${base}/idCadangan`]: ids[5] || "-"
+  [`${base}/namaTim`]: name || "", 
+  [`${base}/kapten`]: captain || "", 
+  [`${base}/roster`]: roster,
+  [`${base}/idKapten`]: ids[0] || "-", 
+  [`${base}/idP2`]: ids[1] || "-", 
+  [`${base}/idP3`]: ids[2] || "-",
+  [`${base}/idP4`]: ids[3] || "-", 
+  [`${base}/idP5`]: ids[4] || "-", 
+  [`${base}/idCadangan`]: ids[5] || "-"
  };
+ 
  if (cat === "Pelajar") {
   updates[`${base}/sekolah`] = sekolah || null;
   updates[`${base}/jenjang`] = jenjang || null;
@@ -1366,23 +1395,28 @@ $("editForm").addEventListener("submit", async e => {
  if (phone) {
   updates[`registered_contacts/${k}/${key}`] = { wa: phone };
   if (t.wa) updates[`${base}/wa`] = null;
+ } else {
+  updates[`registered_contacts/${k}/${key}`] = null;
+  updates[`${base}/wa`] = null;
  }
- Object.entries(playerIdx).forEach(([id, path]) => { if (path === `${k}/${key}` && !ids.includes(id)) updates[`player_ids/${id}`] = null; });
- ids.forEach(id => updates[`player_ids/${id}`] = `${k}/${key}`);
- /* Skor disimpan bersama nama tim, jadi ganti juga nama di pertandingan yang sudah tercatat */
- const old = t.namaTim;
- if (name !== old) {
+ 
+ Object.entries(playerIdx).forEach(([id, path]) => { if (path === `${k}/${key}` && !validIds.includes(id)) updates[`player_ids/${id}`] = null; });
+ validIds.forEach(id => updates[`player_ids/${id}`] = `${k}/${key}`);
+ 
+ const old = t.namaTim || "";
+ if (name && name !== old) {
   Object.entries(tour[k].matches || {}).forEach(([id, m]) => {
    if (m.a === old) updates[`tournament/${k}/matches/${id}/a`] = name;
    if (m.b === old) updates[`tournament/${k}/matches/${id}/b`] = name;
   });
  }
+ 
  $("e-save").disabled = true;
  try {
   await update(ref(db), updates);
   $("editDialog").close();
   log(name !== old ? `Mengubah data Tim "${old}" menjadi "${name}" (${cat.toUpperCase()})` : `Mengubah data Tim "${name}" (${cat.toUpperCase()})`);
-  toast(`Data ${name} disimpan.`);
+  toast(`Perubahan disimpan.`);
  } catch (err) {
   console.error(err);
   fail("Gagal menyimpan perubahan tim.");
@@ -1421,7 +1455,6 @@ async function reject(cat, key) {
  } catch (err) { console.error(err); fail("Gagal menolak tim."); }
 }
 
-/* Undian: slot diacak dan disebar supaya bye terbagi rata ke kedua sisi bagan */
 const SPREAD = [0, 8, 4, 12, 2, 10, 6, 14, 1, 9, 5, 13, 3, 11, 7, 15];
 async function drawBracket(cat) {
  if (!admin) return;
@@ -1463,7 +1496,6 @@ async function unlockBracket(cat) {
  } catch (err) { console.error(err); fail("Gagal membatalkan undian."); }
 }
 
-/* Info & aturan */
 $("infoForm").addEventListener("submit", async e => {
  e.preventDefault();
  if (!admin) return;
@@ -1479,7 +1511,6 @@ $("infoForm").addEventListener("submit", async e => {
  } catch (err) { console.error(err); fail("Gagal menyimpan info."); }
 });
 
-/* Ganti password */
 $("passForm").addEventListener("submit", async e => {
  e.preventDefault();
  const user = auth.currentUser;
@@ -1496,7 +1527,6 @@ $("passForm").addEventListener("submit", async e => {
  }
 });
 
-/* Latar bracket: nilai berupa warna (#xxxxxx), URL, atau gambar data URL */
 function bgValue(cat) { return settings["bg_" + K(cat)] || ""; }
 function bgStyle(v) {
  if (!v) return "background-color:#141f74;";
@@ -1511,9 +1541,7 @@ function loadBgForm() {
  $("bgFile").value = ""; bgFileData = "";
  $("bgPreview").style.cssText = bgStyle(v);
 }
-function bgFromForm() {
- return bgFileData || $("bgImage").value.trim() || $("bgColor").value;
-}
+function bgFromForm() { return bgFileData || $("bgImage").value.trim() || $("bgColor").value; }
 ["input", "change"].forEach(ev => {
  $("bgColor").addEventListener(ev, () => { $("bgImage").value = ""; bgFileData = ""; $("bgPreview").style.cssText = bgStyle(bgFromForm()); });
  $("bgImage").addEventListener(ev, () => { $("bgPreview").style.cssText = bgStyle(bgFromForm()); });
@@ -1553,7 +1581,6 @@ async function clearBackground() {
  } catch (err) { console.error(err); fail("Gagal menghapus latar."); }
 }
 
-/* Log aktivitas */
 function renderLogs() {
  const q = $("logFilter").value.trim().toLowerCase();
  const list = logs.filter(l => !q || `${l.user} ${l.action}`.toLowerCase().includes(q));
@@ -1563,7 +1590,6 @@ function renderLogs() {
 }
 $("logFilter").addEventListener("input", renderLogs);
 
-/* ---------- KARTU PERTANDINGAN ---------- */
 function matchCard(cat, round, i, title) {
  const id = round + "_" + i;
  const m = getMatch(cat, id), p = participants(cat, round, i), w = winner(cat, id);
@@ -1576,7 +1602,6 @@ function matchCard(cat, round, i, title) {
  return `<div class="match"><div class="match-title">${title}</div>${row(p[0], m.sa)}${row(p[1], m.sb)}</div>`;
 }
 
-/* ---------- BAGAN SIMETRIS ---------- */
 function renderBracket() {
  const cat = bracketCat;
  segButtons($("bracketSeg"), cat, c => { bracketCat = c; renderBracket(); });
@@ -1622,7 +1647,6 @@ function renderBracket() {
  }
 }
 
-/* ---------- INPUT SKOR KHUSUS PANITIA ---------- */
 const ROUNDS = [
  ["r16", 8, "16 besar", "Pertandingan"],
  ["qf", 4, "Perempat final", "Perempat final"],
@@ -1706,7 +1730,6 @@ async function resetMatch(cat, id) {
  } catch (err) { console.error(err); fail("Gagal mereset skor."); }
 }
 
-/* ---------- FULLSCREEN VIDEOTRON ---------- */
 function openFS(native) {
  renderBracket();
  $("fsContent").innerHTML = $("bracketContent").innerHTML;
@@ -1725,7 +1748,6 @@ function closeFS() {
  if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
  if (location.hash.startsWith("#videotron")) page("bracketPage");
 }
-/* Perkecil/perbesar bagan agar pas satu layar videotron */
 function fitFS() {
  const stage = document.querySelector("#fsContent .bracket-stage");
  if (!stage) return;
@@ -1739,7 +1761,6 @@ document.addEventListener("keydown", e => {
  if (e.key === "Escape" && $("fullscreen").classList.contains("show") && !document.fullscreenElement) closeFS();
 });
 
-/* ---------- DATA REALTIME ---------- */
 onValue(ref(db, "registered_teams"), s => { reg = { pelajar: {}, umum: {}, ...(s.val() || {}) }; renderAll(); }, err => { console.error(err); fail("Gagal memuat data tim. Periksa koneksi internet."); });
 onValue(ref(db, "slot_claims"), s => { claims = { pelajar: {}, umum: {}, ...(s.val() || {}) }; renderAll(); });
 onValue(ref(db, "player_ids"), s => { playerIdx = s.val() || {}; });
@@ -1753,7 +1774,6 @@ onValue(ref(db, "tournament/settings"), s => { settings = s.val() || {}; renderA
 
 Object.assign(window, { page, logout, approve, reject, openEdit, drawBracket, unlockBracket, saveResult, setWO, openFS, closeFS, enterNativeFS, clearBackground, resetMatch });
 
-/* MULAI */
 syncCategoryFields();
 page(location.hash.slice(1) || "register");
 window.addEventListener("hashchange", () => page(location.hash.slice(1)));
