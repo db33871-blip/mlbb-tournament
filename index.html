@@ -295,6 +295,7 @@ input[type=color]{padding:4px;height:46px;cursor:pointer}
 /* Area luar/pembungkus bagan menjadi hijau saat fullscreen (chroma key) */
 #fullscreen .bracket-wrap{background:#01ff06!important;background-image:none!important}
 #fullscreen .bracket-cat{display:none}
+#fullscreen .bracket-logo{display:none}
 .fs-tools{position:fixed;right:16px;top:16px;z-index:55;display:flex;gap:8px}
 #fullscreen:fullscreen .fs-tools{display:none!important}
 
@@ -1419,7 +1420,7 @@ $("editForm").addEventListener("submit", async e => {
   toast(`Perubahan disimpan.`);
  } catch (err) {
   console.error(err);
-  fail("Gagal menyimpan perubahan tim.");
+  fail("Gagal menyimpan: " + err.message);
  } finally { $("e-save").disabled = false; }
 });
 
