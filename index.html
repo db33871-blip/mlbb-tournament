@@ -1658,6 +1658,7 @@ function renderScores() {
     <span class="t ${tcls(p[1])}">${nm(p[1])}</span>
     <div class="actions">
      <button class="btn ${w ? "" : "btn-primary"}" onclick="saveResult('${cat}','${id}')" ${ready ? "" : "disabled"}>${w && !m.wo ? "Perbarui skor" : "Simpan skor"}</button>
+     ${w || m.sa != null || m.wo ? `<button class="btn btn-danger" onclick="resetMatch('${cat}','${id}')">Reset</button>` : ''}
      <select class="wo-select" onchange="setWO('${cat}','${id}',this.value)" ${ready ? "" : "disabled"} aria-label="Menang WO">
       <option value="">Menang WO…</option>
       <option value="a">${nm(p[0])}</option>
@@ -1694,6 +1695,15 @@ async function setWO(cat, id, side) {
   log(`WO ${cat.toUpperCase()} ${id}: ${win} menang WO`);
   toast(`${win} menang WO.`);
  } catch (err) { console.error(err); fail("Gagal menyimpan WO."); }
+}
+async function resetMatch(cat, id) {
+ if (!admin) return fail("Masuk sebagai panitia terlebih dahulu.");
+ if (!confirm("Yakin ingin mereset/menghapus skor pertandingan ini?")) return;
+ try {
+  await set(ref(db, `tournament/${K(cat)}/matches/${id}`), null);
+  log(`Mereset skor ${cat.toUpperCase()} ${id}`);
+  toast("Skor berhasil direset.");
+ } catch (err) { console.error(err); fail("Gagal mereset skor."); }
 }
 
 /* ---------- FULLSCREEN VIDEOTRON ---------- */
@@ -1741,7 +1751,7 @@ CATS.forEach(c => onValue(ref(db, `tournament/${K(c)}`), s => {
 onValue(ref(db, "tournament/info"), s => { info = s.val() || {}; renderAll(); });
 onValue(ref(db, "tournament/settings"), s => { settings = s.val() || {}; renderAll(); });
 
-Object.assign(window, { page, logout, approve, reject, openEdit, drawBracket, unlockBracket, saveResult, setWO, openFS, closeFS, enterNativeFS, clearBackground });
+Object.assign(window, { page, logout, approve, reject, openEdit, drawBracket, unlockBracket, saveResult, setWO, openFS, closeFS, enterNativeFS, clearBackground, resetMatch });
 
 /* MULAI */
 syncCategoryFields();
