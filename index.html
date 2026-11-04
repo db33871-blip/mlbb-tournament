@@ -289,40 +289,13 @@ input[type=color]{padding:4px;height:46px;cursor:pointer}
  height:100vh;padding:0;border:0;border-radius:0;overflow:hidden;
  display:flex;align-items:center;justify-content:center;
 }
-#fullscreen .bracket-stage{flex-shrink:0;transform-origin:center center;padding:150px 50px 130px}
+/* Padding ditambah agar kotak bagan mengecil, sehingga background gambar terlihat jelas */
+#fullscreen .bracket-stage{flex-shrink:0;transform-origin:center center;padding:120px 40px 140px}
 #fullscreen .bracket-cat{display:none}
 #fullscreen .bracket-logo{display:none}
 .fs-tools{position:fixed;right:16px;top:16px;z-index:55;display:flex;gap:8px}
 #fullscreen:fullscreen .fs-tools{display:none!important}
 #fullscreen.hide-cursor, #fullscreen.hide-cursor * { cursor: none !important; }
-
-/* OVERLAY GRAFIK VIDEOTRON */
-.v-overlay { display: none; position: absolute; z-index: 10; pointer-events: none; }
-#fullscreen .v-overlay { display: block; }
-.v-net {
-  top: 40px; left: 0;
-  background: #fff; color: #0c1667;
-  font: 800 24px var(--display);
-  padding: 12px 40px 12px 30px;
-  border-radius: 0 999px 999px 0;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-}
-.v-carnival {
-  top: 30px; right: 40px;
-  width: 220px; height: 90px;
-  background: url("https://inflycarnival.com/og-image.png") no-repeat right center;
-  background-size: contain;
-  filter: drop-shadow(0 6px 16px rgba(0,0,0,0.6));
-}
-.v-title {
-  bottom: 20px; left: 50%; transform: translateX(-50%);
-  font: 900 64px var(--display);
-  color: rgba(255,255,255,0.75);
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  text-shadow: 0 4px 16px rgba(0,0,0,0.5);
-  white-space: nowrap;
-}
 
 /* ---------- TOAST ---------- */
 #toasts{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:100;display:grid;gap:8px;width:min(440px,calc(100% - 32px))}
@@ -1720,9 +1693,6 @@ function renderBracket() {
  $("bracketContent").innerHTML = `
  <div class="bracket-wrap" style="${esc(bgStyle(bgValue(cat)))}">
  <div class="bracket-stage">
-  <div class="v-overlay v-net">INFLY NETWORKS</div>
-  <div class="v-overlay v-carnival"></div>
-  <div class="v-overlay v-title">TOURNAMENT MLBB</div>
   
   <div class="bracket-logo">${BRAND_LOGO}</div>
   <span class="chip chip-${cat} bracket-cat">Kategori ${cat}</span>
