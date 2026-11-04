@@ -53,14 +53,13 @@ a{color:var(--bulb)}
 .cat-Pelajar .meter i{background:var(--pelajar)}
 .cat-Umum .meter i{background:var(--umum)}
 
-/* ---------- HEADER: minimalis, satu warna navy yang sama dengan latar logo ---------- */
+/* ---------- HEADER ---------- */
 .site-head{
  position:sticky;top:0;z-index:20;
  background:#0c1667;border-bottom:1px solid rgba(255,255,255,.08);
 }
 .head-inner{max-width:1240px;margin:0 auto;padding:0 18px;display:flex;align-items:center;gap:28px;min-height:68px}
 .brand{display:flex;align-items:center;gap:10px;flex-shrink:0;text-decoration:none}
-/* logo resmi diambil dari og-image inflycarnival.com, dipotong ke area logonya (latar #0c1667) */
 .brand-logo{
  --s:52px;flex-shrink:0;width:var(--s);height:var(--s);
  background:#0c1667 url("https://inflycarnival.com/og-image.png") no-repeat;
@@ -79,7 +78,6 @@ a{color:var(--bulb)}
  transition:color .2s;
 }
 .tab:hover{color:#fff}
-/* tab aktif: teks putih dengan garis tipis emas di bawah */
 .tab::after{
  content:"";position:absolute;left:12px;right:12px;bottom:-1px;height:2px;border-radius:2px;
  background:var(--gold-hi);transform:scaleX(0);transition:transform .2s ease;
@@ -214,7 +212,6 @@ input[type=color]{padding:4px;height:46px;cursor:pointer}
  background-color:var(--night-2);
 }
 .bracket-logo{display:flex;justify-content:center;margin-bottom:10px}
-/* logo header dipakai ulang di bagan, di atas pelat navy agar terbaca di latar apa pun */
 .bracket-logo .brand{padding:10px 24px 10px 14px;border-radius:14px;background:#0c1667}
 .bracket-logo .brand-logo{--s:84px}
 .bracket-logo .brand-name{font-size:22px}
@@ -292,8 +289,6 @@ input[type=color]{padding:4px;height:46px;cursor:pointer}
  display:flex;align-items:center;justify-content:center;
 }
 #fullscreen .bracket-stage{flex-shrink:0;transform-origin:center center}
-/* Area luar/pembungkus bagan menjadi hijau saat fullscreen (chroma key) */
-#fullscreen .bracket-wrap{background:#01ff06!important;background-image:none!important}
 #fullscreen .bracket-cat{display:none}
 #fullscreen .bracket-logo{display:none}
 .fs-tools{position:fixed;right:16px;top:16px;z-index:55;display:flex;gap:8px}
@@ -467,7 +462,10 @@ textarea:focus{outline:none;border-color:var(--bulb);box-shadow:0 0 0 3px rgba(2
     </div>
    </div>
    <div class="field">
-    <label for="teamName">Nama tim</label>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px">
+     <label for="teamName" style="margin-bottom:0">Nama tim</label>
+     <button type="button" class="btn btn-sm" onclick="generateAIName()" style="background:linear-gradient(135deg, var(--violet), var(--pink)); color:#fff; border:none; border-radius:999px; font-size:12px; height:26px; padding:0 10px; gap:4px">✨ AI Generator</button>
+    </div>
     <input id="teamName" required maxlength="40" placeholder="Contoh: Garuda Esports" autocomplete="off">
    </div>
    <div class="field-row" id="pelajarFields">
@@ -639,6 +637,14 @@ textarea:focus{outline:none;border-color:var(--bulb);box-shadow:0 0 0 3px rgba(2
    <div id="manageList"></div>
   </div>
 
+  <!-- PANEL AI PENDETEKSI BUG -->
+  <div class="panel">
+   <h3>✨ AI Sistem Pendeteksi Bug & Data</h3>
+   <p class="muted">AI akan memindai seluruh database (tim, slot, id pemain, dan skor) untuk mendeteksi error tersembunyi yang bisa merusak turnamen.</p>
+   <button class="btn btn-primary" onclick="runDiagnostic()" style="background:linear-gradient(135deg, var(--violet), var(--pink)); border:none;">Jalankan Pemindaian AI</button>
+   <div id="diagnosticResult" style="margin-top:14px"></div>
+  </div>
+
   <div class="panel">
    <h3>Undian bracket</h3>
    <p class="muted">Posisi tim diacak setelah semua pendaftaran diperiksa. Slot kosong menjadi bye, jadi lawannya lolos otomatis.</p>
@@ -724,7 +730,6 @@ textarea:focus{outline:none;border-color:var(--bulb);box-shadow:0 0 0 3px rgba(2
   <p class="muted" id="editMeta"></p>
   <div id="e-notice" class="notice hidden chip-no" style="margin-bottom:16px;border-radius:6px;padding:10px 14px"></div>
   <div class="field-row">
-   <!-- Atribut required sudah dihapus -->
    <div class="field"><label for="e-name">Nama tim</label><input id="e-name" maxlength="40"></div>
    <div class="field"><label for="e-captain">Nama lengkap kapten</label><input id="e-captain" maxlength="40"></div>
   </div>
@@ -855,6 +860,75 @@ function fmtTime(t) {
  if (typeof t !== "number") return esc(t);
  return new Date(t).toLocaleString("id-ID", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
 }
+
+/* ---------- AI NAMA TIM ---------- */
+window.generateAIName = function() {
+ const prefixes = ["Cyber", "Neon", "Shadow", "Royal", "Alter", "Aura", "Nova", "Dark", "Astral", "Quantum", "Cosmic", "Venom", "Phantom", "Savage", "Crimson", "Glimmer", "Lunar", "Solar", "Apex", "Vanguard", "Mystic"];
+ const suffixes = ["Tigers", "Garuda", "Phoenix", "Esports", "Legends", "Kings", "Knights", "Dragons", "Wolves", "Lions", "Eagles", "Ninjas", "Samurai", "Titans", "Gods", "Rebels", "Vipers", "Syndicate", "Legion", "Rangers"];
+ const r = arr => arr[Math.floor(Math.random() * arr.length)];
+ 
+ let name = `${r(prefixes)} ${r(suffixes)}`;
+ if (Math.random() > 0.8) name = `Team ${name}`;
+ else if (Math.random() > 0.8) name = `${name} ID`;
+ 
+ const input = $("teamName");
+ input.value = name;
+ input.focus();
+ toast("✨ " + name + " (Dihasilkan oleh AI)");
+};
+
+/* ---------- AI PENDETEKSI BUG (SISTEM) ---------- */
+window.runDiagnostic = function() {
+ if (!admin) return;
+ let issues = [];
+ let all = allTeams();
+ let approved = all.filter(t => t.status === "approved");
+
+ // 1. Cek Duplikat ID di Tim yang Disetujui
+ let idMap = {};
+ approved.forEach(t => {
+  playerIdsOf(t).forEach(id => {
+   if(!idMap[id]) idMap[id] = [];
+   idMap[id].push(t.namaTim);
+  });
+ });
+ Object.keys(idMap).forEach(id => {
+  if(idMap[id].length > 1) {
+   issues.push({ type: 'danger', text: `ID ${id} dipakai di lebih dari 1 tim: ${idMap[id].join(", ")}.` });
+  }
+ });
+
+ // 2. Cek Slot dan Kapten
+ CATS.forEach(c => {
+  let k = K(c);
+  let app = approved.filter(t => t.cat === c);
+  app.forEach(t => {
+   if (!t.slot) issues.push({ type: 'danger', text: `Tim [${c}] ${t.namaTim} disetujui tapi tidak terhubung ke slot manapun.`});
+   else if (claims[k] && claims[k][t.slot] !== t.key) issues.push({ type: 'danger', text: `Slot ${t.slot} di [${c}] tidak sinkron dengan tim ${t.namaTim}.`});
+   if (!t.kapten) issues.push({ type: 'warn', text: `Tim [${c}] ${t.namaTim} tidak memiliki nama kapten.` });
+  });
+ });
+
+ // 3. Cek Skor Anomali (Seri)
+ CATS.forEach(c => {
+  let k = K(c);
+  let matches = tour[k].matches || {};
+  Object.keys(matches).forEach(id => {
+   let m = matches[id];
+   if (!m.wo && m.sa !== null && m.sb !== null && m.sa !== undefined && m.sb !== undefined) {
+    if (m.sa === m.sb) issues.push({ type: 'danger', text: `Skor [${c}] pertandingan ${m.a} vs ${m.b} seri (${m.sa}-${m.sb}). Harus ada pemenang.` });
+   }
+  });
+ });
+
+ // Render Hasil AI
+ let html = issues.length === 0
+  ? `<div class="notice" style="border-color:var(--win);background:rgba(79,240,176,.1);color:var(--win);margin-bottom:0">✅ <b>Sistem Aman!</b> AI tidak menemukan error atau duplikasi data pada ${all.length} tim terdaftar. Bracket dan pertandingan siap dijalankan.</div>`
+  : `<div class="notice chip-no" style="margin-bottom:8px">⚠️ <b>Ditemukan ${issues.length} potensi masalah:</b></div><ul class="user-list rejected" style="margin-top:0">${issues.map(i => `<li><span class="${i.type === 'warn' ? 'chip-wait' : 'chip-no'} chip" style="flex-shrink:0">${i.type === 'warn' ? 'Peringatan' : 'Error Kritis'}</span> <span class="muted" style="font-size:13px">${esc(i.text)}</span></li>`).join("")}</ul>`;
+
+ $("diagnosticResult").innerHTML = html;
+ toast("Sistem AI selesai memindai database.");
+};
 
 /* ---------- DATA TIM ---------- */
 function teamsOf(cat, status) {
@@ -1351,7 +1425,6 @@ $("editForm").addEventListener("submit", async e => {
  
  if ($("e-notice")) $("e-notice").classList.add("hidden");
 
- /* VALIDASI DILONGGARKAN: Lewati jika kosong, periksa format hanya jika terisi */
  if (name && (name.toUpperCase() === "BYE" || name === "Menunggu")) return focusFail($("e-name"), "Gunakan nama tim lain.");
  if (phone && !/^[0-9+ -]{8,20}$/.test(phone)) return focusFail($("e-phone"), "Nomor WhatsApp harus 8 sampai 20 angka.");
  if (cat === "Pelajar" && sekolah && sekolah.length < 2) return focusFail($("e-sekolah"), "Asal sekolah terlalu pendek.");
@@ -1785,7 +1858,7 @@ CATS.forEach(c => onValue(ref(db, `tournament/${K(c)}`), s => {
 onValue(ref(db, "tournament/info"), s => { info = s.val() || {}; renderAll(); });
 onValue(ref(db, "tournament/settings"), s => { settings = s.val() || {}; renderAll(); });
 
-Object.assign(window, { page, logout, approve, reject, openEdit, drawBracket, unlockBracket, saveResult, setWO, openFS, closeFS, enterNativeFS, clearBackground, resetMatch });
+Object.assign(window, { page, logout, approve, reject, openEdit, drawBracket, unlockBracket, saveResult, setWO, openFS, closeFS, enterNativeFS, clearBackground, resetMatch, generateAIName, runDiagnostic });
 
 syncCategoryFields();
 page(location.hash.slice(1) || "register");
