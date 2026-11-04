@@ -298,6 +298,7 @@ input[type=color]{padding:4px;height:46px;cursor:pointer}
 #fullscreen .bracket-logo{display:none}
 .fs-tools{position:fixed;right:16px;top:16px;z-index:55;display:flex;gap:8px}
 #fullscreen:fullscreen .fs-tools{display:none!important}
+#fullscreen.hide-cursor, #fullscreen.hide-cursor * { cursor: none !important; }
 
 /* ---------- TOAST ---------- */
 #toasts{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:100;display:grid;gap:8px;width:min(440px,calc(100% - 32px))}
@@ -1760,6 +1761,17 @@ function fitFS() {
 window.addEventListener("resize", () => { if ($("fullscreen").classList.contains("show")) fitFS(); });
 document.addEventListener("keydown", e => {
  if (e.key === "Escape" && $("fullscreen").classList.contains("show") && !document.fullscreenElement) closeFS();
+});
+
+let cursorTimer;
+$("fullscreen").addEventListener("mousemove", () => {
+ $("fullscreen").classList.remove("hide-cursor");
+ clearTimeout(cursorTimer);
+ cursorTimer = setTimeout(() => {
+  if ($("fullscreen").classList.contains("show")) {
+   $("fullscreen").classList.add("hide-cursor");
+  }
+ }, 3000);
 });
 
 onValue(ref(db, "registered_teams"), s => { reg = { pelajar: {}, umum: {}, ...(s.val() || {}) }; renderAll(); }, err => { console.error(err); fail("Gagal memuat data tim. Periksa koneksi internet."); });
